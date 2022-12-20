@@ -27,7 +27,7 @@ mlagents-learn --help
 ## Learm with ML-Agents
 * Start the training process in the venv:
 ```sh
-mlagents-learn config/rollerball_config.yaml --run-id=RunId
+mlagents-learn config/rollerball_config.yaml --run-id=RunId --torch-device cpu
 ```
 * Monitor the training process:
 ```sh
