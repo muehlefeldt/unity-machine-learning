@@ -3,6 +3,16 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       batch_size: 512
+
+      # (default = 10240 for PPO and 50000 for SAC)
+      # PPO: Number of experiences to collect before updating the policy model.
+      # Corresponds to how many experiences should be collected before we do
+      # any learning or updating of the model.
+      # This should be multiple times larger than batch_size.
+      # Typically a larger buffer_size corresponds to more stable training updates.
+      # SAC: The max size of the experience buffer - on the order of thousands of times
+      # longer than your episodes, so that SAC can learn from old
+      # as well as new experiences.
       buffer_size: 10240
 
       # (default = 3e-4)
@@ -10,9 +20,20 @@ behaviors:
       # Corresponds to the strength of each gradient descent update
       # step. This should typically be decreased if training is unstable,
       # and the reward does not consistently increase. 
-      learning_rate: 1.0e-5
+      learning_rate: 1.0e-4
 
-      beta: 5.0e-4
+      # (default = 5.0e-3)
+      # Strength of the entropy regularization, which makes the policy "more random."
+      # This ensures that agents properly explore the action space during training.
+      # Increasing this will ensure more random actions are taken.
+      # This should be adjusted such that the entropy (measurable from TensorBoard)
+      # slowly decreases alongside increases in reward.
+      # If entropy drops too quickly, increase beta.
+      # If entropy drops too slowly, decrease beta.
+      # Typical range: 1e-4 - 1e-2
+      #beta: 5.0e-4
+      beta: 1.0e-3
+
       epsilon: 0.2
       lambd: 0.99
       num_epoch: 3
@@ -28,8 +49,16 @@ behaviors:
       # For simple problems where the correct action is a straightforward combination of the observation inputs, this should be small.
       # For problems where the action is a very complex interaction between the observation variables, this should be larger.
       # Typical range: 32 - 512
-      hidden_units: 512
-      num_layers: 8
+      hidden_units: 128
+
+      # (default = 2)
+      # The number of hidden layers in the neural network.
+      # Corresponds to how many hidden layers are present after the observation input, or after the CNN encoding of the visual observation.
+      # For simple problems, fewer layers are likely to train faster and more efficiently.
+      # More layers may be necessary for more complex control problems.
+      # Typical range: 1 - 3
+      num_layers: 2
+
       memory:
         memory_size: 128
         sequence_length: 64
@@ -37,6 +66,6 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 5e6
+    max_steps: 10e6
     time_horizon: 64
     summary_freq: 10000
