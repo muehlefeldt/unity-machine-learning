@@ -32,13 +32,20 @@ behaviors:
       # If entropy drops too slowly, decrease beta.
       # Typical range: 1e-4 - 1e-2
       #beta: 5.0e-4
-      beta: 1.0e-3
+      beta: 1.0e-2
+
+      # (default = learning_rate_schedule) Determines how beta changes over time.
+      # linear decays beta linearly, reaching 0 at max_steps, while constant keeps beta
+      # constant for the entire training run. If not explicitly set,
+      # the default beta schedule will be set to
+      # hyperparameters -> learning_rate_schedule.
+      beta_schedule: constant
 
       epsilon: 0.2
-      lambd: 0.99
+      lambd: 0.95
       num_epoch: 3
       learning_rate_schedule: linear
-      beta_schedule: constant
+      
       epsilon_schedule: linear
     network_settings:
       normalize: false
@@ -49,7 +56,7 @@ behaviors:
       # For simple problems where the correct action is a straightforward combination of the observation inputs, this should be small.
       # For problems where the action is a very complex interaction between the observation variables, this should be larger.
       # Typical range: 32 - 512
-      hidden_units: 128
+      hidden_units: 512
 
       # (default = 2)
       # The number of hidden layers in the neural network.
@@ -60,8 +67,25 @@ behaviors:
       num_layers: 2
 
       memory:
-        memory_size: 128
-        sequence_length: 64
+        # (default = 128)
+        # Size of the memory an agent must keep. In order to use a LSTM,
+        # training requires a sequence of experiences instead of single experiences.
+        # Corresponds to the size of the array of floating point numbers used to store
+        # the hidden state of the recurrent neural network of the policy.
+        # This value must be a multiple of 2, and should scale with the amount of
+        # information you expect the agent will need to remember
+        # in order to successfully complete the task.
+        # Typical range: 32 - 256
+        memory_size: 256
+
+        # (default = 64)
+        # Defines how long the sequences of experiences must be while training.
+        # Note that if this number is too small, the agent will not be able
+        # to remember things over longer periods of time.
+        # If this number is too large, the neural network will take longer to train.
+        # Typical range: 4 - 128
+        sequence_length: 128
+
     reward_signals:
       extrinsic:
         gamma: 0.99
