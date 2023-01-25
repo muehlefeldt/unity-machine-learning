@@ -66,7 +66,7 @@ behaviors:
       # Typical range: 1 - 3
       num_layers: 2
 
-      memory:
+      #memory:
         # (default = 128)
         # Size of the memory an agent must keep. In order to use a LSTM,
         # training requires a sequence of experiences instead of single experiences.
@@ -76,7 +76,7 @@ behaviors:
         # information you expect the agent will need to remember
         # in order to successfully complete the task.
         # Typical range: 32 - 256
-        memory_size: 256
+      #  memory_size: 256
 
         # (default = 64)
         # Defines how long the sequences of experiences must be while training.
@@ -84,7 +84,7 @@ behaviors:
         # to remember things over longer periods of time.
         # If this number is too large, the neural network will take longer to train.
         # Typical range: 4 - 128
-        sequence_length: 128
+      #  sequence_length: 128
 
     reward_signals:
       extrinsic:
