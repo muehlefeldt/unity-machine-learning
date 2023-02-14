@@ -21,3 +21,10 @@ Notes to the ML-Agents runs.
 * Replace the Ray Sensor Component with simple rays.
   * Background: The ray sensor adds to many information.
   * The drone receives only limited sensor data. 
+* Rays introduced in 4 directions.
+
+## 04BasicEnvPpo
+* Normalised ray distance values.
+* Code clean up needed.
+* Still no change in PPO config.
+* Compare against run 03: Check convergence speed. Better?
