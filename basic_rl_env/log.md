@@ -30,6 +30,13 @@ Notes to the ML-Agents runs.
 * Compare against run 03: Check convergence speed. Better?
 
 ## 05BasicEnvPpo
-* Introduce memory? Easy to introduce?
+* Introduce memory.
+* Result was not very promissing.
 
+## 06BasicEnvPpo
+* More steps also with memory.
+* Now running for 2e6 steps.
+* Compare against run 04. Rerun 04 with more steps.
+
+## Next
 * Introduce rotation (control signal and sensor data)?
