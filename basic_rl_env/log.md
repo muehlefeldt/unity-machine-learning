@@ -28,3 +28,8 @@ Notes to the ML-Agents runs.
 * Code clean up needed.
 * Still no change in PPO config.
 * Compare against run 03: Check convergence speed. Better?
+
+## 05BasicEnvPpo
+* Introduce memory? Easy to introduce?
+
+* Introduce rotation (control signal and sensor data)?
