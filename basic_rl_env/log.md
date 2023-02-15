@@ -37,6 +37,13 @@ Notes to the ML-Agents runs.
 * More steps also with memory.
 * Now running for 2e6 steps.
 * Compare against run 04. Rerun 04 with more steps.
+* Reward was very unstable.
+
+## 07BasicEnvPpo
+* Rerun of 04: No memory but more steps. 2e6 steps again used as in 05.
+* How does the reward compare to 06 and 04?
+
 
 ## Next
 * Introduce rotation (control signal and sensor data)?
+* Increase number of training areas.
