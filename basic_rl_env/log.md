@@ -48,11 +48,23 @@ Notes to the ML-Agents runs.
 ## 08BasicEnvPpo
 * Rerun of 04. No LSTM.
 * Set step count to 1e6.
-* Due to more steps behavior of beta, epsilon and/or learning rate changed signifcantly?
+* Due to more steps behavior of beta, epsilon and/or
+learning rate changes to reward signifcant?
+* Step: 1000000. Time Elapsed: 7281.410 s.
 
+## 09BasicEnvPpo
+* Increase number of training areas. Now using 8 areas in total.
+* Rerun a constant to config to verfiy result against 08BasicEnvPpo.
+* Result: 
+
+## 10BasicEnvPpo
+* Same as 10 but again run with 500k steps.
+* Should be the same aus run 04 but with more training areas.
+
+## 11BasicEnvPpo
+* Only one training area.
 
 # Next
 * Introduce rotation (control signal and sensor data)?
-* Increase number of training areas. And rerun a constant to config to verfiy result.
 * Merge both git repositories for easier handling.
 * Agent should have forward facing indicator. Just use raycast.
