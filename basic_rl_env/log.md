@@ -28,6 +28,7 @@ Notes to the ML-Agents runs.
 * Code clean up needed.
 * Still no change in PPO config.
 * Compare against run 03: Check convergence speed. Better?
+  * Limited comparison but speed seems better.
 
 ## 05BasicEnvPpo
 * Introduce memory.
@@ -42,8 +43,16 @@ Notes to the ML-Agents runs.
 ## 07BasicEnvPpo
 * Rerun of 04: No memory but more steps. 2e6 steps again used as in 05.
 * How does the reward compare to 06 and 04?
+* Unstable rewards.
+
+## 08BasicEnvPpo
+* Rerun of 04. No LSTM.
+* Set step count to 1e6.
+* Due to more steps behavior of beta, epsilon and/or learning rate changed signifcantly?
 
 
-## Next
+# Next
 * Introduce rotation (control signal and sensor data)?
-* Increase number of training areas.
+* Increase number of training areas. And rerun a constant to config to verfiy result.
+* Merge both git repositories for easier handling.
+* Agent should have forward facing indicator. Just use raycast.
