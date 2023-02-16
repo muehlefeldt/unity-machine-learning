@@ -62,7 +62,18 @@ learning rate changes to reward signifcant?
 * Should be the same aus run 04 but with more training areas.
 
 ## 11BasicEnvPpo
-* Only one training area.
+* Only one training area. Area 0.
+
+## 12BasicEnvPpo
+* Only one training area. Area 7 to test local coordinate system.
+* Shows same result as 10.
+* Indicates code error.
+
+## 13BasicEnvPpo
+* Only one training area. Area 7 to test local coordinate system.
+* Fixed: Ray measurements.
+
+
 
 # Next
 * Introduce rotation (control signal and sensor data)?
