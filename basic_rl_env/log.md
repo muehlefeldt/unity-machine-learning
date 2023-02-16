@@ -55,7 +55,7 @@ learning rate changes to reward signifcant?
 ## 09BasicEnvPpo
 * Increase number of training areas. Now using 8 areas in total.
 * Rerun a constant to config to verfiy result against 08BasicEnvPpo.
-* Result: 
+* Result: Rewards indicate a problem with code and the use of multiple areas.
 
 ## 10BasicEnvPpo
 * Same as 10 but again run with 500k steps.
@@ -72,10 +72,17 @@ learning rate changes to reward signifcant?
 ## 13BasicEnvPpo
 * Only one training area. Area 7 to test local coordinate system.
 * Fixed: Ray measurements.
+  * Rays were always cast based on the local coordinates. But in this cas global is correct.
 
+## 14BasicEnvPpo
+* Test again with multiple training areas.
+* Expected: Improved result compared to 09 and 10.
 
 
 # Next
 * Introduce rotation (control signal and sensor data)?
 * Merge both git repositories for easier handling.
 * Agent should have forward facing indicator. Just use raycast.
+* Reintroduce LSTM and test different step counts and options.
+* Walls.
+
