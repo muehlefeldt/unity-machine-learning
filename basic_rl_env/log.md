@@ -77,6 +77,18 @@ learning rate changes to reward signifcant?
 ## 14BasicEnvPpo
 * Test again with multiple training areas.
 * Expected: Improved result compared to 09 and 10.
+* Result still not as during run 04.
+* Work needed.
+
+## 15BasicEnvPpo
+* Increased distance between the training areas.
+* Result: Again not the same rewards shown as during run 04.
+
+## 16BasicEnvPpo
+* Problem with ray length fixed.
+* Increased distance between the training areas remains.
+* Result: 
+
 
 
 # Next
