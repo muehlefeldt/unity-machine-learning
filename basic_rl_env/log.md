@@ -94,6 +94,9 @@ learning rate changes to reward signifcant?
 * Control signal and sensor data 
 * Forward indicator: If gizmos on, render only forward ray.
 
+## 18BasicEnvPpo
+
+
 # Next
 * Merge both git repositories for easier handling.
 * Reintroduce LSTM and test different step counts and options.
