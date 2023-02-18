@@ -87,14 +87,15 @@ learning rate changes to reward signifcant?
 ## 16BasicEnvPpo
 * Problem with ray length fixed.
 * Increased distance between the training areas remains.
-* Result: 
+* Result: Reward plot as expected. Ray sensors fixed.
 
-
+## 17BasicEnvPpo
+* Rotation of the agent added.
+* Control signal and sensor data 
+* Forward indicator: If gizmos on, render only forward ray.
 
 # Next
-* Introduce rotation (control signal and sensor data)?
 * Merge both git repositories for easier handling.
-* Agent should have forward facing indicator. Just use raycast.
 * Reintroduce LSTM and test different step counts and options.
 * Walls.
 
