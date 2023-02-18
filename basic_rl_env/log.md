@@ -95,7 +95,11 @@ learning rate changes to reward signifcant?
 * Forward indicator: If gizmos on, render only forward ray.
 
 ## 18BasicEnvPpo
+* More hidden units.
+* Previously not very much reward. Maybe longer training needed?
 
+## 19BasicEnvPpo
+* Sensor data change to rigidbody.
 
 # Next
 * Merge both git repositories for easier handling.
