@@ -100,9 +100,13 @@ learning rate changes to reward signifcant?
 
 ## 19BasicEnvPpo
 * Sensor data change to rigidbody.
+* Result: Good.
+
+## 20BasicEnvPpo
+* Increased training step count to 2e6 from 500k.
 
 # Next
-* Merge both git repositories for easier handling.
+* Merge both git repositories for easier handling. Problem with dependency?
 * Reintroduce LSTM and test different step counts and options.
 * Walls.
 
