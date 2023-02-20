@@ -104,6 +104,13 @@ learning rate changes to reward signifcant?
 
 ## 20BasicEnvPpo
 * Increased training step count to 2e6 from 500k.
+* Everything else remains steady.
+
+## 21BasicEnvPpo
+* Set beta: 1.0e-4. Was 5.0e-5.
+* Look for: More stable learning since early in the run.
+* Step count still set to 2e6.
+
 
 # Next
 * Merge both git repositories for easier handling. Problem with dependency?
