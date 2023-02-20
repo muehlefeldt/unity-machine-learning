@@ -110,6 +110,12 @@ learning rate changes to reward signifcant?
 * Set beta: 1.0e-4. Was 5.0e-5.
 * Look for: More stable learning since early in the run.
 * Step count still set to 2e6.
+* Reward drops during initial phase!
+* Reward growth faster compared to 20. But still pretty unstable.
+
+## 22BasicEnvPpo
+* batch_size: 1000
+* buffer_size: 10240
 
 
 # Next
