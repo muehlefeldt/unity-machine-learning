@@ -2,9 +2,15 @@ import yaml
 from pathlib import Path
 import os
 
-path_to_config_file = "basic_rl_env/config/rolleragent_ppo.yaml"
-path_to_temp_config_file = "basic_rl_env/config/current.yaml"
-path_to_unity_env = "basic_rl_env/build"
+# Paths: Config files and unity env.
+path_to_working_dir = "basic"
+path_to_config_file = "./config/rolleragent_ppo.yaml"
+path_to_temp_config_file = "./config/current.yaml"
+path_to_unity_env = "./build"
+
+# Ensure correct working dir.
+if (os.getcwd() != Path("./basic_rl_env").absolute()):
+    os.chdir(Path("./basic_rl_env").absolute())
 
 # Open the base config file.
 with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
