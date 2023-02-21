@@ -117,6 +117,10 @@ learning rate changes to reward signifcant?
 * batch_size: 1000
 * buffer_size: 10240
 
+## 23BasicEnvPpo
+* beta: 1.0e-2.
+* Entropy should drop more slowly?
+
 
 # Next
 * Merge both git repositories for easier handling. Problem with dependency?
