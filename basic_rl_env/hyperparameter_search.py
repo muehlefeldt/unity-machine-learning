@@ -17,17 +17,17 @@ with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
     config = yaml.safe_load(config_file)
 
 # Select parameter to modify in base config.
-parameter_to_modify = "buffer_size"
+parameter_to_modify = "beta"
 values = [
-    10,
-    50,
-    100,
-    1000,
-    2000
+   1e-4,
+   5e-4,
+   1e-3,
+   5e-3,
+   1e-2
 ]
 
 # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
-run_id_num = 25
+run_id_num = 44
 
 for value in values:
     # Reload the base config. Modify selected parameter.
