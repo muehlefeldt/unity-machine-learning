@@ -121,9 +121,21 @@ learning rate changes to reward signifcant?
 * beta: 1.0e-2.
 * Entropy should drop more slowly?
 
+## 25BasicEnvPpo to 48BasicEnvPpo
+* First use of a structured hyperparameter search.
+* Still very simple.
+* Uses hyperparameter_search.py to start search.
+
+## 49
+* Walls in area introduced.
+
+## 50
+* 
+
 
 # Next
-* Merge both git repositories for easier handling. Problem with dependency?
-* Reintroduce LSTM and test different step counts and options.
 * Walls.
 
+# Longterem plans
+* Merge both git repositories for easier handling. Problem with dependency?
+* Reintroduce LSTM and test different step counts and options.
