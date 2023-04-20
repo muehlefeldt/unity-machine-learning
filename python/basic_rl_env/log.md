@@ -136,10 +136,14 @@ learning rate changes to reward signifcant?
 * Test without build. Only in Unity editor.
 * Observation: Runs using build executable are way faster.
 
+## 52
+* Fix: Training wareas wrong positions.
+* Rerun of 51 with same config.
+* Uses build env of unity.
 
 # Next
 * Walls.
 
-# Longterem plans
+# Longtrem plans
 * Merge both git repositories for easier handling. Problem with dependency?
 * Reintroduce LSTM and test different step counts and options.
