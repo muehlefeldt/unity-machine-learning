@@ -140,6 +140,14 @@ learning rate changes to reward signifcant?
 * Fix: Training wareas wrong positions.
 * Rerun of 51 with same config.
 * Uses build env of unity.
+* Result: Looks better comp. to 51.
+* Error: Run was terminated due to waiting state of worker.
+
+## 53
+* Rerun of 52 due to earlier error.
+
+## 54 and following
+* Parameter search using script.
 
 # Next
 * Walls.
