@@ -130,7 +130,11 @@ learning rate changes to reward signifcant?
 * Walls in area introduced.
 
 ## 50
-* 
+* ?
+
+## 51
+* Test without build. Only in Unity editor.
+* Observation: Runs using build executable are way faster.
 
 
 # Next

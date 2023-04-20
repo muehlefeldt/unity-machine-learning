@@ -17,19 +17,33 @@ with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
     config = yaml.safe_load(config_file)
 
 # Select parameter to modify in base config.
-parameter_to_modify = "beta"
-values = [
-   1e-4,
-   5e-4,
-   1e-3,
-   5e-3,
-   1e-2
-]
+para = {
+    "beta": [
+        1e-4,
+        5e-4,
+        1e-3,
+        5e-3,
+        1e-2
+    ],
+    "lambd": [
+        0.85,
+        0.9,
+        0.925,
+        0.95
+    ]
+}
 
-# Id number of the run. As shown in tensorboard. Needed to ensure traceability.
-run_id_num = 44
+def get_run_id() -> int:
+    dir_content = os.listdir(Path("./results/").absolute())
+    numbers = []
+    for entry in dir_content:
+        numbers.append(int(entry.split("_")[0]))
+    return max(numbers) + 1
 
-for value in values:
+for name in para:
+    # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
+    run_id_num = get_run_id()
+
     # Reload the base config. Modify selected parameter.
     tmp_config = config
     tmp_config['behaviors']['RollerAgent']['hyperparameters'][parameter_to_modify] = value
@@ -49,5 +63,3 @@ for value in values:
     )
 
     print(f"Run {run_id_num} with {parameter_to_modify} = {value}: Code {return_code}.")
-
-    run_id_num += 1
