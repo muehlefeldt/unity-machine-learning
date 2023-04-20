@@ -2,7 +2,8 @@
 
 ## Python 3.9
 * Install Python 3.9.13 (last 3.9.x version provided as windows installer). [Download](https://www.python.org/ftp/python/3.9.13/python-3.9.13-amd64.exe)
-* Create virtual environment (venv) and activate environment. VS Code: `CTRL+Shift+P` and `Python: Create environemnt`.
+* Create virtual environment (venv) VS Code: `CTRL+Shift+P` and `Python: Create environemnt`.
+* Activate virtual environment.
 * (Windows) Powershell script execution policy needs to be set:
 ```ps
 Set-ExecutionPolicy -scope CurrentUser -ExecutionPolicy RemoteSigned
