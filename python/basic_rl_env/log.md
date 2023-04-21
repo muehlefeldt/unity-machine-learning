@@ -146,11 +146,14 @@ learning rate changes to reward signifcant?
 ## 53
 * Rerun of 52 due to earlier error.
 
-## 54 and following
+## 54 till 73
 * Parameter search using script.
+* Best results from runs 60 and 66.
 
 # Next
 * Walls.
+* Flight.
+* LSTM.
 
 # Longtrem plans
 * Merge both git repositories for easier handling. Problem with dependency?
