@@ -39,9 +39,10 @@ public class RollerAgent : Agent
     public override void OnEpisodeBegin()
     {
         // If the Agent fell, zero its momentum
-        if (this.transform.localPosition.y < 0)
+        if (this.transform.localPosition.y < 0 || m_CollisionDetected)
         {
-            ResetAgentPosition();            
+            m_CollisionDetected = false;
+            ResetAgentPosition();
         }
 
         // Move the target to a new spot
@@ -113,6 +114,7 @@ public class RollerAgent : Agent
         Vector3 controlSignal = Vector3.zero;
         controlSignal.x = actionBuffers.ContinuousActions[0];
         controlSignal.z = actionBuffers.ContinuousActions[1];
+        controlSignal.y = actionBuffers.ContinuousActions[3];
         var rotate = Mathf.Clamp(actionBuffers.ContinuousActions[2], -1f, 1f);
         
         // Rotate
@@ -120,7 +122,7 @@ public class RollerAgent : Agent
         var rotateDir = transform.up * rotate;
         transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
 
-        controlSignal = Vector3.Scale(controlSignal, transform.forward);
+        //controlSignal = Vector3.Scale(controlSignal, transform.forward);
         //m_RBody.AddForce(controlSignal * forceMultiplier);
         //transform.localPosition = transform.localPosition + controlSignal * forceMultiplier;
         //m_RBody.MovePosition(transform.localPosition + controlSignal * forceMultiplier);
@@ -149,13 +151,15 @@ public class RollerAgent : Agent
         }
         AddReward(-0.001f);
     }
-    
+
+    private bool m_CollisionDetected = false;
     /// <summary>
     /// Collision handling. Reset if the agent collides with other game objects.
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
+        m_CollisionDetected = true;
         SetReward(-1f);
         EndEpisode();
     }
@@ -166,5 +170,7 @@ public class RollerAgent : Agent
         continuousActionsOut[0] = Input.GetAxis("Horizontal");
         continuousActionsOut[1] = Input.GetAxis("Vertical");
         continuousActionsOut[2] = Input.GetAxis("Mouse X");
+        // Height
+        continuousActionsOut[3] = Input.GetAxis("Mouse Y");
     }
 }
