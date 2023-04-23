@@ -57,8 +57,8 @@ public class RollerAgent : Agent
     private float m_RayBackDist;
     private float m_RayLeftDist;
     private float m_RayRightDist;
-    public float m_RayUpDist;
-    public float m_RayDownDist;
+    private float m_RayUpDist;
+    private float m_RayDownDist;
     void FixedUpdate()
     {
         /*var currentRay = new Ray(transform.localPosition, transform.TransformDirection(Vector3.forward));
@@ -160,7 +160,7 @@ public class RollerAgent : Agent
 
     private bool m_CollisionDetected = false;
     /// <summary>
-    /// Collision handling. Reset if the agent collides with other game objects.
+    /// Collision handling. Reset of the agent position if agent collides with other game objects.
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)

@@ -435,7 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 9
+    VectorObservationSize: 11
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 4
@@ -471,6 +471,8 @@ MonoBehaviour:
   MaxStep: 0
   target: {fileID: 5324353081875949238}
   floor: {fileID: 5324353083616000953}
+  m_RayUpDist: 0
+  m_RayDownDist: 0
   forceMultiplier: 10
 --- !u!114 &5324353081925522769
 MonoBehaviour:
