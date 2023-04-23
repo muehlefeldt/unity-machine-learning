@@ -57,6 +57,8 @@ public class RollerAgent : Agent
     private float m_RayBackDist;
     private float m_RayLeftDist;
     private float m_RayRightDist;
+    public float m_RayUpDist;
+    public float m_RayDownDist;
     void FixedUpdate()
     {
         /*var currentRay = new Ray(transform.localPosition, transform.TransformDirection(Vector3.forward));
@@ -66,6 +68,8 @@ public class RollerAgent : Agent
         m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
         m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
         m_RayRightDist = PerformRaycastGetDistance(Vector3.right);
+        m_RayUpDist = PerformRaycastGetDistance(Vector3.up);
+        m_RayDownDist = PerformRaycastGetDistance(Vector3.down);
     }
     
     /// <summary>
@@ -97,6 +101,8 @@ public class RollerAgent : Agent
         sensor.AddObservation(m_RayBackDist);
         sensor.AddObservation(m_RayLeftDist);
         sensor.AddObservation(m_RayRightDist);
+        sensor.AddObservation(m_RayUpDist);
+        sensor.AddObservation(m_RayDownDist);
 
         // Agent velocity.
         sensor.AddObservation(m_RBody.velocity.x);
