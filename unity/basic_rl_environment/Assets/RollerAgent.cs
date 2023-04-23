@@ -24,16 +24,24 @@ public class RollerAgent : Agent
         m_RBody = GetComponent<Rigidbody>();
     }
     
+    /// <summary>
+    /// Reset the position of the agent to a default position.
+    /// </summary>
+    private void ResetAgentPosition()
+    {
+        m_RBody.angularVelocity = Vector3.zero;
+        m_RBody.velocity = Vector3.zero;
+            
+        transform.localPosition = new Vector3( 0, 1f, 0);
+        transform.rotation = Quaternion.identity;
+    }
+    
     public override void OnEpisodeBegin()
     {
         // If the Agent fell, zero its momentum
         if (this.transform.localPosition.y < 0)
         {
-            this.m_RBody.angularVelocity = Vector3.zero;
-            this.m_RBody.velocity = Vector3.zero;
-            
-            this.transform.localPosition = new Vector3( 0, 0.25f, 0);
-            transform.rotation = Quaternion.identity;
+            ResetAgentPosition();            
         }
 
         // Move the target to a new spot
