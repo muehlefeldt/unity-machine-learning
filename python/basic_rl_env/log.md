@@ -150,6 +150,10 @@ learning rate changes to reward signifcant?
 * Parameter search using script.
 * Best results from runs 60 and 66.
 
+## 96
+* More training areas.
+* Uses best parameters from auto runs 76 to 95. Uses same config as run 78.
+
 # Next
 * Walls.
 * Flight.
