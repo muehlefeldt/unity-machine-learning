@@ -166,7 +166,7 @@ public class RollerAgent : Agent
     private void OnTriggerEnter(Collider other)
     {
         m_CollisionDetected = true;
-        SetReward(-1f);
+        AddReward(-1f);
         EndEpisode();
     }
 

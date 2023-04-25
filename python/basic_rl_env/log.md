@@ -153,12 +153,18 @@ learning rate changes to reward signifcant?
 ## 96
 * More training areas.
 * Uses best parameters from auto runs 76 to 95. Uses same config as run 78.
+* Made error: Wrong beta value used.
+
+## 97
+* Slight change of reward handling in case of collision.
+  * Add -1 and not set to -1.
+* Still uses the wrong beta value!
+
+## 98
+* Rerun of 97 with correct beta value.
 
 # Next
-* Walls.
-* Flight.
 * LSTM.
 
 # Longtrem plans
-* Merge both git repositories for easier handling. Problem with dependency?
 * Reintroduce LSTM and test different step counts and options.

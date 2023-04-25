@@ -31,9 +31,9 @@ with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
 # Select parameter to modify in base config.
 para = {
     "beta": [
-        #1e-4,
+        1e-4,
         #5e-4,
-        1e-3,
+        #1e-3,
         #5e-3,
         #1e-2
     ],
