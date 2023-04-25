@@ -39,9 +39,10 @@ public class RollerAgent : Agent
     public override void OnEpisodeBegin()
     {
         // If the Agent fell, zero its momentum
-        if (this.transform.localPosition.y < 0 || m_CollisionDetected)
+        if (this.transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
         {
             m_CollisionDetected = false;
+            m_ImplausiblePosition = false;
             ResetAgentPosition();
         }
 
@@ -112,7 +113,30 @@ public class RollerAgent : Agent
         Quaternion rotation = m_RBody.rotation;
         sensor.AddObservation(rotation.eulerAngles / 360.0f);  // [0,1]
     }
+
+    /// <summary>
+    /// Check if agent position and rotation is plausible. Used to detect positions outside of training area.
+    /// </summary>
+    /// <returns></returns>
+    private bool IsAgentStatePlausible()
+    {
+        // Fell off platform or is beyond roof.
+        var y = transform.localPosition.y;
+        if (y is < 0f or > 2f)
+        {
+            return false;
+        }
+        // Check rotation. In case of implausible values terminate episode.
+        var rotation = transform.rotation;
+        if (!Mathf.Approximately(rotation.x, 0f) || !Mathf.Approximately(rotation.z, 0f))
+        {
+            return false;
+        }
+        return true;
+
+    }
     
+    private bool m_ImplausiblePosition = false;
     public float forceMultiplier = 10f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -149,12 +173,15 @@ public class RollerAgent : Agent
             AddReward(1.0f);
             EndEpisode();
         }
-
-        // Fell off platform
-        else if (this.transform.localPosition.y < 0)
+        
+        // Verify agent state (position) is plausible.
+        if (!IsAgentStatePlausible())
         {
+            m_ImplausiblePosition = true;
             EndEpisode();
         }
+        
+        // Punish each step.
         AddReward(-0.001f);
     }
 

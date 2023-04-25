@@ -168,8 +168,16 @@ learning rate changes to reward signifcant?
 * Need to compare configs between 78 and this run.
 * Interesting observation: episode length between the the runs is comparable.
 
+## 99
+* Increased step number.
+* Terminated with error.
+
+## 100
+* Rerun of 99 after rebuild.
+
 # Next
-* LSTM.
+* Discrete actions. To prepare for LSTM.
+* LSTM. Test different configurations.
 
 # Longtrem plans
 * Reintroduce LSTM and test different step counts and options.

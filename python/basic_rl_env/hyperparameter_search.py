@@ -57,9 +57,9 @@ for beta_value in para["beta"]:
         # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
         run_id_num = get_run_id()
 
-        logging.info(f"[{get_run_id()}] New run started with id {get_run_id()}.")
-        logging.info(f"[{get_run_id()}] beta = {beta_value}.")
-        logging.info(f"[{get_run_id()}] lambd = {lambd_value}.")
+        logging.info(f"[{run_id_num}] New run started with id {run_id_num}.")
+        logging.info(f"[{run_id_num}] beta = {beta_value}.")
+        logging.info(f"[{run_id_num}] lambd = {lambd_value}.")
 
         # Reload the base config. Modify selected parameter.
         #tmp_config = config
@@ -80,6 +80,6 @@ for beta_value in para["beta"]:
         )
 
         if return_code != 0:
-            logging.warning(f"[{get_run_id()}] error code.")
+            logging.warning(f"[{run_id_num}] error code.")
 
-        logging.info(f"[{get_run_id()}] return code = {return_code}.")
+        logging.info(f"[{run_id_num}] return code = {return_code}.")
