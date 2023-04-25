@@ -10,6 +10,7 @@ path_to_working_dir = "python/basic_rl_env"
 path_to_config_file = "./config/rolleragent_ppo.yaml"
 path_to_temp_config_file = "./config/current.yaml"
 path_to_unity_env = "./build"
+path_to_log_dir = "./logs"
 
 # Ensure correct working dir.
 if (os.getcwd() != Path(path_to_working_dir).absolute()):
@@ -22,7 +23,7 @@ def get_run_id() -> int:
         numbers.append(int(entry.split("_")[0]))
     return max(numbers) + 1
 
-logging.basicConfig(filename=f"{get_run_id()}_search.log", level=logging.INFO)
+logging.basicConfig(filename=Path(f"./logs/{get_run_id()}_search.log").absolute(), level=logging.INFO)
 
 # Open the base config file.
 with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
