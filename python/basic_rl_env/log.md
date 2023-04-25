@@ -162,6 +162,11 @@ learning rate changes to reward signifcant?
 
 ## 98
 * Rerun of 97 with correct beta value.
+* Target: Compare to run 78.
+* Comparison to run 78: Results differ. This run does not follow 78 after 800k steps in terms of reward.
+* Speculation on the reason: Reward function changed?
+* Need to compare configs between 78 and this run.
+* Interesting observation: episode length between the the runs is comparable.
 
 # Next
 * LSTM.
