@@ -177,7 +177,10 @@ learning rate changes to reward signifcant?
 
 ## 103
 * Discrete action test run.
-* Uses parameter as 102 but changes to buffer size. 
+* Uses parameter as 102 but changes to buffer size.
+  * Docs recommend reduction in buffer size.
+* Beta value to high? Or good? Is now 1e-2. Was way smaller before.
+  * More tests needed with beta value.
 
 
 # Next
