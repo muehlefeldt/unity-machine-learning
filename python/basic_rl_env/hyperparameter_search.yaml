@@ -17,12 +17,12 @@ behaviors:
       hidden_units: 256
       num_layers: 2
       memory:
-        memory_size: [32, 128]
-        sequence_length: 64
+        memory_size: [32, 64, 128]
+        sequence_length: [16, 32, 64, 128]
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 7.5e5
+    max_steps: 1e6
     time_horizon: 64
     summary_freq: 10000
