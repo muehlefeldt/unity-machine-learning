@@ -185,6 +185,10 @@ learning rate changes to reward signifcant?
 ## 108
 * Test of script.
 
+## 109
+* Very first LSTM run.
+* Aborted run. 
+
 # Next
 * LSTM. Test different configurations.
 * Test: Small reward for better state but not optimal state, +0.1.
