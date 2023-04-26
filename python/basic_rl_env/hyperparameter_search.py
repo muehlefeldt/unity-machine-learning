@@ -48,6 +48,7 @@ if memory is not None:
             memory_key_values.append({key: memory[key]})
 memory_input = [list(entry.values())[0] for entry in memory_key_values]
 memory_combinations = list(itertools.product(*memory_input))
+logging.info(f"Found {len(memory_input)} memory parameters with dynamic values.")
 
 for hyperparameter_option in hyperparameter_combinations:
     for memory_option in memory_combinations:
