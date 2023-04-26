@@ -1,5 +1,6 @@
 results/
 logs/
+configs/
 *.zip
 *.pdf
 current.yaml
