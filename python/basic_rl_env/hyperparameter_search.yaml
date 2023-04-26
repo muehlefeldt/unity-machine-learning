@@ -16,7 +16,9 @@ behaviors:
       normalize: false
       hidden_units: 256
       num_layers: 2
-      memory: null
+      memory:
+        memory_size: [32, 128]
+        sequence_length: 64
     reward_signals:
       extrinsic:
         gamma: 0.99
