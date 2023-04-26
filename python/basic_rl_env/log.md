@@ -177,6 +177,7 @@ learning rate changes to reward signifcant?
 
 ## 103
 * Discrete action test run.
+* Uses parameter as 102 but changes to buffer size. 
 
 
 # Next
