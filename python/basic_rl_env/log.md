@@ -182,11 +182,12 @@ learning rate changes to reward signifcant?
 * Beta value to high? Or good? Is now 1e-2. Was way smaller before.
   * More tests needed with beta value.
 
+## 108
+* Test of script.
 
 # Next
-* Discrete actions. To prepare for LSTM.
 * LSTM. Test different configurations.
 * Test: Small reward for better state but not optimal state, +0.1.
 
 # Longtrem plans
-* Reintroduce LSTM and test different step counts and options.
+* Increase complexity of the environment.
