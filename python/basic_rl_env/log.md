@@ -175,6 +175,10 @@ learning rate changes to reward signifcant?
 ## 100
 * Rerun of 99 after rebuild.
 
+## 103
+* Discrete action test run.
+
+
 # Next
 * Discrete actions. To prepare for LSTM.
 * LSTM. Test different configurations.
