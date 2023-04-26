@@ -69,7 +69,8 @@ for hyperparameter_option in hyperparameter_combinations:
         for index in range(len(memory_key_values)):
             key = list(memory_key_values[index].keys())[0]
             value = memory_option[index]
-            memory[key] = value
+            tmp_memory[key] = value
+            logging.info(f"[{run_id_num}] {key} = {value}.")
 
         tmp_config = config
         tmp_config['behaviors']['RollerAgent']['hyperparameters'] = tmp_hyperparameters
