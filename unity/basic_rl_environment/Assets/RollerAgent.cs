@@ -140,23 +140,53 @@ public class RollerAgent : Agent
     public float forceMultiplier = 10f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        // Actions, size = 2
         Vector3 controlSignal = Vector3.zero;
-        //controlSignal.x = actionBuffers.ContinuousActions[0];
-        //controlSignal.z = actionBuffers.ContinuousActions[1];
-        //controlSignal.y = actionBuffers.ContinuousActions[3];
-        //var rotate = Mathf.Clamp(actionBuffers.ContinuousActions[2], -1f, 1f);
         
-        // Can be: -1, 0, 1
-        var x = actionBuffers.DiscreteActions[0];
-        var y = actionBuffers.DiscreteActions[1];
-        var z = actionBuffers.DiscreteActions[2];
+        var rightLeft = actionBuffers.DiscreteActions[0];
+        var upDown = actionBuffers.DiscreteActions[1];
+        var forwardBackwards = actionBuffers.DiscreteActions[2];
         var r = actionBuffers.DiscreteActions[3];
+        
+        switch (rightLeft)
+        {
+            case 2:
+                controlSignal.x = 1f;
+                break;
+            case 3:
+                controlSignal.x = -1f;
+                break;
+        }
+        
+        switch (upDown)
+        {
+            case 2:
+                controlSignal.y = 1f;
+                break;
+            case 3:
+                controlSignal.y = -1f;
+                break;
+        }
+        
+        switch (forwardBackwards)
+        {
+            case 2:
+                controlSignal.z = 1f;
+                break;
+            case 3:
+                controlSignal.z = -1f;
+                break;
+        }
 
-        controlSignal.x = x;
-        controlSignal.y = y;
-        controlSignal.z = z;
-        var rotate = r;
+        var rotate = 0f;
+        switch (r)
+        {
+            case 2:
+                rotate = 1f;
+                break;
+            case 3:
+                rotate = -1f;
+                break;
+        }
         
         // Rotate
         var turnSpeed = 200;
@@ -222,58 +252,57 @@ public class RollerAgent : Agent
         //var z = discreteActionsOut[2];
         //var rotation = discreteActionsOut[3];
         
-        // X.
-        if (Input.GetKey(KeyCode.W))
-        {
-            discreteActionsOut[0] = 1;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            discreteActionsOut[0] = -1;
-        }
-        else
-        {
-            discreteActionsOut[0] = 0;
-        }
-        // Y.
-        if (Input.GetKey(KeyCode.Q))
-        {
-            discreteActionsOut[1] = 1;
-        }
-        else if (Input.GetKey(KeyCode.Y))
-        {
-            discreteActionsOut[1] = -1;
-        }
-        else
-        {
-            discreteActionsOut[1] = 0;
-        }
-        // Z
+        // X. Right, left and no movement.
         if (Input.GetKey(KeyCode.D))
         {
-            discreteActionsOut[2] = 1;
+            discreteActionsOut[0] = 2;
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            discreteActionsOut[2] = -1;
+            discreteActionsOut[0] = 3;
         }
         else
         {
-            discreteActionsOut[2] = 0;
+            discreteActionsOut[0] = 1;
         }
-        // Rotation
-        if (Input.GetKey(KeyCode.M))
+        // Y. Up, down and no movement.
+        if (Input.GetKey(KeyCode.X))
+        {
+            discreteActionsOut[1] = 2;
+        }
+        else if (Input.GetKey(KeyCode.Y))
+        {
+            discreteActionsOut[1] = 3;
+        }
+        else
+        {
+            discreteActionsOut[1] = 1;
+        }
+        // Z. Forward, backwards and no movement.
+        if (Input.GetKey(KeyCode.W))
+        {
+            discreteActionsOut[2] = 2;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            discreteActionsOut[2] = 3;
+        }
+        else
+        {
+            discreteActionsOut[2] = 1;
+        }
+        // Rotation. Right, left and no rotation.
+        if (Input.GetKey(KeyCode.E))
+        {
+            discreteActionsOut[3] = 2;
+        }
+        else if (Input.GetKey(KeyCode.Q))
+        {
+            discreteActionsOut[3] = 3;
+        }
+        else
         {
             discreteActionsOut[3] = 1;
         }
-        else if (Input.GetKey(KeyCode.N))
-        {
-            discreteActionsOut[3] = -1;
-        }
-        else
-        {
-            discreteActionsOut[3] = 0;
-        }
-        
     }
 }
