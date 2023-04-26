@@ -438,11 +438,11 @@ MonoBehaviour:
     VectorObservationSize: 11
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 4
-      BranchSizes: 
-    VectorActionSize: 04000000
+      m_NumContinuousActions: 0
+      BranchSizes: 03000000030000000300000003000000
+    VectorActionSize: 03000000030000000300000003000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 1
+    VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 3
@@ -471,8 +471,6 @@ MonoBehaviour:
   MaxStep: 0
   target: {fileID: 5324353081875949238}
   floor: {fileID: 5324353083616000953}
-  m_RayUpDist: 0
-  m_RayDownDist: 0
   forceMultiplier: 10
 --- !u!114 &5324353081925522769
 MonoBehaviour:

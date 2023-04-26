@@ -178,6 +178,7 @@ learning rate changes to reward signifcant?
 # Next
 * Discrete actions. To prepare for LSTM.
 * LSTM. Test different configurations.
+* Test: Small reward for better state but not optimal state, +0.1.
 
 # Longtrem plans
 * Reintroduce LSTM and test different step counts and options.

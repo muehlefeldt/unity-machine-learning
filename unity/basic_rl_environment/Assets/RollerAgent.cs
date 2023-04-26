@@ -142,10 +142,21 @@ public class RollerAgent : Agent
     {
         // Actions, size = 2
         Vector3 controlSignal = Vector3.zero;
-        controlSignal.x = actionBuffers.ContinuousActions[0];
-        controlSignal.z = actionBuffers.ContinuousActions[1];
-        controlSignal.y = actionBuffers.ContinuousActions[3];
-        var rotate = Mathf.Clamp(actionBuffers.ContinuousActions[2], -1f, 1f);
+        //controlSignal.x = actionBuffers.ContinuousActions[0];
+        //controlSignal.z = actionBuffers.ContinuousActions[1];
+        //controlSignal.y = actionBuffers.ContinuousActions[3];
+        //var rotate = Mathf.Clamp(actionBuffers.ContinuousActions[2], -1f, 1f);
+        
+        // Can be: -1, 0, 1
+        var x = actionBuffers.DiscreteActions[0];
+        var y = actionBuffers.DiscreteActions[1];
+        var z = actionBuffers.DiscreteActions[2];
+        var r = actionBuffers.DiscreteActions[3];
+
+        controlSignal.x = x;
+        controlSignal.y = y;
+        controlSignal.z = z;
+        var rotate = r;
         
         // Rotate
         var turnSpeed = 200;
@@ -199,11 +210,70 @@ public class RollerAgent : Agent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        continuousActionsOut[1] = Input.GetAxis("Vertical");
-        continuousActionsOut[2] = Input.GetAxis("Mouse X");
+        //var continuousActionsOut = actionsOut.ContinuousActions;
+        //continuousActionsOut[0] = Input.GetAxis("Horizontal");
+        //continuousActionsOut[1] = Input.GetAxis("Vertical");
+        //continuousActionsOut[2] = Input.GetAxis("Mouse X");
         // Height
-        continuousActionsOut[3] = Input.GetAxis("Mouse Y");
+        //continuousActionsOut[3] = Input.GetAxis("Mouse Y");
+        var discreteActionsOut = actionsOut.DiscreteActions;
+        //var x = discreteActionsOut[0];
+        //var y = discreteActionsOut[1];
+        //var z = discreteActionsOut[2];
+        //var rotation = discreteActionsOut[3];
+        
+        // X.
+        if (Input.GetKey(KeyCode.W))
+        {
+            discreteActionsOut[0] = 1;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            discreteActionsOut[0] = -1;
+        }
+        else
+        {
+            discreteActionsOut[0] = 0;
+        }
+        // Y.
+        if (Input.GetKey(KeyCode.Q))
+        {
+            discreteActionsOut[1] = 1;
+        }
+        else if (Input.GetKey(KeyCode.Y))
+        {
+            discreteActionsOut[1] = -1;
+        }
+        else
+        {
+            discreteActionsOut[1] = 0;
+        }
+        // Z
+        if (Input.GetKey(KeyCode.D))
+        {
+            discreteActionsOut[2] = 1;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            discreteActionsOut[2] = -1;
+        }
+        else
+        {
+            discreteActionsOut[2] = 0;
+        }
+        // Rotation
+        if (Input.GetKey(KeyCode.M))
+        {
+            discreteActionsOut[3] = 1;
+        }
+        else if (Input.GetKey(KeyCode.N))
+        {
+            discreteActionsOut[3] = -1;
+        }
+        else
+        {
+            discreteActionsOut[3] = 0;
+        }
+        
     }
 }
