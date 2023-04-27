@@ -192,6 +192,15 @@ learning rate changes to reward signifcant?
 ## 111
 * Aborted.
 
+## 115
+* Not stable. memory_size = 32. sequence_length = 128.
+
+## 119
+* Not stable. memory_size = 64. sequence_length = 128.
+
+## 122
+* Looks good.
+
 # Next
 * LSTM. Test different configurations.
 * Test: Small reward for better state but not optimal state, +0.1.
