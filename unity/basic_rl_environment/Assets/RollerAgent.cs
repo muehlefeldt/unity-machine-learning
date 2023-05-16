@@ -17,6 +17,7 @@ public class RollerAgent : Agent
     private Rigidbody m_RBody;
     public Transform target;
     public Floor floor;
+    public InnerWall innerWall;
     private float m_MaxDist;
     
     // Start is called before the first frame update
@@ -45,6 +46,7 @@ public class RollerAgent : Agent
             m_ImplausiblePosition = false;
             ResetAgentPosition();
         }
+        innerWall.SetRandomPosition();
 
         // Move the target to a new spot
         target.localPosition = new Vector3(Random.value * 8 - 4,

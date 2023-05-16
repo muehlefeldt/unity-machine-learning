@@ -202,7 +202,7 @@ learning rate changes to reward signifcant?
 * Looks good.
 
 # Next
-* LSTM. Test different configurations.
+* Second room.
 * Test: Small reward for better state but not optimal state, +0.1.
 
 # Longtrem plans
