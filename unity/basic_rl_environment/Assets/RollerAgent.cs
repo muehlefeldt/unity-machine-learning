@@ -17,9 +17,8 @@ public class RollerAgent : Agent
     private Rigidbody m_RBody;
     public Transform target;
     public Floor floor;
-    public InnerWall innerWall;
     private float m_MaxDist;
-    
+
     // Start is called before the first frame update
     void Start () {
         m_RBody = GetComponent<Rigidbody>();
@@ -39,6 +38,9 @@ public class RollerAgent : Agent
     
     public override void OnEpisodeBegin()
     {
+        //floor.
+        floor.CreateInnerWall();
+        
         // If the Agent fell, zero its momentum
         if (this.transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
         {
@@ -46,7 +48,6 @@ public class RollerAgent : Agent
             m_ImplausiblePosition = false;
             ResetAgentPosition();
         }
-        innerWall.SetRandomPosition();
 
         // Move the target to a new spot
         target.localPosition = new Vector3(Random.value * 8 - 4,
