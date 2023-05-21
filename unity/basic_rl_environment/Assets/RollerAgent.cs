@@ -38,7 +38,7 @@ public class RollerAgent : Agent
     
     public override void OnEpisodeBegin()
     {
-        //floor.
+        floor.Prepare();
         floor.CreateInnerWall();
         
         // If the Agent fell, zero its momentum
