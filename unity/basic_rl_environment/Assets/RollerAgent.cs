@@ -15,13 +15,14 @@ using Vector3 = UnityEngine.Vector3;
 public class RollerAgent : Agent
 {
     private Rigidbody m_RBody;
-    public Transform target;
+    public Target target;
     public Floor floor;
     private float m_MaxDist;
 
     // Start is called before the first frame update
     void Start () {
         m_RBody = GetComponent<Rigidbody>();
+        ResetAgentPosition();
     }
     
     /// <summary>
@@ -32,7 +33,7 @@ public class RollerAgent : Agent
         m_RBody.angularVelocity = Vector3.zero;
         m_RBody.velocity = Vector3.zero;
             
-        transform.localPosition = new Vector3( 0, 1f, 0);
+        transform.localPosition = new Vector3( 0, 1f, 3f);
         transform.rotation = Quaternion.identity;
     }
     
@@ -50,9 +51,7 @@ public class RollerAgent : Agent
         }
 
         // Move the target to a new spot
-        target.localPosition = new Vector3(Random.value * 8 - 4,
-            0.5f,
-            Random.value * 8 - 4);
+        target.ResetPosition();
 
         //m_MaxDist = floor.GetMaxPossibleDist();
     }
@@ -209,7 +208,7 @@ public class RollerAgent : Agent
         //m_RBody.MovePosition(transform.localPosition + dirToGo * (Time.fixedDeltaTime * forceMultiplier));
 
         // Rewards
-        float distanceToTarget = Vector3.Distance(this.transform.localPosition, target.localPosition);
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, target.GetLocalPosition());
 
         // Reached target
         if (distanceToTarget < 1.42f)

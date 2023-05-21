@@ -13,6 +13,7 @@ public class Floor : MonoBehaviour
     public float m_MaxDist = 1f;
     private int[] m_PossibleWallLocations = new int[] {0, 11, 22, 33, 66, 77, 88, 99, 110};
     private int m_IndexWallEnd = 10;
+    private Matrix4x4 m_FloorMatrix;
     
     public InnerWallCreator innerWallCreator;
 
@@ -29,16 +30,16 @@ public class Floor : MonoBehaviour
             Mesh floorMesh = floorMeshFilter.sharedMesh;
 
             // Get the local-to-world transformation matrix of the floor object
-            Matrix4x4 floorMatrix = transform.localToWorldMatrix;
+            m_FloorMatrix = transform.localToWorldMatrix;
 
             // Get the corner coordinates in world space
             // Retrieve the vertices of the floor mesh and transform them to world space
             m_Vertices = floorMesh.vertices;
 
-            m_CornerCoord.Add(floorMatrix.MultiplyPoint3x4(m_Vertices[0]));
-            m_CornerCoord.Add(floorMatrix.MultiplyPoint3x4(m_Vertices[10]));
-            m_CornerCoord.Add(floorMatrix.MultiplyPoint3x4(m_Vertices[110]));
-            m_CornerCoord.Add(floorMatrix.MultiplyPoint3x4(m_Vertices[120]));
+            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[0]));
+            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[10]));
+            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[110]));
+            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[120]));
             
             CalculateMaxDist();
         }
@@ -70,9 +71,12 @@ public class Floor : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        foreach (var corner in m_CornerCoord)
+        if (m_Vertices != null)
         {
-            Gizmos.DrawSphere(corner, 0.1f);
+            foreach (var corner in m_Vertices)
+            {
+                Gizmos.DrawSphere(m_FloorMatrix.MultiplyPoint3x4(corner), 0.1f);
+            }
         }
     }
 
@@ -95,7 +99,6 @@ public class Floor : MonoBehaviour
         var randomWallIndex = Random.Range(3, 6);
         var begin = m_PossibleWallLocations[randomWallIndex];
         var randomDoorIncrement = Random.Range(2, 8);
-        //var vertices = GetComponent<MeshFilter>().sharedMesh.vertices;
         var coordStartWall = m_Vertices[begin];
         var coordDoor = m_Vertices[begin + randomDoorIncrement];
         var coordEndWall = m_Vertices[begin + m_IndexWallEnd];
