@@ -2,19 +2,23 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class Floor : MonoBehaviour
 {
-    private List<Vector3> m_CornerCoord = new List<Vector3>();
-    private Vector3[] m_Vertices;
+    public List<Vector3> globalCornerCoord = new List<Vector3>();
+    //private Vector3[] m_GlobalVertices;
+    private List<Vector3> m_GlobalVertices = new List<Vector3>();
     public float m_MaxDist = 1f;
     private int[] m_PossibleWallLocations = new int[] {0, 11, 22, 33, 66, 77, 88, 99, 110};
     private int m_IndexWallEnd = 10;
-    private Matrix4x4 m_FloorMatrix;
-    
+
+    public List<Tuple<Vector3, Vector3>> CreatedWallsCoord = new List<Tuple<Vector3, Vector3>>();
+
     public InnerWallCreator innerWallCreator;
 
     // Start is called before the first frame update
@@ -28,18 +32,25 @@ public class Floor : MonoBehaviour
         {
             // Get the shared mesh of the floor
             Mesh floorMesh = floorMeshFilter.sharedMesh;
-
-            // Get the local-to-world transformation matrix of the floor object
-            m_FloorMatrix = transform.localToWorldMatrix;
-
+            
             // Get the corner coordinates in world space
             // Retrieve the vertices of the floor mesh and transform them to world space
-            m_Vertices = floorMesh.vertices;
+            //m_GlobalVertices = floorMesh.vertices;
 
-            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[0]));
-            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[10]));
-            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[110]));
-            m_CornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_Vertices[120]));
+            foreach (var vert in floorMesh.vertices)
+            {
+                m_GlobalVertices.Add(transform.TransformPoint(vert));
+            }
+
+            /*globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[0]));
+            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[10]));
+            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[110]));
+            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[120]));*/
+            
+            globalCornerCoord.Add(m_GlobalVertices[0]);
+            globalCornerCoord.Add(m_GlobalVertices[10]);
+            globalCornerCoord.Add(m_GlobalVertices[110]);
+            globalCornerCoord.Add(m_GlobalVertices[120]);
             
             CalculateMaxDist();
         }
@@ -51,9 +62,9 @@ public class Floor : MonoBehaviour
     private void CalculateMaxDist()
     {
         m_MaxDist = Mathf.NegativeInfinity;
-        foreach (var baseCorner in m_CornerCoord)
+        foreach (var baseCorner in globalCornerCoord)
         {
-            foreach (var corner in m_CornerCoord)
+            foreach (var corner in globalCornerCoord)
             {
                 if (baseCorner == corner)
                 {
@@ -69,16 +80,16 @@ public class Floor : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
+    /*void OnDrawGizmos()
     {
-        if (m_Vertices != null)
+        if (m_GlobalVertices != null)
         {
-            foreach (var corner in m_Vertices)
+            foreach (var corner in m_GlobalVertices)
             {
                 Gizmos.DrawSphere(m_FloorMatrix.MultiplyPoint3x4(corner), 0.1f);
             }
         }
-    }
+    }*/
 
     public float GetMaxPossibleDist()
     {
@@ -99,10 +110,11 @@ public class Floor : MonoBehaviour
         var randomWallIndex = Random.Range(3, 6);
         var begin = m_PossibleWallLocations[randomWallIndex];
         var randomDoorIncrement = Random.Range(2, 8);
-        var coordStartWall = m_Vertices[begin];
-        var coordDoor = m_Vertices[begin + randomDoorIncrement];
-        var coordEndWall = m_Vertices[begin + m_IndexWallEnd];
-
+        var coordStartWall = m_GlobalVertices[begin];
+        var coordDoor = m_GlobalVertices[begin + randomDoorIncrement];
+        var coordEndWall = m_GlobalVertices[begin + m_IndexWallEnd];
+        
+        CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall,  coordEndWall));
         innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
     }
 }

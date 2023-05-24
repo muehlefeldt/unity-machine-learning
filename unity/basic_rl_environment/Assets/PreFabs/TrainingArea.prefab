@@ -220,6 +220,7 @@ GameObject:
   - component: {fileID: 5324353081875949233}
   - component: {fileID: 5324353081875949232}
   - component: {fileID: 5324353081875949239}
+  - component: {fileID: 1515308257171817040}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -305,6 +306,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1515308257171817040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5324353081875949237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ae333822068b94fa7848c96e40195a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floor: {fileID: 5324353083616000953}
 --- !u!1 &5324353081925522775
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,7 +485,6 @@ MonoBehaviour:
   MaxStep: 0
   target: {fileID: 5324353081875949238}
   floor: {fileID: 5324353083616000953}
-  innerWallCreator: {fileID: 1595673323979307659}
   forceMultiplier: 10
 --- !u!114 &5324353081925522769
 MonoBehaviour:
@@ -636,7 +649,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c321ff55c24d3d4fa4adb11570e79c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CornerCoordinates: []
   m_MaxDist: 0
   innerWallCreator: {fileID: 1595673323979307659}
 --- !u!65 &7692793173245375662
@@ -732,6 +744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floor: {fileID: 5324353083616000953}
+  wallParent: {fileID: 0}
 --- !u!1 &7271182151014013351
 GameObject:
   m_ObjectHideFlags: 0
