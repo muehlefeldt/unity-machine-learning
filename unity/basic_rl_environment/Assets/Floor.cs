@@ -21,8 +21,9 @@ public class Floor : MonoBehaviour
 
     public InnerWallCreator innerWallCreator;
 
+    public bool finished = false;
     // Start is called before the first frame update
-    private void Start()
+    void Awake()
     {
         // Get the MeshFilter component of the floor object
         MeshFilter floorMeshFilter = GetComponent<MeshFilter>();
@@ -51,6 +52,8 @@ public class Floor : MonoBehaviour
             globalCornerCoord.Add(m_GlobalVertices[10]);
             globalCornerCoord.Add(m_GlobalVertices[110]);
             globalCornerCoord.Add(m_GlobalVertices[120]);
+
+            finished = true;
             
             CalculateMaxDist();
         }

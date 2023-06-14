@@ -13,21 +13,58 @@ public class Target : MonoBehaviour
         var cornerCoords = floor.globalCornerCoord;
         var wallCoords = floor.CreatedWallsCoord;
 
-        var minX = getMinX(cornerCoords);
-        var maxX = getMaxX(cornerCoords);
+        var minX = getMin(cornerCoords, 0);
+        var maxX = getMax(cornerCoords, 0);
         
-        transform.localPosition = new Vector3(
-            Random.Range(-3.5f, 3.5f),
-            0.5f,
-            Random.Range(-13f, 3f));
+        var minZ = getMin(cornerCoords, 2);
+        var maxZ = getMax(cornerCoords, 2);
+
+        var distFromWall = 0.5f;
+        var rangesX = new List<float>();
+        rangesX.Add(minX);
+        var rangesZ = new List<float>();
+        rangesZ.Add(maxZ);
+
+        foreach (var coords in wallCoords)
+        {
+            rangesX.Add(coords.Item1.x);
+            rangesZ.Add(coords.Item1.z);
+        }
+        
+        rangesX.Add(maxX);
+        rangesZ.Add(maxZ);
+
+        var randomX = new List<float>();
+        var randomZ = new List<float>();
+
+        var tmpX = rangesX[0];
+        foreach (var x in rangesX)
+        {
+            randomX.Add(Random.Range(tmpX + distFromWall, x - distFromWall));
+            tmpX = x;
+        }
+        
+        var tmpZ = rangesZ[0];
+        foreach (var z in rangesZ)
+        {
+            randomZ.Add(Random.Range(tmpZ + distFromWall, z - distFromWall));
+            tmpZ = z;
+        }
+        
+        transform.localPosition = transform.InverseTransformPoint(
+            new Vector3(
+                randomX[Random.Range(0, randomX.Count)],
+                1f,
+                randomZ[Random.Range(0, randomZ.Count)]
+            ));
     }
 
-    private float getMaxX(List<Vector3> vectorList)
+    private float getMax(List<Vector3> vectorList, int index)
     {
         var maxValue = float.NegativeInfinity;
         foreach (var vec in vectorList)
         {
-            if (vec.x > maxValue)
+            if (vec[index] > maxValue)
             {
                 maxValue = vec.x;
             }
@@ -35,14 +72,14 @@ public class Target : MonoBehaviour
         return maxValue;
     }
     
-    private float getMinX(List<Vector3> vectorList)
+    private float getMin(List<Vector3> vectorList, int index)
     {
-        var minValue = float.NegativeInfinity;
+        var minValue = float.PositiveInfinity;
         foreach (var vec in vectorList)
         {
-            if (vec.x > minValue)
+            if (vec[index] < minValue)
             {
-                minValue = vec.x;
+                minValue = vec[index];
             }
         }
         return minValue;
@@ -52,24 +89,4 @@ public class Target : MonoBehaviour
     {
         return transform.localPosition;
     }
-
-    /*private void OnTriggerEnter(Collider other)
-    {
-        var compareObj = innerWallCreator.wallParent;
-        
-        ResetPosition();
-    }*/
-    
-    /*void Update()
-    {
-        if (innerWallCreator.wallParent != null)
-        {
-            // Check for overlap between this object's collider and the target object's collider
-            if (GetComponent<Collider>().bounds.Intersects(innerWallCreator.wallParent.GetComponent<Collider>().bounds))
-            {
-                // Overlap detected
-                Debug.Log("Overlap detected!");
-            }
-        }
-    }*/
 }

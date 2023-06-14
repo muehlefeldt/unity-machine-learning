@@ -483,7 +483,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  target: {fileID: 5324353081875949238}
+  target: {fileID: 1515308257171817040}
   floor: {fileID: 5324353083616000953}
   forceMultiplier: 10
 --- !u!114 &5324353081925522769
@@ -649,8 +649,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c321ff55c24d3d4fa4adb11570e79c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  globalCornerCoord: []
   m_MaxDist: 0
   innerWallCreator: {fileID: 1595673323979307659}
+  finished: 0
 --- !u!65 &7692793173245375662
 BoxCollider:
   m_ObjectHideFlags: 0
