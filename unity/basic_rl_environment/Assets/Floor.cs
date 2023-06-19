@@ -83,16 +83,31 @@ public class Floor : MonoBehaviour
         }
     }
 
-    /*void OnDrawGizmos()
+    void OnDrawGizmos()
     {
-        if (m_GlobalVertices != null)
+        /*if (m_GlobalVertices != null)
         {
             foreach (var corner in m_GlobalVertices)
             {
                 Gizmos.DrawSphere(m_FloorMatrix.MultiplyPoint3x4(corner), 0.1f);
             }
+        }*/
+        if (globalCornerCoord != null)
+        {
+            foreach (var coord in globalCornerCoord)
+            {
+                Gizmos.DrawSphere(coord, 0.5f);
+            }
         }
-    }*/
+        if (CreatedWallsCoord != null)
+        {
+            foreach (var coords in CreatedWallsCoord)
+            {
+                Gizmos.DrawSphere(coords.Item1, 0.5f);
+                Gizmos.DrawSphere(coords.Item2, 0.5f);
+            }
+        }
+    }
 
     public float GetMaxPossibleDist()
     {
@@ -117,7 +132,10 @@ public class Floor : MonoBehaviour
         var coordDoor = m_GlobalVertices[begin + randomDoorIncrement];
         var coordEndWall = m_GlobalVertices[begin + m_IndexWallEnd];
         
+        // Empty saved coords. 
+        CreatedWallsCoord.Clear();
         CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall,  coordEndWall));
+        
         innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
     }
 }

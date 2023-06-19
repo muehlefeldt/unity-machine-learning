@@ -8,6 +8,8 @@ public class Target : MonoBehaviour
 {
     // public InnerWallCreator innerWallCreator;
     public Floor floor;
+    private List<float> rangesX;
+    private List<float> rangesZ;
     public void ResetPosition()
     {
         var cornerCoords = floor.globalCornerCoord;
@@ -19,11 +21,12 @@ public class Target : MonoBehaviour
         var minZ = getMin(cornerCoords, 2);
         var maxZ = getMax(cornerCoords, 2);
 
-        var distFromWall = 0.5f;
-        var rangesX = new List<float>();
+        var distFromWall = 10f;
+        rangesX = new List<float>();
         rangesX.Add(minX);
-        var rangesZ = new List<float>();
-        rangesZ.Add(maxZ);
+        
+        rangesZ = new List<float>();
+        rangesZ.Add(minZ);
 
         foreach (var coords in wallCoords)
         {
@@ -37,26 +40,58 @@ public class Target : MonoBehaviour
         var randomX = new List<float>();
         var randomZ = new List<float>();
 
-        var tmpX = rangesX[0];
-        foreach (var x in rangesX)
+        //var tmpX = rangesX[0];
+        for (int i = 0; i < rangesX.Count - 1; i++)
+        {
+            var tmpX = rangesX[i];
+            var secondX = rangesX[i + 1];
+            randomX.Add(Random.Range(tmpX + distFromWall, secondX - distFromWall));
+        }
+        /*foreach (var x in rangesX)
         {
             randomX.Add(Random.Range(tmpX + distFromWall, x - distFromWall));
             tmpX = x;
-        }
+        }*/
         
-        var tmpZ = rangesZ[0];
+        /*var tmpZ = rangesZ[0];
         foreach (var z in rangesZ)
         {
             randomZ.Add(Random.Range(tmpZ + distFromWall, z - distFromWall));
             tmpZ = z;
+        }*/
+        
+        for (int i = 0; i < rangesZ.Count - 1; i++)
+        {
+            var tmpZ = rangesZ[i];
+            var secondZ = rangesZ[i + 1];
+            randomZ.Add(Random.Range(tmpZ + distFromWall, secondZ - distFromWall));
         }
         
-        transform.localPosition = transform.InverseTransformPoint(
+        /*transform.localPosition = transform.InverseTransformPoint(
             new Vector3(
                 randomX[Random.Range(0, randomX.Count)],
                 1f,
                 randomZ[Random.Range(0, randomZ.Count)]
-            ));
+            ));*/
+        transform.localPosition = new Vector3(
+                randomX[Random.Range(0, randomX.Count)],
+                1f,
+                randomZ[Random.Range(0, randomZ.Count)]
+            );
+    }
+    
+    void OnDrawGizmos()
+    {
+        if (rangesX != null && rangesZ != null)
+        {
+            for (int x = 0; x < rangesX.Count; x++)
+            {
+                for (int z = 0; z < rangesZ.Count; z++)
+                {
+                    Gizmos.DrawSphere(new Vector3(rangesX[x], 0f, rangesZ[z]), 0.8f);
+                }
+            }
+        }
     }
 
     private float getMax(List<Vector3> vectorList, int index)
@@ -66,7 +101,7 @@ public class Target : MonoBehaviour
         {
             if (vec[index] > maxValue)
             {
-                maxValue = vec.x;
+                maxValue = vec[index];
             }
         }
         return maxValue;
