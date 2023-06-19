@@ -201,6 +201,15 @@ learning rate changes to reward signifcant?
 ## 122
 * Looks good.
 
+## 127
+* Test random location of target.
+* Uses build.
+* Bad result clean run.
+
+## 128
+* Standard run w/o build.
+* Manual run.
+
 # Next
 * Second room.
 * Test: Small reward for better state but not optimal state, +0.1.
