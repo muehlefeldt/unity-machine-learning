@@ -8,88 +8,52 @@ public class Target : MonoBehaviour
 {
     // public InnerWallCreator innerWallCreator;
     public Floor floor;
-    private List<float> rangesX;
-    private List<float> rangesZ;
+    private Vector3 final = Vector3.zero;
+    private float m_distFromWall = 0.2f;
+    private List<Vector3> options;
     public void ResetPosition()
     {
         var cornerCoords = floor.globalCornerCoord;
         var wallCoords = floor.CreatedWallsCoord;
 
-        var minX = getMin(cornerCoords, 0);
-        var maxX = getMax(cornerCoords, 0);
+        var a = wallCoords[0].Item1;
+        var b = wallCoords[0].Item2;
+        var randomWall = Vector3.Lerp(a, b, getRandom());
         
-        var minZ = getMin(cornerCoords, 2);
-        var maxZ = getMax(cornerCoords, 2);
+        var c = cornerCoords[2];
+        var second = Vector3.Lerp(a, c, getRandom());
 
-        var distFromWall = 10f;
-        rangesX = new List<float>();
-        rangesX.Add(minX);
-        
-        rangesZ = new List<float>();
-        rangesZ.Add(minZ);
+        var d = cornerCoords[0];
+        var third = Vector3.Lerp(a, d, getRandom());
 
-        foreach (var coords in wallCoords)
-        {
-            rangesX.Add(coords.Item1.x);
-            rangesZ.Add(coords.Item1.z);
-        }
-        
-        rangesX.Add(maxX);
-        rangesZ.Add(maxZ);
+        options = new List<Vector3>();
+        options.Add(Vector3.Lerp(randomWall, second, getRandom()));
+        options.Add(Vector3.Lerp(randomWall, third, getRandom()));
 
-        var randomX = new List<float>();
-        var randomZ = new List<float>();
+        final = options[Random.Range(0, options.Count)];
 
-        //var tmpX = rangesX[0];
-        for (int i = 0; i < rangesX.Count - 1; i++)
-        {
-            var tmpX = rangesX[i];
-            var secondX = rangesX[i + 1];
-            randomX.Add(Random.Range(tmpX + distFromWall, secondX - distFromWall));
-        }
-        /*foreach (var x in rangesX)
-        {
-            randomX.Add(Random.Range(tmpX + distFromWall, x - distFromWall));
-            tmpX = x;
-        }*/
-        
-        /*var tmpZ = rangesZ[0];
-        foreach (var z in rangesZ)
-        {
-            randomZ.Add(Random.Range(tmpZ + distFromWall, z - distFromWall));
-            tmpZ = z;
-        }*/
-        
-        for (int i = 0; i < rangesZ.Count - 1; i++)
-        {
-            var tmpZ = rangesZ[i];
-            var secondZ = rangesZ[i + 1];
-            randomZ.Add(Random.Range(tmpZ + distFromWall, secondZ - distFromWall));
-        }
-        
-        /*transform.localPosition = transform.InverseTransformPoint(
-            new Vector3(
-                randomX[Random.Range(0, randomX.Count)],
-                1f,
-                randomZ[Random.Range(0, randomZ.Count)]
-            ));*/
-        transform.localPosition = new Vector3(
-                randomX[Random.Range(0, randomX.Count)],
-                1f,
-                randomZ[Random.Range(0, randomZ.Count)]
-            );
+        final.y = 0.5f;
+        transform.localPosition = final;
+    }
+
+    private float getRandom()
+    {
+        var t = Random.Range(0f + m_distFromWall, 1f - m_distFromWall);
+        return t;
     }
     
     void OnDrawGizmos()
     {
-        if (rangesX != null && rangesZ != null)
+        if (final != Vector3.zero)
         {
-            for (int x = 0; x < rangesX.Count; x++)
+            Gizmos.DrawSphere(final, 0.8f);
+        }
+
+        if (options != null)
+        {
+            foreach (var coord in options)
             {
-                for (int z = 0; z < rangesZ.Count; z++)
-                {
-                    Gizmos.DrawSphere(new Vector3(rangesX[x], 0f, rangesZ[z]), 0.8f);
-                }
+                Gizmos.DrawSphere(coord, 0.3f);
             }
         }
     }
