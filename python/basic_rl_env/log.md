@@ -209,6 +209,11 @@ learning rate changes to reward signifcant?
 ## 128
 * Standard run w/o build.
 * Manual run.
+* Looks good at least.
+* Result still no good but used same config as 127.
+
+## 129 and 130
+* Test of rewritten script.
 
 # Next
 * Second room.

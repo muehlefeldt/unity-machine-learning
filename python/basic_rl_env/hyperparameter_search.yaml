@@ -1,3 +1,6 @@
+userconfig:
+  # Options: no-build for manual mode. Runs in Unity editor.
+  mode: build
 behaviors:
   RollerAgent:
     trainer_type: ppo
@@ -15,7 +18,7 @@ behaviors:
     network_settings:
       normalize: false
       hidden_units: 256
-      num_layers: 2
+      num_layers: [2, 3]
       memory:
         memory_size: 128
         sequence_length: 64
