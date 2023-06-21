@@ -215,8 +215,14 @@ learning rate changes to reward signifcant?
 ## 129 and 130
 * Test of rewritten script.
 
+## 131 and following
+* Automated runs.
+* Reward function may need tweaking.
+* Use 154 as base config.
+
 # Next
 * Second room.
+* Target location set incorrectly.
 * Test: Small reward for better state but not optimal state, +0.1.
 
 # Longtrem plans

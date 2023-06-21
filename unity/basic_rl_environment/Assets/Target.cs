@@ -33,7 +33,7 @@ public class Target : MonoBehaviour
         final = options[Random.Range(0, options.Count)];
 
         final.y = 0.5f;
-        transform.localPosition = final;
+        transform.position = final;
     }
 
     private float getRandom()
