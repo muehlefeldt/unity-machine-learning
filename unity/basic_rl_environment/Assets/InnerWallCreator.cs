@@ -9,6 +9,7 @@ public class InnerWallCreator : MonoBehaviour
     public Floor floor;
     private List<GameObject> m_GameObjects = new List<GameObject>();
     public GameObject wallParent;
+    private Material wallMaterial;
 
     private void Start()
     {
@@ -16,6 +17,7 @@ public class InnerWallCreator : MonoBehaviour
         wallParent.transform.SetParent(floor.transform);
         wallParent.transform.localPosition = Vector3.zero;
         //newCube.transform.parent = emptyGameObject.transform;
+        wallMaterial = Resources.Load<Material>("WallMaterial");
     }
 
     private void CreateWall(Vector3 coordStartWall, Vector3 coordEndWall)
@@ -29,6 +31,7 @@ public class InnerWallCreator : MonoBehaviour
         var position = coordStartWall + (between / 2);
         position.y = 1f;
         newCube.transform.localPosition = position;
+        SetMaterial(newCube);
         SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
@@ -51,6 +54,7 @@ public class InnerWallCreator : MonoBehaviour
         var position = coordStart + (between / 2);
         position.y = 1.75f;
         newCube.transform.localPosition = position;
+        SetMaterial(newCube);
         SetCollider(newCube);
         m_GameObjects.Add(newCube);
 
@@ -95,5 +99,10 @@ public class InnerWallCreator : MonoBehaviour
     {
         //obj.transform.parent = wallParent.transform;
         obj.GetComponent<Collider>().isTrigger = true;
+    }
+
+    private void SetMaterial(GameObject obj)
+    {
+        obj.GetComponent<Renderer>().material = wallMaterial;
     }
 }
