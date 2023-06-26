@@ -220,6 +220,9 @@ learning rate changes to reward signifcant?
 * Reward function may need tweaking.
 * Use 154 as base config.
 
+## 161
+* Fix: Target position set to world.
+
 # Next
 * Second room.
 * Target location set incorrectly.
