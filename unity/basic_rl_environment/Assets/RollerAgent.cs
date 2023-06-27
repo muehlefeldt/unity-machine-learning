@@ -7,6 +7,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
@@ -54,6 +55,7 @@ public class RollerAgent : Agent
         target.ResetPosition();
 
         //m_MaxDist = floor.GetMaxPossibleDist();
+        CalculateDistanceToTarget();
     }
 
     private float m_RayForwardDist;
@@ -228,16 +230,56 @@ public class RollerAgent : Agent
         AddReward(-0.001f);
     }
 
-    private bool m_CollisionDetected = false;
+    
     /// <summary>
     /// Collision handling. Reset of the agent position if agent collides with other game objects.
     /// </summary>
     /// <param name="other"></param>
+    private bool m_CollisionDetected = false;
     private void OnTriggerEnter(Collider other)
     {
         m_CollisionDetected = true;
         AddReward(-1f);
         EndEpisode();
+    }
+
+    public float m_DistToTarget;
+    private void CalculateDistanceToTarget()
+    {
+        GetPath();
+        m_DistToTarget = 0f;
+        if (m_Path.status != NavMeshPathStatus.PathInvalid)
+        {
+            for (int i = 1; i < m_Path.corners.Length; i++)
+            {
+                m_DistToTarget += Vector3.Distance(m_Path.corners[i - 1], m_Path.corners[i]);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Get the path from the agent to the target.
+    /// </summary>
+    /// <remarks>
+    /// Uses navmesh to calculate the path. Used to determine travel distance between the two.
+    /// Is basis for the reward calculation.
+    /// </remarks>
+    private NavMeshPath m_Path;
+    private void GetPath()
+    {
+        m_Path = new NavMeshPath();
+        NavMesh.CalculatePath(transform.position, target.transform.position, 1, m_Path);
+    }
+    
+    void OnDrawGizmos()
+    {
+        if (m_Path != null)
+        {
+            for (int i = 1; i < m_Path.corners.Length; i++)
+            {
+                Gizmos.DrawLine(m_Path.corners[i-1], m_Path.corners[i]);
+            }
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

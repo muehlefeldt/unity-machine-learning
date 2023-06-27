@@ -1,15 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class InnerWallCreator : MonoBehaviour
 {
     public Floor floor;
     private List<GameObject> m_GameObjects = new List<GameObject>();
     public GameObject wallParent;
-    private Material wallMaterial;
+    private Material m_WallMaterial;
 
     private void Start()
     {
@@ -17,7 +20,7 @@ public class InnerWallCreator : MonoBehaviour
         wallParent.transform.SetParent(floor.transform);
         wallParent.transform.localPosition = Vector3.zero;
         //newCube.transform.parent = emptyGameObject.transform;
-        wallMaterial = Resources.Load<Material>("WallMaterial");
+        m_WallMaterial = Resources.Load<Material>("WallMaterial");
     }
 
     private void CreateWall(Vector3 coordStartWall, Vector3 coordEndWall)
@@ -32,6 +35,7 @@ public class InnerWallCreator : MonoBehaviour
         position.y = 1f;
         newCube.transform.localPosition = position;
         SetMaterial(newCube);
+        SetNavmesh(newCube);
         SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
@@ -78,10 +82,12 @@ public class InnerWallCreator : MonoBehaviour
         CreateWall(coordStart, coordDoor);
         var coordEndDoor = CreateDoor(coordDoor);
         CreateWall(coordEndDoor, coordEnd);
+
+        UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
     }
     
     /// <summary>
-    /// Destroy all created game objects.
+    /// Destroy all created game objects. Delete existing navmesh.
     /// </summary>
     public void DestroyAll()
     {
@@ -89,6 +95,7 @@ public class InnerWallCreator : MonoBehaviour
         {
             Destroy(element);
         }
+        UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();   
     }
     
     /// <summary>
@@ -103,6 +110,12 @@ public class InnerWallCreator : MonoBehaviour
 
     private void SetMaterial(GameObject obj)
     {
-        obj.GetComponent<Renderer>().material = wallMaterial;
+        obj.GetComponent<Renderer>().material = m_WallMaterial;
+    }
+
+    private void SetNavmesh(GameObject obj)
+    {
+        GameObjectUtility.SetStaticEditorFlags(obj, StaticEditorFlags.NavigationStatic);
+        GameObjectUtility.SetNavMeshArea(obj, 1);
     }
 }
