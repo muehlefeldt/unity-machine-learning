@@ -87,7 +87,7 @@ public class InnerWallCreator : MonoBehaviour
         var coordEndDoor = CreateDoor(coordDoor);
         CreateWall(coordEndDoor, coordEnd);
 
-        //UnityEngine.AI.NavMeshBuilder.
+        //UnityEngine.AI.NavMeshBuilder.UpdateNavMeshData()
     }
     
     /// <summary>
@@ -99,7 +99,7 @@ public class InnerWallCreator : MonoBehaviour
         {
             Destroy(element);
         }
-        // UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();   
+        //UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();   
     }
     
     /// <summary>

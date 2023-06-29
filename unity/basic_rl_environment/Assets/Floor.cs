@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -137,5 +138,6 @@ public class Floor : MonoBehaviour
         CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall,  coordEndWall));
         
         innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
+        this.GetComponent<NavMeshSurface>().BuildNavMesh();
     }
 }

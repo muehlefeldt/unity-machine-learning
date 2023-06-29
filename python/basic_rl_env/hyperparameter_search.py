@@ -54,7 +54,7 @@ use_build = True
 if "userconfig" in config:
     if config["userconfig"] is not None:
         if "mode" in config["userconfig"]:
-            if any(s in config["userconfig"]["mode"] for s in ["no-build"]):
+            if any(s in config["userconfig"]["mode"] for s in ["no-build", "editor"]):
                 use_build = False
     config.pop("userconfig")
 
