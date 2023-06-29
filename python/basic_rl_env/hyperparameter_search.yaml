@@ -1,6 +1,6 @@
 userconfig:
   # Options: no-build for manual mode. Runs in Unity editor.
-  mode: no-build
+  mode: build
 behaviors:
   RollerAgent:
     trainer_type: ppo

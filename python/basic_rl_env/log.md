@@ -223,6 +223,22 @@ learning rate changes to reward signifcant?
 ## 161
 * Fix: Target position set to world.
 
+## 162
+* First try of run in editor using navmesh.
+* Performance evaluation:
+  * Performance severly compromised.
+
+## 163
+* Switched the wall navmesh components to navmesh obsticale.
+* Walls were static navmesh set.
+* Performance better but still restricted.
+
+## 164, 165
+* Same as 163 but using build.
+* Question: Performance comparison with previous runs.
+* Navmesh maybe to complex.
+
+
 # Next
 * Second room.
 * Target location set incorrectly.

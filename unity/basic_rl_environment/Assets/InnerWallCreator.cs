@@ -64,7 +64,11 @@ public class InnerWallCreator : MonoBehaviour
 
         return coordEnd;
     }
-
+    
+    /// <summary>
+    /// Create a new primitive cube.
+    /// </summary>
+    /// <returns>Created cube.</returns>
     private GameObject CreateNewCube()
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -83,7 +87,7 @@ public class InnerWallCreator : MonoBehaviour
         var coordEndDoor = CreateDoor(coordDoor);
         CreateWall(coordEndDoor, coordEnd);
 
-        UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
+        //UnityEngine.AI.NavMeshBuilder.
     }
     
     /// <summary>
@@ -95,27 +99,36 @@ public class InnerWallCreator : MonoBehaviour
         {
             Destroy(element);
         }
-        UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();   
+        // UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();   
     }
     
     /// <summary>
     /// Set the Collider of a game object as trigger.
     /// </summary>
-    /// <param name="obj">Game object with collider</param>
+    /// <param name="obj">Game object to be modified.</param>
     private void SetCollider(GameObject obj)
     {
         //obj.transform.parent = wallParent.transform;
         obj.GetComponent<Collider>().isTrigger = true;
     }
-
+    
+    /// <summary>
+    /// Set the material of the wall elements. Visual effect only.
+    /// </summary>
+    /// <param name="obj">Game object to be modified.</param>
     private void SetMaterial(GameObject obj)
     {
         obj.GetComponent<Renderer>().material = m_WallMaterial;
     }
-
+    
+    /// <summary>
+    /// Set the the Navmesh options of the wall elements.
+    /// </summary>
+    /// <param name="obj">Game object to be modified.</param>
     private void SetNavmesh(GameObject obj)
     {
-        GameObjectUtility.SetStaticEditorFlags(obj, StaticEditorFlags.NavigationStatic);
-        GameObjectUtility.SetNavMeshArea(obj, 1);
+        //GameObjectUtility.SetStaticEditorFlags(obj, StaticEditorFlags.NavigationStatic);
+        //GameObjectUtility.SetNavMeshArea(obj, 1);
+        obj.AddComponent<NavMeshObstacle>().carving = true;
     }
 }
