@@ -28,43 +28,39 @@ public class InnerWallCreator : MonoBehaviour
         var between = coordEndWall - coordStartWall;
         var dist = Vector3.Distance(coordStartWall, coordEndWall);
 
-        var newCube = CreateNewCube(); 
-        
+        var newCube = CreateNewCube();
+
         newCube.transform.localScale = new Vector3(dist, 2f, 0.1f);
         var position = coordStartWall + (between / 2);
         position.y = 1f;
         newCube.transform.localPosition = position;
-        SetMaterial(newCube);
-        SetNavmesh(newCube);
-        SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
 
     private float m_DoorWidth = 1.5f;
     private float m_DoorFrameHeight = 0.5f;
+
     private Vector3 CreateDoor(Vector3 coordDoor)
     {
         var coordStart = coordDoor;
         var coordEnd = coordDoor;
         coordEnd.x -= m_DoorWidth;
-        
+
         var between = coordEnd - coordStart;
         var dist = Vector3.Distance(coordStart, coordEnd);
 
         var newCube = CreateNewCube();
-        
+
         newCube.transform.localScale = new Vector3(dist, m_DoorFrameHeight, 0.1f);
-        
+
         var position = coordStart + (between / 2);
         position.y = 1.75f;
         newCube.transform.localPosition = position;
-        SetMaterial(newCube);
-        SetCollider(newCube);
         m_GameObjects.Add(newCube);
 
         return coordEnd;
     }
-    
+
     /// <summary>
     /// Create a new primitive cube.
     /// </summary>
@@ -73,6 +69,7 @@ public class InnerWallCreator : MonoBehaviour
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         newCube.transform.parent = wallParent.transform;
+        SetMaterial(newCube);
         return newCube;
     }
 
@@ -82,14 +79,12 @@ public class InnerWallCreator : MonoBehaviour
         coordDoor = wallParent.transform.InverseTransformPoint(coordDoor);
         coordStart = wallParent.transform.InverseTransformPoint(coordStart);
         coordEnd = wallParent.transform.InverseTransformPoint(coordEnd);
-        
+
         CreateWall(coordStart, coordDoor);
         var coordEndDoor = CreateDoor(coordDoor);
         CreateWall(coordEndDoor, coordEnd);
-
-        //UnityEngine.AI.NavMeshBuilder.UpdateNavMeshData()
     }
-    
+
     /// <summary>
     /// Destroy all created game objects. Delete existing navmesh.
     /// </summary>
@@ -99,19 +94,8 @@ public class InnerWallCreator : MonoBehaviour
         {
             Destroy(element);
         }
-        //UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();   
     }
-    
-    /// <summary>
-    /// Set the Collider of a game object as trigger.
-    /// </summary>
-    /// <param name="obj">Game object to be modified.</param>
-    private void SetCollider(GameObject obj)
-    {
-        //obj.transform.parent = wallParent.transform;
-        obj.GetComponent<Collider>().isTrigger = true;
-    }
-    
+
     /// <summary>
     /// Set the material of the wall elements. Visual effect only.
     /// </summary>
@@ -119,16 +103,5 @@ public class InnerWallCreator : MonoBehaviour
     private void SetMaterial(GameObject obj)
     {
         obj.GetComponent<Renderer>().material = m_WallMaterial;
-    }
-    
-    /// <summary>
-    /// Set the the Navmesh options of the wall elements.
-    /// </summary>
-    /// <param name="obj">Game object to be modified.</param>
-    private void SetNavmesh(GameObject obj)
-    {
-        //GameObjectUtility.SetStaticEditorFlags(obj, StaticEditorFlags.NavigationStatic);
-        //GameObjectUtility.SetNavMeshArea(obj, 1);
-        obj.AddComponent<NavMeshObstacle>().carving = true;
     }
 }
