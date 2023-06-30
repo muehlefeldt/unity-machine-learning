@@ -263,7 +263,7 @@ public class RollerAgent : Agent
             reward = 0f;
             return reward;
         }
-        var beta = 1f;
+        var beta = 0.5f;
         var omega = 0.3f;
         var x = m_DistToTarget / m_MaxDist;
 
