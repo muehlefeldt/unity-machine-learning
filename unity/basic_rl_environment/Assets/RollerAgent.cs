@@ -37,11 +37,17 @@ public class RollerAgent : Agent
         transform.localPosition = new Vector3( 0, 1f, 3f);
         transform.rotation = Quaternion.identity;
     }
-    
+
+    private int m_MaxSteps;
+    private int m_CurrentStep;
     public override void OnEpisodeBegin()
     {
         floor.Prepare();
         floor.CreateInnerWall();
+
+        // How many steps are allowed.
+        m_MaxSteps = 500;
+        m_CurrentStep = 0;
         
         // If the Agent fell, zero its momentum
         if (this.transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
@@ -216,7 +222,9 @@ public class RollerAgent : Agent
         // Reached target
         if (m_DistToTarget < 1.42f)
         {
-            SetReward(1.0f);
+            var statsRecorder = Academy.Instance.StatsRecorder;
+            statsRecorder.Add("Target Reached", 1f);
+            SetReward(1f);
             EndEpisode();
         }
         
@@ -229,6 +237,13 @@ public class RollerAgent : Agent
         
         // Punish each step.
         //AddReward(-0.001f);
+        m_CurrentStep += 1;
+
+        if (m_CurrentStep > m_MaxSteps)
+        {
+            SetReward(-1f);
+            EndEpisode();
+        }
         
         SetReward(GetReward());
     }
@@ -243,7 +258,7 @@ public class RollerAgent : Agent
     private float GetReward()
     {
         // If distance increases to target no reward issued.
-        if (m_DistToTarget > m_LastDistToTarget)
+        if (m_DistToTarget >= m_LastDistToTarget)
         {
             reward = 0f;
             return reward;

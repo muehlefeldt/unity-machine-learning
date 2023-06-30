@@ -260,6 +260,11 @@ learning rate changes to reward signifcant?
 
 # 171
 * Run with revised reward function.
+  * Reward 0f if distance to target increases.
+
+# 172
+* Not nice result.
+* Target only found once.
 
 # Next
 * Second room.
