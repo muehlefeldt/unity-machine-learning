@@ -269,6 +269,13 @@ learning rate changes to reward signifcant?
 # 173
 * Reward recuced. beta = 0.5f.
 
+# 174
+* Editor was not started in time.
+* Disregard.
+
+# 175
+* Check more tensorboard data charts.
+
 # Next
 * Second room.
 * Target location set incorrectly.

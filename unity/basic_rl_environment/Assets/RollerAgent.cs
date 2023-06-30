@@ -219,12 +219,12 @@ public class RollerAgent : Agent
         //var currentDistToTarget = Vector3.Distance(transform.position, target.transform.position);
         CalculateDistanceToTarget();
         
-        var statsRecorder = Academy.Instance.StatsRecorder;
+        
         
         // Reached target
         if (m_DistToTarget < 1.42f)
         {
-            statsRecorder.Add("Target Reached", 1f);
+            RecordData("target");
             SetReward(1f);
             EndEpisode();
         }
@@ -232,7 +232,7 @@ public class RollerAgent : Agent
         // Verify agent state (position) is plausible.
         if (!IsAgentStatePlausible())
         {
-            statsRecorder.Add("Implausible agent position", 1f);
+            RecordData("implausible");
             m_ImplausiblePosition = true;
             EndEpisode();
         }
@@ -243,7 +243,7 @@ public class RollerAgent : Agent
 
         if (m_CurrentStep > m_MaxSteps)
         {
-            statsRecorder.Add("Max Steps reached", 1f);
+            RecordData("maxSteps");
             SetReward(-1f);
             EndEpisode();
         }
@@ -281,11 +281,47 @@ public class RollerAgent : Agent
     private bool m_CollisionDetected = false;
     private void OnTriggerEnter(Collider other)
     {
-        var statsRecorder = Academy.Instance.StatsRecorder;
-        statsRecorder.Add("Wall hit", 1f);
+        RecordData("wall");
         m_CollisionDetected = true;
         SetReward(-1f);
         EndEpisode();
+    }
+    
+    private void RecordData(string msg)
+    {
+        var statsRecorder = Academy.Instance.StatsRecorder;
+        if (msg == "wall")
+        {
+            statsRecorder.Add("Wall hit", 1f);
+            statsRecorder.Add("Max Steps reached", 0f);
+            statsRecorder.Add("Implausible agent position", 0f);
+            statsRecorder.Add("Target Reached", 0f);
+        }
+
+        if (msg == "maxSteps")
+        {
+            statsRecorder.Add("Wall hit", 0f);
+            statsRecorder.Add("Max Steps reached", 1f);
+            statsRecorder.Add("Implausible agent position", 0f);
+            statsRecorder.Add("Target Reached", 0f);
+        }
+
+        if (msg == "implausible")
+        {
+            statsRecorder.Add("Wall hit", 0f);
+            statsRecorder.Add("Max Steps reached", 0f);
+            statsRecorder.Add("Implausible agent position", 1f);
+            statsRecorder.Add("Target Reached", 0f);
+        }
+
+        if (msg == "target")
+        {
+            statsRecorder.Add("Wall hit", 0f);
+            statsRecorder.Add("Max Steps reached", 0f);
+            statsRecorder.Add("Implausible agent position", 0f);
+            statsRecorder.Add("Target Reached", 1f);
+        }
+        
     }
     
     /// <summary>
