@@ -248,6 +248,10 @@ learning rate changes to reward signifcant?
 * Performance: First 10k steps take 300 secs. Afterwards significant speedup.
 * Terminated.
 
+# 169
+* Reward function introduced.
+* Test run in the editor.
+
 # Next
 * Second room.
 * Target location set incorrectly.
