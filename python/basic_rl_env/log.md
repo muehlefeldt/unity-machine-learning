@@ -276,6 +276,9 @@ learning rate changes to reward signifcant?
 # 175
 * Check more tensorboard data charts.
 
+# 176
+* Further change to tensorboard recording.
+
 # Next
 * Second room.
 * Target location set incorrectly.
