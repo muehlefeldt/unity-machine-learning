@@ -279,6 +279,10 @@ learning rate changes to reward signifcant?
 # 176
 * Further change to tensorboard recording.
 
+# 177 and more
+* Auto run.
+* Check in the morning.
+
 # Next
 * Second room.
 * Target location set incorrectly.
