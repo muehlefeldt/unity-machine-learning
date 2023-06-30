@@ -238,6 +238,13 @@ learning rate changes to reward signifcant?
 * Question: Performance comparison with previous runs.
 * Navmesh maybe to complex.
 
+# 167
+* Test of rewritten pathfinding.
+* Again check in the editor first.
+* Performance seems better -> Check again with compiled build.
+
+# 168
+* Same as 167 but compiled build.
 
 # Next
 * Second room.

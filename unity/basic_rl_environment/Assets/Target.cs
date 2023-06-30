@@ -53,7 +53,7 @@ public class Target : MonoBehaviour
         {
             foreach (var coord in options)
             {
-                Gizmos.DrawSphere(coord, 0.3f);
+                Gizmos.DrawWireSphere(coord, 0.3f);
             }
         }
     }

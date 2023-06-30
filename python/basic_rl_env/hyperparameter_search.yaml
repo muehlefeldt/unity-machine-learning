@@ -1,7 +1,8 @@
 userconfig:
-  # Options: "no-build" or "editor" for manual mode. Runs in Unity editor.
-  # Use "build" mode to run with pre build unity version.
-  mode: editor
+  # Options: 
+  # "no-build" or "editor" for manual mode. Runs in Unity editor.
+  # "build" mode to run with pre build unity version.
+  mode: build
 behaviors:
   RollerAgent:
     trainer_type: ppo
