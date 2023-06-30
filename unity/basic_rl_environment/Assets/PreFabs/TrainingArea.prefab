@@ -485,7 +485,9 @@ MonoBehaviour:
   MaxStep: 0
   target: {fileID: 1515308257171817040}
   floor: {fileID: 5324353083616000953}
+  m_MaxDist: 0
   forceMultiplier: 10
+  reward: 0
   m_DistToTarget: 0
 --- !u!114 &5324353081925522769
 MonoBehaviour:
@@ -652,6 +654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalCornerCoord: []
   m_MaxDist: 0
+  CreatedDoorsCoord: []
   innerWallCreator: {fileID: 1595673323979307659}
   finished: 0
 --- !u!65 &7692793173245375662

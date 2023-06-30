@@ -252,6 +252,15 @@ learning rate changes to reward signifcant?
 * Reward function introduced.
 * Test run in the editor.
 
+# 170
+* Again run in editor.
+* Learning progress not stable.
+* Fix: One AddReward() changed to SetReward().
+* Question remains: How does a good reward function look here?
+
+# 171
+* Run with revised reward function.
+
 # Next
 * Second room.
 * Target location set incorrectly.

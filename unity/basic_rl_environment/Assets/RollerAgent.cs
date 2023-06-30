@@ -232,10 +232,22 @@ public class RollerAgent : Agent
         
         SetReward(GetReward());
     }
-
+    
+    /// <summary>
+    /// Calculate and return reward based on current distance to target.
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
     public float reward = 0f;
     private float GetReward()
     {
+        // If distance increases to target no reward issued.
+        if (m_DistToTarget > m_LastDistToTarget)
+        {
+            reward = 0f;
+            return reward;
+        }
         var beta = 1f;
         var omega = 0.3f;
         var x = m_DistToTarget / m_MaxDist;
@@ -260,14 +272,17 @@ public class RollerAgent : Agent
     /// Calculate the distance from the agent to the target. Taking doors into account.
     /// </summary>
     /// <remarks>Distance is basis for reward function.</remarks>
-    public float m_DistToTarget;
+    public float m_DistToTarget = 0f;
+    private float m_LastDistToTarget = 0f;
     private void CalculateDistanceToTarget()
     {
+        m_LastDistToTarget = m_DistToTarget;
+        m_DistToTarget = 0f;
+        
         // Get the path from agent to target.
         GetPath();
         
         // Calculate the distance of the path.
-        m_DistToTarget = 0f;
         for (int i = 1; i < m_Path.Count; i++)
         {
             m_DistToTarget += Vector3.Distance(m_Path[i - 1], m_Path[i]);
