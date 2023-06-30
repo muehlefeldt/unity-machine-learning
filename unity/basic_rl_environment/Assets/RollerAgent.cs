@@ -242,42 +242,59 @@ public class RollerAgent : Agent
         AddReward(-1f);
         EndEpisode();
     }
-
+    
+    /// <summary>
+    /// Calculate the distance from the agent to the target. Taking doors into account.
+    /// </summary>
     public float m_DistToTarget;
     private void CalculateDistanceToTarget()
     {
         GetPath();
         m_DistToTarget = 0f;
-        if (m_Path.status != NavMeshPathStatus.PathInvalid)
-        {
-            for (int i = 1; i < m_Path.corners.Length; i++)
-            {
-                m_DistToTarget += Vector3.Distance(m_Path.corners[i - 1], m_Path.corners[i]);
-            }
-        }
     }
     
     /// <summary>
     /// Get the path from the agent to the target.
     /// </summary>
     /// <remarks>
-    /// Uses navmesh to calculate the path. Used to determine travel distance between the two.
-    /// Is basis for the reward calculation.
+    /// ToDo
     /// </remarks>
-    private NavMeshPath m_Path;
+    private List<Vector3> m_Path = new List<Vector3>();
     private void GetPath()
     {
-        m_Path = new NavMeshPath();
-        NavMesh.CalculatePath(transform.position, target.transform.position, 1, m_Path);
+        m_Path.Clear();
+        
+        var agentPosition = transform.position;
+        var doorPositions = floor.CreatedDoorsCoord;
+        var targetPosition = target.transform.position;
+        
+        // First point of the path is the agent position.
+        m_Path.Add(agentPosition);
+
+        foreach (var coord in doorPositions)
+        {
+            if ((agentPosition.z > coord.z) && (coord.z > targetPosition.z))
+            {
+                m_Path.Add(coord);
+            }
+        }
+        
+        // Last point of the path is the target position.
+        m_Path.Add(targetPosition);
     }
     
     void OnDrawGizmos()
     {
         if (m_Path != null)
         {
-            for (int i = 1; i < m_Path.corners.Length; i++)
+            for (int i = 1; i < m_Path.Count; i++)
             {
-                Gizmos.DrawLine(m_Path.corners[i-1], m_Path.corners[i]);
+                Gizmos.DrawLine(m_Path[i-1], m_Path[i]);
+            }
+
+            foreach (var coord in m_Path) 
+            {
+                Gizmos.DrawCube(coord, new Vector3(0.3f, 0.3f, 0.3f));    
             }
         }
     }

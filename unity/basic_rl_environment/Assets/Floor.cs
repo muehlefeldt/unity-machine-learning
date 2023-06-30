@@ -18,6 +18,7 @@ public class Floor : MonoBehaviour
     private int m_IndexWallEnd = 10;
 
     public List<Tuple<Vector3, Vector3>> CreatedWallsCoord = new List<Tuple<Vector3, Vector3>>();
+    public List<Vector3> CreatedDoorsCoord = new List<Vector3>();
 
     public InnerWallCreator innerWallCreator;
 
@@ -135,6 +136,9 @@ public class Floor : MonoBehaviour
         // Empty saved coords. 
         CreatedWallsCoord.Clear();
         CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall,  coordEndWall));
+        
+        CreatedDoorsCoord.Clear();
+        CreatedDoorsCoord.Add(coordDoor);
         
         innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
     }
