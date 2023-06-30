@@ -266,6 +266,9 @@ learning rate changes to reward signifcant?
 * Not nice result.
 * Target only found once.
 
+# 173
+* Reward recuced. beta = 0.5f.
+
 # Next
 * Second room.
 * Target location set incorrectly.

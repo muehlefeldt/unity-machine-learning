@@ -218,11 +218,12 @@ public class RollerAgent : Agent
         // Rewards
         //var currentDistToTarget = Vector3.Distance(transform.position, target.transform.position);
         CalculateDistanceToTarget();
-
+        
+        var statsRecorder = Academy.Instance.StatsRecorder;
+        
         // Reached target
         if (m_DistToTarget < 1.42f)
         {
-            var statsRecorder = Academy.Instance.StatsRecorder;
             statsRecorder.Add("Target Reached", 1f);
             SetReward(1f);
             EndEpisode();
@@ -231,6 +232,7 @@ public class RollerAgent : Agent
         // Verify agent state (position) is plausible.
         if (!IsAgentStatePlausible())
         {
+            statsRecorder.Add("Implausible agent position", 1f);
             m_ImplausiblePosition = true;
             EndEpisode();
         }
@@ -241,6 +243,7 @@ public class RollerAgent : Agent
 
         if (m_CurrentStep > m_MaxSteps)
         {
+            statsRecorder.Add("Max Steps reached", 1f);
             SetReward(-1f);
             EndEpisode();
         }
@@ -278,6 +281,8 @@ public class RollerAgent : Agent
     private bool m_CollisionDetected = false;
     private void OnTriggerEnter(Collider other)
     {
+        var statsRecorder = Academy.Instance.StatsRecorder;
+        statsRecorder.Add("Wall hit", 1f);
         m_CollisionDetected = true;
         SetReward(-1f);
         EndEpisode();
