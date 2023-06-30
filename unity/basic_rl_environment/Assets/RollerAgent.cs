@@ -18,7 +18,7 @@ public class RollerAgent : Agent
     private Rigidbody m_RBody;
     public Target target;
     public Floor floor;
-    private float m_MaxDist;
+    public float m_MaxDist;
 
     // Start is called before the first frame update
     void Start () {
@@ -54,7 +54,7 @@ public class RollerAgent : Agent
         // Move the target to a new spot
         target.ResetPosition();
 
-        //m_MaxDist = floor.GetMaxPossibleDist();
+        m_MaxDist = floor.GetMaxPossibleDist();
         CalculateDistanceToTarget();
     }
 
@@ -210,12 +210,13 @@ public class RollerAgent : Agent
         //m_RBody.MovePosition(transform.localPosition + dirToGo * (Time.fixedDeltaTime * forceMultiplier));
 
         // Rewards
-        float distanceToTarget = Vector3.Distance(this.transform.localPosition, target.GetLocalPosition());
+        //var currentDistToTarget = Vector3.Distance(transform.position, target.transform.position);
+        CalculateDistanceToTarget();
 
         // Reached target
-        if (distanceToTarget < 1.42f)
+        if (m_DistToTarget < 1.42f)
         {
-            AddReward(1.0f);
+            SetReward(1.0f);
             EndEpisode();
         }
         
@@ -227,9 +228,21 @@ public class RollerAgent : Agent
         }
         
         // Punish each step.
-        AddReward(-0.001f);
+        //AddReward(-0.001f);
+        
+        SetReward(GetReward());
     }
 
+    public float reward = 0f;
+    private float GetReward()
+    {
+        var beta = 1f;
+        var omega = 0.3f;
+        var x = m_DistToTarget / m_MaxDist;
+
+        reward = beta * Mathf.Exp(-1 * Mathf.Pow(x, 2f) / (2f * Mathf.Pow(omega, 2f)));
+        return reward;
+    }
     
     /// <summary>
     /// Collision handling. Reset of the agent position if agent collides with other game objects.
@@ -246,11 +259,19 @@ public class RollerAgent : Agent
     /// <summary>
     /// Calculate the distance from the agent to the target. Taking doors into account.
     /// </summary>
+    /// <remarks>Distance is basis for reward function.</remarks>
     public float m_DistToTarget;
     private void CalculateDistanceToTarget()
     {
+        // Get the path from agent to target.
         GetPath();
+        
+        // Calculate the distance of the path.
         m_DistToTarget = 0f;
+        for (int i = 1; i < m_Path.Count; i++)
+        {
+            m_DistToTarget += Vector3.Distance(m_Path[i - 1], m_Path[i]);
+        }
     }
     
     /// <summary>
@@ -273,9 +294,19 @@ public class RollerAgent : Agent
 
         foreach (var coord in doorPositions)
         {
-            if ((agentPosition.z > coord.z) && (coord.z > targetPosition.z))
+            if (agentPosition.z > targetPosition.z)
             {
-                m_Path.Add(coord);
+                if ((agentPosition.z > coord.z) && (coord.z > targetPosition.z))
+                {
+                    m_Path.Add(coord);
+                }
+            }
+            else
+            {
+                if ((agentPosition.z < coord.z) && (coord.z < targetPosition.z))
+                {
+                    m_Path.Add(coord);
+                }
             }
         }
         

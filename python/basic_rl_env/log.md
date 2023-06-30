@@ -245,6 +245,8 @@ learning rate changes to reward signifcant?
 
 # 168
 * Same as 167 but compiled build.
+* Performance: First 10k steps take 300 secs. Afterwards significant speedup.
+* Terminated.
 
 # Next
 * Second room.
