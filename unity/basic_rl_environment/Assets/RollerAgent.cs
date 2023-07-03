@@ -46,6 +46,8 @@ public class RollerAgent : Agent
     {
         floor.Prepare();
         floor.CreateInnerWall();
+        
+        // ToDo: Why reset here distances?
         ResetDist();
 
         // How many steps are allowed.
