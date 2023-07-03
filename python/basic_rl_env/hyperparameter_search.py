@@ -1,12 +1,12 @@
-import yaml
 from pathlib import Path
 from statistics import mean
+import yaml
 import os
 import logging
 import itertools
 import sys
 import time
-
+import csv
 
 # Get the run id (number) based on past runs in the result folder.
 def get_run_id() -> int:
@@ -46,6 +46,7 @@ def update_parameter(base: dict, key_values: list, option, id: int) -> dict:
 
         # Update the temporary dict.
         tmp[key] = value
+        
         logging.info(f"[{id}] {key} = {value}.")
     return tmp
 
@@ -109,6 +110,19 @@ if "memory" in network:
 hyper_key_value, hyper_comb = get_parameter_combinations(hyperparamters)
 network_key_value, network_comb = get_parameter_combinations(network)
 
+use_summary = False
+
+if use_summary:
+    path_to_summary_file = f"./summaries/{get_run_id()}.csv"
+    with open(Path(path_to_summary_file).absolute(), mode="w", newline="") as summary_file:
+        summary_writer = csv.writer(summary_file)
+        headings = []
+        for section in [memory_key_value, hyper_key_value, network_key_value]:
+            for entry in section:
+                headings.append(list(entry.keys())[0])
+        headings.append('5_last_cumulative_reward')
+        summary_writer.writerow(headings)
+
 # Get the number of runs the current config is goint to produce.
 num_count = len(memory_comb) * len(network_comb) * len(hyper_comb)
 logging.info(f"{num_count} runs are going to be started.")
@@ -116,11 +130,13 @@ logging.info(f"{num_count} runs are going to be started.")
 # Store run durations.
 run_durations = []
 run_counter = 0
+
 # Combine all possible options for possible runs.
 for hyperparameter_option in hyper_comb:
     for network_option in network_comb:
         for memory_option in memory_comb:
             run_counter += 1
+
             # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
             run_id = get_run_id()
             path_to_temp_config_file = f"./configs/{run_id}.yaml"
@@ -171,6 +187,7 @@ for hyperparameter_option in hyper_comb:
                         --force"
                     )
             end_time = time.time()
+            logging.info(f"[{run_id}] return code = {return_code}.")
 
             # Logging and error code handling.
             if return_code != 0:
@@ -181,5 +198,11 @@ for hyperparameter_option in hyper_comb:
                 logging.info(f"[{run_id}] Avg. duration: {int(mean(run_durations))} sec.")
                 duration = (num_count - run_counter) * mean(run_durations)
                 logging.info(f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}.")
+                
+                if use_summary:
+                    with open(Path(path_to_summary_file).absolute(), mode="a", newline="") as summary_file:
+                        summary_writer = csv.writer(summary_file, delimiter="")
+                        #summary_writer.writerow
 
-            logging.info(f"[{run_id}] return code = {return_code}.")
+
+            
