@@ -139,12 +139,14 @@ public class RollerAgent : Agent
         var y = transform.localPosition.y;
         if (y is < 0f or > 2f)
         {
+            RecordData(RecorderCodes.OutOfBounds);
             return false;
         }
         // Check rotation. In case of implausible values terminate episode.
         var rotation = transform.rotation;
         if (!Mathf.Approximately(rotation.x, 0f) || !Mathf.Approximately(rotation.z, 0f))
         {
+            RecordData(RecorderCodes.RotationError);
             return false;
         }
         return true;
@@ -237,7 +239,6 @@ public class RollerAgent : Agent
         // Verify agent state (position) is plausible.
         if (!IsAgentStatePlausible())
         {
-            RecordData(RecorderCodes.Implausible);
             m_ImplausiblePosition = true;
             EndEpisode();
         }
