@@ -10,7 +10,7 @@ behaviors:
     hyperparameters:
       batch_size: 246
       buffer_size: 10240
-      learning_rate: [1e-4, 1e-5]
+      learning_rate: 1e-4
       beta: 1e-3
       epsilon: 0.2
       lambd: 0.925
@@ -20,8 +20,8 @@ behaviors:
       epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: [128, 384]
-      num_layers: [2, 3]
+      hidden_units: 384
+      num_layers: 3
       memory:
         memory_size: 256
         sequence_length: 64

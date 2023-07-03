@@ -302,3 +302,7 @@ learning rate changes to reward signifcant?
   * -0.2 is worse distance.
   * +0.1 if better
 
+# 220
+* Test python env.
+* Repeat of run 215.
+
