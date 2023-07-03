@@ -282,7 +282,7 @@ public class RollerAgent : Agent
         }
         else if (m_DistToTarget > m_LastDistToTarget)
         {
-            reward = -0.1f;
+            reward = -0.2f;
         }
         else
         {
@@ -312,7 +312,9 @@ public class RollerAgent : Agent
         Wall = 1,
         MaxSteps = 2,
         Implausible = 3,
-        Target = 4
+        Target = 4,
+        RotationError = 5,
+        OutOfBounds = 6
     }
     
     /// <summary>
@@ -327,29 +329,41 @@ public class RollerAgent : Agent
             case RecorderCodes.Wall:
                 statsRecorder.Add("Wall hit", 1f);
                 statsRecorder.Add("Max Steps reached", 0f);
-                statsRecorder.Add("Implausible agent position", 0f);
                 statsRecorder.Add("Target Reached", 0f);
+                statsRecorder.Add("Rotation Error", 0f);
+                statsRecorder.Add("Out of bounds", 0f);
                 break;
             
             case RecorderCodes.MaxSteps:
                 statsRecorder.Add("Wall hit", 0f);
                 statsRecorder.Add("Max Steps reached", 1f);
-                statsRecorder.Add("Implausible agent position", 0f);
                 statsRecorder.Add("Target Reached", 0f);
+                statsRecorder.Add("Rotation Error", 0f);
+                statsRecorder.Add("Out of bounds", 0f);
                 break;
 
-            case RecorderCodes.Implausible:
-                statsRecorder.Add("Wall hit", 0f);
-                statsRecorder.Add("Max Steps reached", 0f);
-                statsRecorder.Add("Implausible agent position", 1f);
-                statsRecorder.Add("Target Reached", 0f);
-                break;
-            
             case  RecorderCodes.Target:
                 statsRecorder.Add("Wall hit", 0f);
                 statsRecorder.Add("Max Steps reached", 0f);
-                statsRecorder.Add("Implausible agent position", 0f);
                 statsRecorder.Add("Target Reached", 1f);
+                statsRecorder.Add("Rotation Error", 0f);
+                statsRecorder.Add("Out of bounds", 0f);
+                break;
+            
+            case RecorderCodes.RotationError:
+                statsRecorder.Add("Wall hit", 0f);
+                statsRecorder.Add("Max Steps reached", 0f);
+                statsRecorder.Add("Target Reached", 0f);
+                statsRecorder.Add("Rotation Error", 1f);
+                statsRecorder.Add("Out of bounds", 0f);
+                break;
+            
+            case RecorderCodes.OutOfBounds:
+                statsRecorder.Add("Wall hit", 0f);
+                statsRecorder.Add("Max Steps reached", 0f);
+                statsRecorder.Add("Target Reached", 0f);
+                statsRecorder.Add("Rotation Error", 0f);
+                statsRecorder.Add("Out of bounds", 1f);
                 break;
         }
     }
