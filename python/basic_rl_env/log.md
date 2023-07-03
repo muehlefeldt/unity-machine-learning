@@ -283,10 +283,16 @@ learning rate changes to reward signifcant?
 * Auto run.
 * Check in the morning.
 
+# 201
+* Revised reward:
+  * Closer to target: +0.1
+  * Farther away from target: -0.1
+* Run in editor.
+* Not good results.
+
 # Next
-* Second room.
-* Target location set incorrectly.
 * Test: Small reward for better state but not optimal state, +0.1.
+* ...
 
 # Longtrem plans
 * Increase complexity of the environment.

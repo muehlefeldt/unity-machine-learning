@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+//using DefaultNamespace;
 using UnityEngine;
 
 using Unity.MLAgents;
@@ -12,6 +13,7 @@ using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
+
 
 public class RollerAgent : Agent
 {
@@ -44,9 +46,10 @@ public class RollerAgent : Agent
     {
         floor.Prepare();
         floor.CreateInnerWall();
+        ResetDist();
 
         // How many steps are allowed.
-        m_MaxSteps = 500;
+        m_MaxSteps = 1000;
         m_CurrentStep = 0;
         
         // If the Agent fell, zero its momentum
@@ -224,7 +227,7 @@ public class RollerAgent : Agent
         // Reached target
         if (m_DistToTarget < 1.42f)
         {
-            RecordData("target");
+            RecordData(RecorderCodes.Target);
             SetReward(1f);
             EndEpisode();
         }
@@ -232,7 +235,7 @@ public class RollerAgent : Agent
         // Verify agent state (position) is plausible.
         if (!IsAgentStatePlausible())
         {
-            RecordData("implausible");
+            RecordData(RecorderCodes.Implausible);
             m_ImplausiblePosition = true;
             EndEpisode();
         }
@@ -243,24 +246,25 @@ public class RollerAgent : Agent
 
         if (m_CurrentStep > m_MaxSteps)
         {
-            RecordData("maxSteps");
+            RecordData(RecorderCodes.MaxSteps);
             SetReward(-1f);
             EndEpisode();
         }
         
-        SetReward(GetReward());
+        CalculateReward();
+        SetReward(reward);
     }
     
     /// <summary>
     /// Calculate and return reward based on current distance to target.
     /// </summary>
     /// <remarks>
-    /// 
+    /// ToDo: Wenn du die Entfernung zum Ziel nicht verringerst, dann gibt es eine Bestrafung.
     /// </remarks>
     public float reward = 0f;
-    private float GetReward()
+    private void CalculateReward()
     {
-        // If distance increases to target no reward issued.
+        /*// If distance increases to target no reward issued.
         if (m_DistToTarget >= m_LastDistToTarget)
         {
             reward = 0f;
@@ -271,7 +275,19 @@ public class RollerAgent : Agent
         var x = m_DistToTarget / m_MaxDist;
 
         reward = beta * Mathf.Exp(-1 * Mathf.Pow(x, 2f) / (2f * Mathf.Pow(omega, 2f)));
-        return reward;
+        return reward;*/
+        if (m_DistToTarget < m_LastDistToTarget)
+        {
+            reward = 0.1f;
+        }
+        else if (m_DistToTarget > m_LastDistToTarget)
+        {
+            reward = -0.1f;
+        }
+        else
+        {
+            reward = 0f;
+        }
     }
     
     /// <summary>
@@ -281,47 +297,61 @@ public class RollerAgent : Agent
     private bool m_CollisionDetected = false;
     private void OnTriggerEnter(Collider other)
     {
-        RecordData("wall");
+        RecordData(RecorderCodes.Wall);
         m_CollisionDetected = true;
         SetReward(-1f);
         EndEpisode();
     }
     
-    private void RecordData(string msg)
+    /// <summary>
+    /// Codes used for tensorboard stats recorder.
+    /// </summary>
+    private enum RecorderCodes
+    {
+        None = 0,
+        Wall = 1,
+        MaxSteps = 2,
+        Implausible = 3,
+        Target = 4
+    }
+    
+    /// <summary>
+    /// Record data for tensorboard.
+    /// </summary>
+    /// <param name="msg">Recorder code</param>
+    private void RecordData(RecorderCodes msg)
     {
         var statsRecorder = Academy.Instance.StatsRecorder;
-        if (msg == "wall")
+        switch (msg)
         {
-            statsRecorder.Add("Wall hit", 1f);
-            statsRecorder.Add("Max Steps reached", 0f);
-            statsRecorder.Add("Implausible agent position", 0f);
-            statsRecorder.Add("Target Reached", 0f);
-        }
+            case RecorderCodes.Wall:
+                statsRecorder.Add("Wall hit", 1f);
+                statsRecorder.Add("Max Steps reached", 0f);
+                statsRecorder.Add("Implausible agent position", 0f);
+                statsRecorder.Add("Target Reached", 0f);
+                break;
+            
+            case RecorderCodes.MaxSteps:
+                statsRecorder.Add("Wall hit", 0f);
+                statsRecorder.Add("Max Steps reached", 1f);
+                statsRecorder.Add("Implausible agent position", 0f);
+                statsRecorder.Add("Target Reached", 0f);
+                break;
 
-        if (msg == "maxSteps")
-        {
-            statsRecorder.Add("Wall hit", 0f);
-            statsRecorder.Add("Max Steps reached", 1f);
-            statsRecorder.Add("Implausible agent position", 0f);
-            statsRecorder.Add("Target Reached", 0f);
+            case RecorderCodes.Implausible:
+                statsRecorder.Add("Wall hit", 0f);
+                statsRecorder.Add("Max Steps reached", 0f);
+                statsRecorder.Add("Implausible agent position", 1f);
+                statsRecorder.Add("Target Reached", 0f);
+                break;
+            
+            case  RecorderCodes.Target:
+                statsRecorder.Add("Wall hit", 0f);
+                statsRecorder.Add("Max Steps reached", 0f);
+                statsRecorder.Add("Implausible agent position", 0f);
+                statsRecorder.Add("Target Reached", 1f);
+                break;
         }
-
-        if (msg == "implausible")
-        {
-            statsRecorder.Add("Wall hit", 0f);
-            statsRecorder.Add("Max Steps reached", 0f);
-            statsRecorder.Add("Implausible agent position", 1f);
-            statsRecorder.Add("Target Reached", 0f);
-        }
-
-        if (msg == "target")
-        {
-            statsRecorder.Add("Wall hit", 0f);
-            statsRecorder.Add("Max Steps reached", 0f);
-            statsRecorder.Add("Implausible agent position", 0f);
-            statsRecorder.Add("Target Reached", 1f);
-        }
-        
     }
     
     /// <summary>
@@ -330,10 +360,11 @@ public class RollerAgent : Agent
     /// <remarks>Distance is basis for reward function.</remarks>
     public float m_DistToTarget = 0f;
     private float m_LastDistToTarget = 0f;
+    private float m_BestDistToTarget = float.PositiveInfinity;
+    private bool m_DistImproved = false;
     private void CalculateDistanceToTarget()
     {
-        m_LastDistToTarget = m_DistToTarget;
-        m_DistToTarget = 0f;
+        ResetDist();
         
         // Get the path from agent to target.
         GetPath();
@@ -343,6 +374,19 @@ public class RollerAgent : Agent
         {
             m_DistToTarget += Vector3.Distance(m_Path[i - 1], m_Path[i]);
         }
+
+        if (m_DistToTarget < m_BestDistToTarget)
+        {
+            m_BestDistToTarget = m_DistToTarget;
+            m_DistImproved = true;
+        }
+    }
+
+    private void ResetDist()
+    {
+        m_LastDistToTarget = m_DistToTarget;
+        m_DistToTarget = 0f;
+        m_DistImproved = false;
     }
     
     /// <summary>

@@ -27,12 +27,13 @@ def get_run_id() -> int:
 def get_parameter_combinations(parameters) -> tuple[list, list]:
     key_values = []
     for key in parameters:
+        # Check if value for key is a list. If so store key value pair.
         if isinstance(parameters[key], list):
             key_values.append({key: parameters[key]})
 
     input = [list(entry.values())[0] for entry in key_values]
     combinations = list(itertools.product(*input))
-    logging.info(f"Found {len(input)} hyperparameter with dynamic values.")
+    logging.info(f"Found {len(input)} with dynamic values.")
     return key_values, combinations
 
 def get_parameter(tmp, key_values: list, option, id: int):
@@ -42,6 +43,14 @@ def get_parameter(tmp, key_values: list, option, id: int):
         tmp[key] = value
         logging.info(f"[{id}] {key} = {value}.")
     return tmp
+
+def get_number_of_runs(list_of_key_values: list[dict]) -> int:
+    num_runs = 1
+    for entry in list_of_key_values:
+        num_runs = entry.keys()[0]
+        print()
+
+    return num_runs
 
 # Logging config.
 logging.basicConfig(filename=Path(f"./logs/{get_run_id()}_search.log").absolute(), level=logging.INFO)
@@ -72,6 +81,8 @@ if "memory" in network:
 
 hyper_key_value, hyper_comb = get_parameter_combinations(hyperparamters)
 network_key_value, network_comb = get_parameter_combinations(network)
+
+num = get_number_of_runs(hyper_key_value)
 
 # Combine all possible options for possible runs.
 for hyperparameter_option in hyper_comb:
