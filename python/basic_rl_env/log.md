@@ -297,4 +297,8 @@ learning rate changes to reward signifcant?
 # 210 and following
 * Script test again
 
+# 212 and following
+* Test with reward function revised.
+  * -0.2 is worse distance.
+  * +0.1 if better
 
