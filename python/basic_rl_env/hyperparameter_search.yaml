@@ -2,6 +2,7 @@ userconfig:
   # Options: 
   # "no-build" or "editor" for manual mode. Runs in Unity editor.
   # "build" mode to run with pre build unity version.
+  # "test" mode bypasses ml-agents execution.
   mode: editor
 behaviors:
   RollerAgent:
