@@ -111,7 +111,7 @@ network_key_value, network_comb = get_parameter_combinations(network)
 
 # Get the number of runs the current config is goint to produce.
 num_count = len(memory_comb) * len(network_comb) * len(hyper_comb)
-logging.info(f"{num_count} are going to be started.")
+logging.info(f"{num_count} runs are going to be started.")
 
 # Store run durations.
 run_durations = []
@@ -152,6 +152,7 @@ for hyperparameter_option in hyper_comb:
             start_time = time.time()
             if no_test:
                 if use_build:
+                    # Start ml-algents using build version of unity.
                     return_code = os.system(
                         f"mlagents-learn \
                         {Path(path_to_temp_config_file).absolute()} \
@@ -161,6 +162,7 @@ for hyperparameter_option in hyper_comb:
                         --force"
                     )
                 else:
+                    # Start ml-agents in the unity editor. Requires user interaction.
                     return_code = os.system(
                         f"mlagents-learn \
                         {Path(path_to_temp_config_file).absolute()} \
@@ -169,12 +171,15 @@ for hyperparameter_option in hyper_comb:
                         --force"
                     )
             end_time = time.time()
+
+            # Logging and error code handling.
             if return_code != 0:
                 logging.warning(f"[{run_id}] error code.")
             else:
                 run_durations.append(end_time - start_time)
                 logging.info(f"[{run_id}] Duration: {int(run_durations[-1])} sec.")
-                logging.info(f"[{run_id}] Avg. duration: {mean(run_durations)} sec.")
-                logging.info(f"[{run_id}] Expected end time of all runs: {time.localtime(time.time() + ((num_count - run_counter) * mean(run_durations)))}.")
+                logging.info(f"[{run_id}] Avg. duration: {int(mean(run_durations))} sec.")
+                duration = (num_count - run_counter) * mean(run_durations)
+                logging.info(f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}.")
 
             logging.info(f"[{run_id}] return code = {return_code}.")

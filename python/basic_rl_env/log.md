@@ -290,9 +290,11 @@ learning rate changes to reward signifcant?
 * Run in editor.
 * Not good results.
 
-# Next
-* Test: Small reward for better state but not optimal state, +0.1.
-* ...
+# 202 following
+* Script test
+* Disregard
+ 
+# 210 and following
+* Script test again
 
-# Longtrem plans
-* Increase complexity of the environment.
+
