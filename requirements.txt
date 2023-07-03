@@ -1,0 +1,5 @@
+tensorflow
+torch~=1.7.1 -f https://download.pytorch.org/whl/torch_stable.html
+protobuf==3.20
+numpy==1.21.2
+mlagents==0.30.0
