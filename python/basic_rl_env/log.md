@@ -312,4 +312,5 @@ learning rate changes to reward signifcant?
 * Performance not sufficient.
 * 221 shows ok result.
 
-
+# 247
+* Test of fixed Collider and step counter.

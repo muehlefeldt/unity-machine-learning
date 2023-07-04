@@ -6,7 +6,7 @@ userconfig:
   # "test" mode bypasses ml-agents execution. Must be bool.
   test: false
   # Provide message for the log file for better traceability.
-  message: "Test script and performance based on run 221 config."
+  message: "Test collision handling. Based on run 221 config."
 behaviors:
   RollerAgent:
     trainer_type: ppo

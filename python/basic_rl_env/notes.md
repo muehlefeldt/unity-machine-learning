@@ -1,6 +1,9 @@
 # Next
 * How to get data from tfevents file!!!!
 * Rotation problem.
+  * Why does the rotation still occur?
+  * Error reduced but still remains a problem.
+
 * Test: Small reward for better state but not optimal state, +0.1.
 * Flos reward function.
 * Are there options to increase performance during build runs?
