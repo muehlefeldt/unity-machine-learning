@@ -41,7 +41,7 @@ public class RollerAgent : Agent
     }
 
     private int m_MaxSteps;
-    private int m_CurrentStep;
+    public int currentStep;
     public override void OnEpisodeBegin()
     {
         floor.Prepare();
@@ -52,7 +52,7 @@ public class RollerAgent : Agent
 
         // How many steps are allowed.
         m_MaxSteps = 1000;
-        m_CurrentStep = 0;
+        currentStep = 0;
         
         // If the Agent fell, zero its momentum
         if (this.transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
@@ -130,10 +130,10 @@ public class RollerAgent : Agent
     }
 
     /// <summary>
-    /// Check if agent position and rotation is plausible. Used to detect positions outside of training area.
+    /// Check if agent position is plausible. Used to detect positions outside of training area.
     /// </summary>
-    /// <returns></returns>
-    private bool IsAgentStatePlausible()
+    /// <returns>True if position is good.</returns>
+    private bool IsAgentPositionPlausible()
     {
         // Fell off platform or is beyond roof.
         var y = transform.localPosition.y;
@@ -142,15 +142,25 @@ public class RollerAgent : Agent
             RecordData(RecorderCodes.OutOfBounds);
             return false;
         }
-        // Check rotation. In case of implausible values terminate episode.
+
+        return true;
+    }
+    
+    /// <summary>
+    /// Check if the agent rotation is plausible. 
+    /// </summary>
+    /// <returns></returns>
+    private bool IsAgentRotationPlausible()
+    {
+        // Check rotation.
         var rotation = transform.rotation;
         if (!Mathf.Approximately(rotation.x, 0f) || !Mathf.Approximately(rotation.z, 0f))
         {
             RecordData(RecorderCodes.RotationError);
+            Debug.Log("Rotation error.");
             return false;
         }
         return true;
-
     }
     
     private bool m_ImplausiblePosition = false;
@@ -163,7 +173,14 @@ public class RollerAgent : Agent
         var upDown = actionBuffers.DiscreteActions[1];
         var forwardBackwards = actionBuffers.DiscreteActions[2];
         var r = actionBuffers.DiscreteActions[3];
-        
+
+        var all = new List<int>(){rightLeft, upDown, forwardBackwards, r};
+
+        if (!(all.Contains(2) || all.Contains(3)))
+        {
+            return;
+        } 
+
         switch (rightLeft)
         {
             case 2:
@@ -204,7 +221,7 @@ public class RollerAgent : Agent
                 rotate = -1f;
                 break;
         }
-        
+
         // Rotate
         var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
@@ -237,17 +254,23 @@ public class RollerAgent : Agent
         }
         
         // Verify agent state (position) is plausible.
-        if (!IsAgentStatePlausible())
+        if (!IsAgentPositionPlausible())
         {
             m_ImplausiblePosition = true;
             EndEpisode();
         }
-        
-        // Punish each step.
-        //AddReward(-0.001f);
-        m_CurrentStep += 1;
 
-        if (m_CurrentStep > m_MaxSteps)
+        if (!IsAgentRotationPlausible())
+        {
+            m_ImplausiblePosition = true;
+            EndEpisode();
+        }
+
+            // Punish each step.
+        //AddReward(-0.001f);
+        currentStep += 1;
+
+        if (currentStep > m_MaxSteps)
         {
             RecordData(RecorderCodes.MaxSteps);
             SetReward(-1f);
@@ -303,6 +326,7 @@ public class RollerAgent : Agent
         RecordData(RecorderCodes.Wall);
         m_CollisionDetected = true;
         SetReward(-1f);
+        Debug.Log("Collision");
         EndEpisode();
     }
     
