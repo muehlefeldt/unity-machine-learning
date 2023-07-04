@@ -306,3 +306,10 @@ learning rate changes to reward signifcant?
 * Test python env.
 * Repeat of run 215.
 
+# 221 and following
+* Large number of runs.
+* Build used.
+* Performance not sufficient.
+* 221 shows ok result.
+
+

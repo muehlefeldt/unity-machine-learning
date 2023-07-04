@@ -76,14 +76,24 @@ with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
 use_build = True
 no_test = True
 
+message_for_log = None
 # Check the loaded config for user specified modes.
 if "userconfig" in config:
     if config["userconfig"] is not None:
+        # Build or editor?
         if "mode" in config["userconfig"]:
             if any(s in config["userconfig"]["mode"] for s in ["no-build", "editor"]):
                 use_build = False
-            if any(s in config["userconfig"]["mode"] for s in ["test"]):
-                test = False
+        # Test mode requested?
+        if "test" in config["userconfig"]:
+            if config["userconfig"]["test"]:
+                no_test = False
+        
+        # Get the message from the config file to be logged.
+        if "message" in config["userconfig"]:
+            tmp_message = config["userconfig"]["message"]
+            if tmp_message is not None and isinstance(tmp_message, str):
+                message_for_log = tmp_message
     
     # Mode information no longer needed.
     config.pop("userconfig")
@@ -94,6 +104,10 @@ if no_test:
         filename=Path(f"./logs/{get_run_id()}_search.log").absolute(),
         level=logging.INFO
         )
+
+# Logg the message from the config file.
+if message_for_log is not None:
+    logging.info(f"Note: {message_for_log}")
 
 hyperparamters = config['behaviors']['RollerAgent']['hyperparameters']
 network = config['behaviors']['RollerAgent']['network_settings']

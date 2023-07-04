@@ -2,15 +2,18 @@ userconfig:
   # Options: 
   # "no-build" or "editor" for manual mode. Runs in Unity editor.
   # "build" mode to run with pre build unity version.
-  # "test" mode bypasses ml-agents execution.
   mode: build
+  # "test" mode bypasses ml-agents execution. Must be bool.
+  test: false
+  # Provide message for the log file for better traceability.
+  message: "Test script and performance based on run 221 config."
 behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: [128, 256, 512]
-      buffer_size: [10240, 102400]
-      learning_rate: [1e-3, 1e-4, 1e-5]
+      batch_size: 128
+      buffer_size: 10240
+      learning_rate: 1e-3
       beta: 1e-3
       epsilon: 0.2
       lambd: 0.925
@@ -20,8 +23,8 @@ behaviors:
       epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: [256, 384, 512]
-      num_layers: [3, 4, 5]
+      hidden_units: 256
+      num_layers: 3
       memory:
         memory_size: 256
         sequence_length: 64
