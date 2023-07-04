@@ -34,6 +34,7 @@ public class InnerWallCreator : MonoBehaviour
         var position = coordStartWall + (between / 2);
         position.y = 1f;
         newCube.transform.localPosition = position;
+        SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
 
@@ -104,5 +105,15 @@ public class InnerWallCreator : MonoBehaviour
     private void SetMaterial(GameObject obj)
     {
         obj.GetComponent<Renderer>().material = m_WallMaterial;
+    }
+    
+    /// <summary>
+    /// Set the Collider of a game object as trigger.
+    /// </summary>
+    /// <param name="obj">Game object with collider</param>
+    private void SetCollider(GameObject obj)
+    {
+        //obj.transform.parent = wallParent.transform;
+        obj.GetComponent<Collider>().isTrigger = true;
     }
 }

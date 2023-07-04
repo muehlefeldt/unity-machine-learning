@@ -55,7 +55,7 @@ public class RollerAgent : Agent
         currentStep = 0;
         
         // If the Agent fell, zero its momentum
-        if (this.transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
+        if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
         {
             m_CollisionDetected = false;
             m_ImplausiblePosition = false;
@@ -174,8 +174,8 @@ public class RollerAgent : Agent
         var forwardBackwards = actionBuffers.DiscreteActions[2];
         var r = actionBuffers.DiscreteActions[3];
 
+        // Check if any movement is requested.
         var all = new List<int>(){rightLeft, upDown, forwardBackwards, r};
-
         if (!(all.Contains(2) || all.Contains(3)))
         {
             return;
@@ -227,23 +227,18 @@ public class RollerAgent : Agent
         var rotateDir = transform.up * rotate;
         transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
 
-        //controlSignal = Vector3.Scale(controlSignal, transform.forward);
-        //m_RBody.AddForce(controlSignal * forceMultiplier);
-        //transform.localPosition = transform.localPosition + controlSignal * forceMultiplier;
-        //m_RBody.MovePosition(transform.localPosition + controlSignal * forceMultiplier);
-        
         var direction = m_RBody.rotation * controlSignal;
         m_RBody.MovePosition(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
         
-        // Move forward
-        //var dirToGo = Vector3.Scale(transform.forward, controlSignal);// * m_Forward;
-        //m_RBody.MovePosition(transform.localPosition + dirToGo * (Time.fixedDeltaTime * forceMultiplier));
-
-        // Rewards
-        //var currentDistToTarget = Vector3.Distance(transform.position, target.transform.position);
         CalculateDistanceToTarget();
-        
-        
+
+        if (m_CollisionDetected)
+        {
+            RecordData(RecorderCodes.Wall);
+            SetReward(-1f);
+            Debug.Log("Collision");
+            EndEpisode();
+        }
         
         // Reached target
         if (m_DistToTarget < 1.42f)
@@ -323,11 +318,7 @@ public class RollerAgent : Agent
     private bool m_CollisionDetected = false;
     private void OnTriggerEnter(Collider other)
     {
-        RecordData(RecorderCodes.Wall);
         m_CollisionDetected = true;
-        SetReward(-1f);
-        Debug.Log("Collision");
-        EndEpisode();
     }
     
     /// <summary>
