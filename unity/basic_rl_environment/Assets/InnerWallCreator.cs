@@ -34,7 +34,7 @@ public class InnerWallCreator : MonoBehaviour
         var position = coordStartWall + (between / 2);
         position.y = 1f;
         newCube.transform.localPosition = position;
-        SetCollider(newCube);
+        //SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
 
@@ -71,6 +71,7 @@ public class InnerWallCreator : MonoBehaviour
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         newCube.transform.parent = wallParent.transform;
         SetMaterial(newCube);
+        SetCollider(newCube);
         return newCube;
     }
 

@@ -39,6 +39,16 @@ public class RollerAgent : Agent
         transform.localPosition = new Vector3( 0, 1f, 3f);
         transform.rotation = Quaternion.identity;
     }
+    
+    /// <summary>
+    /// Fix implausible agent rotation. Maintains Y rotation but sets x and z to 0.
+    /// </summary>
+    private void FixAgentRotation()
+    {
+        var currentRotationY = transform.eulerAngles.y;
+        transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
+
+    }
 
     private int m_MaxSteps;
     public int currentStep;
@@ -154,6 +164,7 @@ public class RollerAgent : Agent
     {
         // Check rotation.
         var rotation = transform.rotation;
+        var allowedValues = new List<float>(){ 0f, -0f };
         if (!Mathf.Approximately(rotation.x, 0f) || !Mathf.Approximately(rotation.z, 0f))
         {
             RecordData(RecorderCodes.RotationError);
@@ -257,8 +268,9 @@ public class RollerAgent : Agent
 
         if (!IsAgentRotationPlausible())
         {
-            m_ImplausiblePosition = true;
-            EndEpisode();
+            //m_ImplausiblePosition = true;
+            FixAgentRotation();
+            //EndEpisode();
         }
 
             // Punish each step.
