@@ -1,6 +1,7 @@
 from pathlib import Path
 from statistics import mean
 from tensorflow.python.summary.summary_iterator import summary_iterator
+from collections import OrderedDict
 import yaml
 import os
 import logging
@@ -244,7 +245,7 @@ for hyperparameter_option in hyper_comb:
                 
                 if generate_summary:
                     summary_dict[run_id] = {}
-                    for entry in [*network_option, *network_option, *memory_option]:
+                    for entry in [*hyperparameter_option, *network_option, *memory_option]:
                         summary_dict[run_id].update(entry)
 
                     summary_dict[run_id]['3_last_cumulative_reward'] = get_mean_reward(run_name)
@@ -252,5 +253,9 @@ for hyperparameter_option in hyper_comb:
 if generate_summary:
     path_to_summary_file = f"./summaries/{get_run_id()}.json"
     with open(Path(path_to_summary_file).absolute(), mode="w", newline="") as summary_file:
-        json.dump(summary_dict, summary_file, indent=4)
+        sorted_dict = OrderedDict(sorted(
+            summary_dict.items(),
+            key=lambda v: v[1]['3_last_cumulative_reward'],
+            reverse=True))
+        json.dump(sorted_dict, summary_file, indent=4)
 
