@@ -47,7 +47,6 @@ public class RollerAgent : Agent
     {
         var currentRotationY = transform.eulerAngles.y;
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
-
     }
 
     private int m_MaxSteps;

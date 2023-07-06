@@ -1,12 +1,13 @@
 from pathlib import Path
 from statistics import mean
+from tensorflow.python.summary.summary_iterator import summary_iterator
 import yaml
 import os
 import logging
 import itertools
 import sys
 import time
-import csv
+import json
 
 # Get the run id (number) based on past runs in the result folder.
 def get_run_id() -> int:
@@ -22,27 +23,31 @@ def get_parameter_combinations(parameters) -> tuple[list, list]:
     for key in parameters:
         # Check if value for key is a list. If so, store key value pair.
         if isinstance(parameters[key], list):
-            key_values.append({key: parameters[key]})
+            new = []
+            for entry in parameters[key]:
+                new.append({key: entry})
+            key_values.append(new)
 
-    input = [list(entry.values())[0] for entry in key_values]
-    combinations = list(itertools.product(*input))
-    logging.info(f"Found {len(input)} dynamic values.")
-    return key_values, combinations
+    
+    combinations = list(itertools.product(*key_values))
+    if production:
+        logging.info(f"Found {len(key_values)} dynamic values.")
+    return combinations
 
 # Update key value pairs in temporary dict using the key values list and the current option.
 # The run id is only used for logging purposes.
-def update_parameter(base: dict, key_values: list, option, id: int) -> dict:
+def update_parameter(base: dict, option: tuple, id: int) -> dict:
     # Work on copy of the base config values only.
     tmp = dict.copy(base)
 
-    # Dynamic key value pairs are only of interest.
-    for index in range(len(key_values)):
+    # Dynamic key value pairs are updated in the tmp dict.
+    for entry in option:
 
-        # Get the key for the given index.
-        key = list(key_values[index].keys())[0]
+        # Get the key for the entry in the option.
+        key = list(entry.keys())[0]
 
-        # Value from the option for the given key.
-        value = option[index]
+        # Value for the given key.
+        value = entry[key]
 
         # Update the temporary dict.
         tmp[key] = value
@@ -57,6 +62,18 @@ def get_number_of_runs(list_of_key_values: list[dict]) -> int:
         print()
 
     return num_runs
+
+def get_mean_reward(name: str) -> float:
+    cumulative_rewards = []
+    path_to_result_folder = f"./results/{name}/RollerAgent/"
+    path_to_result = sorted(Path(path_to_result_folder).glob("events.out.tfevents.*"))[0]
+
+    for event in summary_iterator(str(path_to_result)):
+        for v in event.summary.value:
+            if v.tag == "Environment/Cumulative Reward":
+                cumulative_rewards.append(v.simple_value)
+
+    return mean(cumulative_rewards[-3:])
 
 # Paths: Config files and unity env.
 path_to_working_dir = "python/basic_rl_env"
@@ -73,40 +90,47 @@ with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
     config = yaml.safe_load(config_file)
 
 # Variables for control flow.
-use_build = True
-no_test = True
+use_build_env = False
+production = False
+generate_summary = False
 
 message_for_log = None
 # Check the loaded config for user specified modes.
 if "userconfig" in config:
     if config["userconfig"] is not None:
-        # Build or editor?
-        if "mode" in config["userconfig"]:
-            if any(s in config["userconfig"]["mode"] for s in ["no-build", "editor"]):
-                use_build = False
-        # Test mode requested?
-        if "test" in config["userconfig"]:
-            if config["userconfig"]["test"]:
-                no_test = False
+        # Build env requested?
+        if "build" in config["userconfig"]:
+            if config["userconfig"]["build"]:
+                use_build_env = True
+
+        # Production mode requested?
+        if "production" in config["userconfig"]:
+            if config["userconfig"]["production"]:
+                production = True
+        
+        # Summary requested?
+        if "summary" in config["userconfig"]:
+            if config["userconfig"]["summary"]:
+                generate_summary = True
         
         # Get the message from the config file to be logged.
         if "message" in config["userconfig"]:
             tmp_message = config["userconfig"]["message"]
             if tmp_message is not None and isinstance(tmp_message, str):
                 message_for_log = tmp_message
-    
-    # Mode information no longer needed.
+
+    # User config information no longer needed.
     config.pop("userconfig")
 
 # Logging config.
-if no_test:
+if production:
     logging.basicConfig(
         filename=Path(f"./logs/{get_run_id()}_search.log").absolute(),
         level=logging.INFO
         )
 
-# Logg the message from the config file.
-if message_for_log is not None:
+# Log the message from the config file.
+if production and message_for_log is not None:
     logging.info(f"Note: {message_for_log}")
 
 hyperparamters = config['behaviors']['RollerAgent']['hyperparameters']
@@ -114,32 +138,28 @@ network = config['behaviors']['RollerAgent']['network_settings']
 
 # In case memory is configured in yaml file:
 # Handle memory options seperate from network settings.
-memory_key_value, memory_comb = [()], [()]
+memory_comb = [()]
 memory = None
 if "memory" in network:
     memory = config['behaviors']['RollerAgent']['network_settings']['memory']
     network.pop('memory')
-    memory_key_value, memory_comb = get_parameter_combinations(memory)
+    memory_comb = get_parameter_combinations(memory)
 
-hyper_key_value, hyper_comb = get_parameter_combinations(hyperparamters)
-network_key_value, network_comb = get_parameter_combinations(network)
+hyper_comb = get_parameter_combinations(hyperparamters)
+network_comb = get_parameter_combinations(network)
 
-use_summary = False
-
-if use_summary:
-    path_to_summary_file = f"./summaries/{get_run_id()}.csv"
-    with open(Path(path_to_summary_file).absolute(), mode="w", newline="") as summary_file:
-        summary_writer = csv.writer(summary_file)
-        headings = []
-        for section in [memory_key_value, hyper_key_value, network_key_value]:
-            for entry in section:
-                headings.append(list(entry.keys())[0])
-        headings.append('5_last_cumulative_reward')
-        summary_writer.writerow(headings)
+# Prepare summary.
+if generate_summary:
+    headings = []
+    for section in [hyper_comb[0], network_comb[0], memory_comb[0]]:
+        for entry in section:
+            headings.append(list(entry.keys())[0])
+    summary_dict = {}
 
 # Get the number of runs the current config is goint to produce.
 num_count = len(memory_comb) * len(network_comb) * len(hyper_comb)
-logging.info(f"{num_count} runs are going to be started.")
+if production:
+    logging.info(f"{num_count} runs are going to be started.")
 
 # Store run durations.
 run_durations = []
@@ -154,25 +174,26 @@ for hyperparameter_option in hyper_comb:
             # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
             run_id = get_run_id()
             path_to_temp_config_file = f"./configs/{run_id}.yaml"
-
-            logging.info(f"[{run_id}] New run started with id {run_id}.")
+            
+            if production:
+                logging.info(f"[{run_id}] New run started with id {run_id}.")
 
             # Get copy of the base config as loaded.
             tmp_config = dict.copy(config)
 
-            tmp_hyper = update_parameter(hyperparamters, hyper_key_value, hyperparameter_option, run_id)
+            tmp_hyper = update_parameter(hyperparamters, hyperparameter_option, run_id)
             tmp_config['behaviors']['RollerAgent']['hyperparameters'] = tmp_hyper
 
-            tmp_network = update_parameter(network, network_key_value, network_option, run_id)
+            tmp_network = update_parameter(network, network_option, run_id)
             tmp_config['behaviors']['RollerAgent']['network_settings'] = tmp_network
             
             # Memory might not be specified in the yaml file.
             if memory is not None:
-                tmp_memory = update_parameter(memory, memory_key_value, memory_option, run_id)
+                tmp_memory = update_parameter(memory, memory_option, run_id)
                 tmp_config['behaviors']['RollerAgent']['network_settings']['memory'] = tmp_memory
 
             # Save modified config as yaml file.
-            if no_test:
+            if production:
                 with open(Path(path_to_temp_config_file).absolute(), mode="w") as new_file:
                     yaml.dump(tmp_config, new_file)
             
@@ -180,43 +201,56 @@ for hyperparameter_option in hyper_comb:
             # Bypass if in test mode.
             return_code = 0
             start_time = time.time()
-            if no_test:
-                if use_build:
+            run_name = f"{run_id}_basicenv_ppo_auto"
+            if production:
+                if use_build_env:
+                    run_name = f"{run_id}_basicenv_ppo_auto"
                     # Start ml-algents using build version of unity.
                     return_code = os.system(
                         f"mlagents-learn \
                         {Path(path_to_temp_config_file).absolute()} \
                         --env={Path(path_to_unity_env).absolute()} \
-                        --run-id={run_id}_basicenv_ppo_auto \
+                        --run-id={run_name}\
                         --torch-device cpu \
                         --force"
                     )
                 else:
                     # Start ml-agents in the unity editor. Requires user interaction.
+                    run_name = f"{run_id}_basicenv_ppo_manual"
                     return_code = os.system(
                         f"mlagents-learn \
                         {Path(path_to_temp_config_file).absolute()} \
-                        --run-id={run_id}_basicenv_ppo_manual \
+                        --run-id={run_name} \
                         --torch-device cpu \
                         --force"
                     )
+
             end_time = time.time()
-            logging.info(f"[{run_id}] return code = {return_code}.")
+            if production:
+                logging.info(f"[{run_id}] return code = {return_code}.")
 
             # Logging and error code handling.
             if return_code != 0:
-                logging.warning(f"[{run_id}] error code.")
+                if production:
+                    logging.warning(f"[{run_id}] error code.")
             else:
                 run_durations.append(end_time - start_time)
-                logging.info(f"[{run_id}] Duration: {int(run_durations[-1])} sec.")
-                logging.info(f"[{run_id}] Avg. duration: {int(mean(run_durations))} sec.")
                 duration = (num_count - run_counter) * mean(run_durations)
-                logging.info(f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}.")
+
+                if production:
+                    logging.info(f"[{run_id}] Duration: {int(run_durations[-1])} sec.")
+                    logging.info(f"[{run_id}] Avg. duration: {int(mean(run_durations))} sec.")
+                    logging.info(f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}.")
                 
-                if use_summary:
-                    with open(Path(path_to_summary_file).absolute(), mode="a", newline="") as summary_file:
-                        summary_writer = csv.writer(summary_file, delimiter="")
-                        #summary_writer.writerow
+                if generate_summary:
+                    summary_dict[run_id] = {}
+                    for entry in [*network_option, *network_option, *memory_option]:
+                        summary_dict[run_id].update(entry)
 
+                    summary_dict[run_id]['3_last_cumulative_reward'] = get_mean_reward(run_name)
 
-            
+if generate_summary:
+    path_to_summary_file = f"./summaries/{get_run_id()}.json"
+    with open(Path(path_to_summary_file).absolute(), mode="w", newline="") as summary_file:
+        json.dump(summary_dict, summary_file, indent=4)
+

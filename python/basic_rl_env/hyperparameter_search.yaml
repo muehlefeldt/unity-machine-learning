@@ -1,12 +1,16 @@
 userconfig:
-  # Options: 
-  # "no-build" or "editor" for manual mode. Runs in Unity editor.
-  # "build" mode to run with pre build unity version.
-  mode: build
-  # "test" mode bypasses ml-agents execution. Must be bool.
-  test: false
+  # Use build env? false for editor.
+  build: false
+
+  # Production mode? false for test run.
+  production: false
+
+  # "true" to generate summary file.
+  summary: true
+
   # Provide message for the log file for better traceability.
-  message: "Test collision handling. Based on run 221 config."
+  message: "Test script. Was rewritten for summary."
+
 behaviors:
   RollerAgent:
     trainer_type: ppo
@@ -23,8 +27,8 @@ behaviors:
       epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: [128, 256, 384]
-      num_layers: [3, 4]
+      hidden_units: 256
+      num_layers: 3
       memory:
         memory_size: 256
         sequence_length: 64
@@ -32,6 +36,6 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 500000
+    max_steps: 20000
     time_horizon: 64
     summary_freq: 10000
