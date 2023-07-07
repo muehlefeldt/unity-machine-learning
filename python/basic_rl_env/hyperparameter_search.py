@@ -1,15 +1,16 @@
-import yaml
-import os
-import logging
 import itertools
-
-import time
 import json
-
+import logging
+import os
+import time
+from collections import OrderedDict
 from pathlib import Path
 from statistics import mean
-from tensorflow.python.summary.summary_iterator import summary_iterator
-from collections import OrderedDict
+
+import tensorflow as tf
+import yaml
+from tensorflow.core.util import event_pb2
+from tensorflow.data import TFRecordDataset
 
 
 # Get the run id (number) based on past runs in the result folder.
@@ -23,7 +24,7 @@ def get_run_id() -> int:
 
 def get_parameter_combinations(parameters) -> tuple[list, list]:
     """
-    Get the parameter combinations. 
+    Get the parameter combinations.
     """
     key_values = []
     for key in parameters:
@@ -64,26 +65,34 @@ def update_parameter(base: dict, option: tuple, id_num: int) -> dict:
     return tmp
 
 
-def get_number_of_runs(list_of_key_values: list[dict]) -> int:
-    num_runs = 1
-    for entry in list_of_key_values:
-        num_runs = entry.keys()[0]
-        print()
-
-    return num_runs
+# def get_number_of_runs(list_of_key_values: list[dict]) -> int:
+#    """ Get the number of runs to be performed. Calculation based on the """
+#    num_runs = 1
+#    for entry in list_of_key_values:
+#        num_runs = entry.keys()[0]
+#        print()
+#
+#    return num_runs
 
 
 def get_mean_reward(name: str) -> float:
+    """Get the mean reward over the last 5 cumulative rewards entries in the tfevents file."""
     cumulative_rewards = []
+
+    # Get the tfevents file associated with the current run.
     path_to_result_folder = f"./results/{name}/RollerAgent/"
     path_to_result = sorted(Path(path_to_result_folder).glob("events.out.tfevents.*"))[0]
 
-    for event in summary_iterator(str(path_to_result)):
-        for v in event.summary.value:
-            if v.tag == "Environment/Cumulative Reward":
-                cumulative_rewards.append(v.simple_value)
+    # Using tensorflow to access the tfevents data.
+    datarecord = TFRecordDataset(str(path_to_result))
+    for batch in datarecord:
+        event = event_pb2.Event.FromString(batch.numpy())
+        for value in event.summary.value:
+            if value.tag == "Environment/Cumulative Reward":
+                cumulative_rewards.append(value.simple_value)
 
-    return mean(cumulative_rewards[-3:])
+    # Return mean of the last 5 recorded cummulative rewards.
+    return mean(cumulative_rewards[-5:])
 
 
 # Paths: Config files and unity env.
@@ -169,7 +178,7 @@ if generate_summary:
 # Get the number of runs the current config is goint to produce.
 num_count = len(memory_comb) * len(network_comb) * len(hyper_comb)
 if production:
-    logging.info(f"{num_count} runs are going to be started.")
+    logging.info("%i runs are going to be started.", num_count)
 
 # Store run durations.
 run_durations = []
@@ -266,7 +275,7 @@ if generate_summary:
     with open(Path(path_to_summary_file).absolute(), mode="w", newline="") as summary_file:
         sorted_dict = OrderedDict(
             sorted(
-                summary_dict.items(), key=lambda v: v[1]["3_last_cumulative_reward"], reverse=True
+                summary_dict.items(), key=lambda v: v[1]["5_last_cumulative_reward"], reverse=True
             )
         )
         json.dump(sorted_dict, summary_file, indent=4)

@@ -9,7 +9,7 @@ userconfig:
   summary: true
 
   # Provide message for the log file for better traceability.
-  message: "Real run. Test beta and summary."
+  message: "Test script and tf usage."
 
 behaviors:
   RollerAgent:
@@ -36,6 +36,6 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 200000
+    max_steps: 10000
     time_horizon: 64
     summary_freq: 10000
