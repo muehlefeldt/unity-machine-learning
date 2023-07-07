@@ -237,7 +237,8 @@ for hyperparameter_option in hyper_comb:
                         {Path(path_to_temp_config_file).absolute()} \
                         --env={Path(path_to_unity_env).absolute()} \
                         --run-id={run_name}\
-                        --num-envs=2\
+                        --num-envs=2 \
+                        --no-graphics \
                         --torch-device cpu \
                         --force"
                     )
@@ -248,7 +249,8 @@ for hyperparameter_option in hyper_comb:
                         f"mlagents-learn \
                         {Path(path_to_temp_config_file).absolute()} \
                         --run-id={run_name} \
-                        --num-envs=2\
+                        --num-envs=2 \
+                        --no-graphics \
                         --torch-device cpu \
                         --force"
                     )
