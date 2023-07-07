@@ -4,3 +4,5 @@ protobuf==3.20
 numpy==1.21.2
 mlagents==0.30.0
 ipykernel
+black
+pylint

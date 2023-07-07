@@ -1,14 +1,16 @@
-from pathlib import Path
-from statistics import mean
-from tensorflow.python.summary.summary_iterator import summary_iterator
-from collections import OrderedDict
 import yaml
 import os
 import logging
 import itertools
-import sys
+
 import time
 import json
+
+from pathlib import Path
+from statistics import mean
+from tensorflow.python.summary.summary_iterator import summary_iterator
+from collections import OrderedDict
+
 
 # Get the run id (number) based on past runs in the result folder.
 def get_run_id() -> int:
@@ -18,8 +20,11 @@ def get_run_id() -> int:
         numbers.append(int(entry.split("_")[0]))
     return max(numbers) + 1
 
-# Get the parameter combinations.
+
 def get_parameter_combinations(parameters) -> tuple[list, list]:
+    """
+    Get the parameter combinations. 
+    """
     key_values = []
     for key in parameters:
         # Check if value for key is a list. If so, store key value pair.
@@ -29,21 +34,22 @@ def get_parameter_combinations(parameters) -> tuple[list, list]:
                 new.append({key: entry})
             key_values.append(new)
 
-    
     combinations = list(itertools.product(*key_values))
     if production:
-        logging.info(f"Found {len(key_values)} dynamic values.")
+        logging.info("Found %i dynamic values.", len(key_values))
     return combinations
 
-# Update key value pairs in temporary dict using the key values list and the current option.
-# The run id is only used for logging purposes.
-def update_parameter(base: dict, option: tuple, id: int) -> dict:
+
+def update_parameter(base: dict, option: tuple, id_num: int) -> dict:
+    """
+    Update key value pairs in temporary dict using the key values list and the current option.
+    The run id is only used for logging purposes.
+    """
     # Work on copy of the base config values only.
     tmp = dict.copy(base)
 
     # Dynamic key value pairs are updated in the tmp dict.
     for entry in option:
-
         # Get the key for the entry in the option.
         key = list(entry.keys())[0]
 
@@ -52,9 +58,11 @@ def update_parameter(base: dict, option: tuple, id: int) -> dict:
 
         # Update the temporary dict.
         tmp[key] = value
-        
-        logging.info(f"[{id}] {key} = {value}.")
+
+        if production:
+            logging.info(f"[{id_num}] {key} = {value}.")
     return tmp
+
 
 def get_number_of_runs(list_of_key_values: list[dict]) -> int:
     num_runs = 1
@@ -63,6 +71,7 @@ def get_number_of_runs(list_of_key_values: list[dict]) -> int:
         print()
 
     return num_runs
+
 
 def get_mean_reward(name: str) -> float:
     cumulative_rewards = []
@@ -76,6 +85,7 @@ def get_mean_reward(name: str) -> float:
 
     return mean(cumulative_rewards[-3:])
 
+
 # Paths: Config files and unity env.
 path_to_working_dir = "python/basic_rl_env"
 path_to_config_file = "./hyperparameter_search.yaml"
@@ -83,7 +93,7 @@ path_to_unity_env = "./build"
 path_to_log_dir = "./logs"
 
 # Ensure correct working dir.
-if (os.getcwd() != Path(path_to_working_dir).absolute()):
+if os.getcwd() != Path(path_to_working_dir).absolute():
     os.chdir(Path(path_to_working_dir).absolute())
 
 # Open the base config file.
@@ -108,12 +118,12 @@ if "userconfig" in config:
         if "production" in config["userconfig"]:
             if config["userconfig"]["production"]:
                 production = True
-        
+
         # Summary requested?
         if "summary" in config["userconfig"]:
             if config["userconfig"]["summary"]:
                 generate_summary = True
-        
+
         # Get the message from the config file to be logged.
         if "message" in config["userconfig"]:
             tmp_message = config["userconfig"]["message"]
@@ -126,24 +136,23 @@ if "userconfig" in config:
 # Logging config.
 if production:
     logging.basicConfig(
-        filename=Path(f"./logs/{get_run_id()}_search.log").absolute(),
-        level=logging.INFO
-        )
+        filename=Path(f"./logs/{get_run_id()}_search.log").absolute(), level=logging.INFO
+    )
 
 # Log the message from the config file.
 if production and message_for_log is not None:
     logging.info(f"Note: {message_for_log}")
 
-hyperparamters = config['behaviors']['RollerAgent']['hyperparameters']
-network = config['behaviors']['RollerAgent']['network_settings']
+hyperparamters = config["behaviors"]["RollerAgent"]["hyperparameters"]
+network = config["behaviors"]["RollerAgent"]["network_settings"]
 
 # In case memory is configured in yaml file:
 # Handle memory options seperate from network settings.
 memory_comb = [()]
 memory = None
 if "memory" in network:
-    memory = config['behaviors']['RollerAgent']['network_settings']['memory']
-    network.pop('memory')
+    memory = config["behaviors"]["RollerAgent"]["network_settings"]["memory"]
+    network.pop("memory")
     memory_comb = get_parameter_combinations(memory)
 
 hyper_comb = get_parameter_combinations(hyperparamters)
@@ -175,7 +184,7 @@ for hyperparameter_option in hyper_comb:
             # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
             run_id = get_run_id()
             path_to_temp_config_file = f"./configs/{run_id}.yaml"
-            
+
             if production:
                 logging.info(f"[{run_id}] New run started with id {run_id}.")
 
@@ -183,21 +192,21 @@ for hyperparameter_option in hyper_comb:
             tmp_config = dict.copy(config)
 
             tmp_hyper = update_parameter(hyperparamters, hyperparameter_option, run_id)
-            tmp_config['behaviors']['RollerAgent']['hyperparameters'] = tmp_hyper
+            tmp_config["behaviors"]["RollerAgent"]["hyperparameters"] = tmp_hyper
 
             tmp_network = update_parameter(network, network_option, run_id)
-            tmp_config['behaviors']['RollerAgent']['network_settings'] = tmp_network
-            
+            tmp_config["behaviors"]["RollerAgent"]["network_settings"] = tmp_network
+
             # Memory might not be specified in the yaml file.
             if memory is not None:
                 tmp_memory = update_parameter(memory, memory_option, run_id)
-                tmp_config['behaviors']['RollerAgent']['network_settings']['memory'] = tmp_memory
+                tmp_config["behaviors"]["RollerAgent"]["network_settings"]["memory"] = tmp_memory
 
             # Save modified config as yaml file.
             if production:
                 with open(Path(path_to_temp_config_file).absolute(), mode="w") as new_file:
                     yaml.dump(tmp_config, new_file)
-            
+
             # Execute ml-agents using a compiled environment.
             # Bypass if in test mode.
             return_code = 0
@@ -241,21 +250,23 @@ for hyperparameter_option in hyper_comb:
                 if production:
                     logging.info(f"[{run_id}] Duration: {int(run_durations[-1])} sec.")
                     logging.info(f"[{run_id}] Avg. duration: {int(mean(run_durations))} sec.")
-                    logging.info(f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}.")
-                
+                    logging.info(
+                        f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}."
+                    )
+
                 if generate_summary:
                     summary_dict[run_id] = {}
                     for entry in [*hyperparameter_option, *network_option, *memory_option]:
                         summary_dict[run_id].update(entry)
 
-                    summary_dict[run_id]['3_last_cumulative_reward'] = get_mean_reward(run_name)
+                    summary_dict[run_id]["3_last_cumulative_reward"] = get_mean_reward(run_name)
 
 if generate_summary:
     path_to_summary_file = f"./summaries/{get_run_id()}.json"
     with open(Path(path_to_summary_file).absolute(), mode="w", newline="") as summary_file:
-        sorted_dict = OrderedDict(sorted(
-            summary_dict.items(),
-            key=lambda v: v[1]['3_last_cumulative_reward'],
-            reverse=True))
+        sorted_dict = OrderedDict(
+            sorted(
+                summary_dict.items(), key=lambda v: v[1]["3_last_cumulative_reward"], reverse=True
+            )
+        )
         json.dump(sorted_dict, summary_file, indent=4)
-
