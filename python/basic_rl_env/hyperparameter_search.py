@@ -134,7 +134,7 @@ if "userconfig" in config:
         if "summary" in config["userconfig"]:
             if config["userconfig"]["summary"]:
                 generate_summary = True
-        
+
         if "num_env" in config["userconfig"]:
             if isinstance(config["userconfig"]["num_env"], int):
                 num_env = config["userconfig"]["num_env"]

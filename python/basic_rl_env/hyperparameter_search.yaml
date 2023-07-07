@@ -10,15 +10,15 @@ userconfig:
   num_env: 2
 
   # Provide message for the log file for better traceability.
-  message: "Performance test with 32 training areas. 2 build env."
+  message: "Runs over night."
 
 behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 256
-      buffer_size: 10240
-      learning_rate: 1e-4
+      batch_size: [64, 128, 256]
+      buffer_size: [10240, 51200, 102400, 204800]
+      learning_rate: [1e-5, 1e-4, 1e-3]
       beta: 5e-3
       epsilon: 0.2
       lambd: 0.925
@@ -28,15 +28,15 @@ behaviors:
       epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: 256
+      hidden_units: [128, 256, 384]
       num_layers: 4
       memory:
-        memory_size: 64
-        sequence_length: 96
+        memory_size: 128
+        sequence_length: 64
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 0.5e6
+    max_steps: 1e6
     time_horizon: 128
     summary_freq: 10000
