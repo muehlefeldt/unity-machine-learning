@@ -10,7 +10,7 @@ userconfig:
   num_env: 1
 
   # Provide message for the log file for better traceability.
-  message: "Performance test with 8 training areas. 1 build env."
+  message: "Performance test with 32 training areas. 1 build env."
 
 behaviors:
   RollerAgent:
