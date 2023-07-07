@@ -243,6 +243,7 @@ for hyperparameter_option in hyper_comb:
                         --env={Path(path_to_unity_env).absolute()} \
                         --run-id={run_name}\
                         --num-envs={num_env} \
+                        --train \
                         --no-graphics \
                         --torch-device cpu \
                         --force"
@@ -255,6 +256,7 @@ for hyperparameter_option in hyper_comb:
                         {Path(path_to_temp_config_file).absolute()} \
                         --run-id={run_name} \
                         --num-envs={num_env} \
+                        --train \
                         --no-graphics \
                         --torch-device cpu \
                         --force"
