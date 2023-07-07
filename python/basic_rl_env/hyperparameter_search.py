@@ -115,6 +115,7 @@ use_build_env = False
 production = False
 generate_summary = False
 
+num_env = 1
 message_for_log = None
 # Check the loaded config for user specified modes.
 if "userconfig" in config:
@@ -133,6 +134,10 @@ if "userconfig" in config:
         if "summary" in config["userconfig"]:
             if config["userconfig"]["summary"]:
                 generate_summary = True
+        
+        if "num_env" in config["userconfig"]:
+            if isinstance(config["userconfig"]["num_env"], int):
+                num_env = config["userconfig"]["num_env"]
 
         # Get the message from the config file to be logged.
         if "message" in config["userconfig"]:
@@ -237,7 +242,7 @@ for hyperparameter_option in hyper_comb:
                         {Path(path_to_temp_config_file).absolute()} \
                         --env={Path(path_to_unity_env).absolute()} \
                         --run-id={run_name}\
-                        --num-envs=2 \
+                        --num-envs={num_env} \
                         --no-graphics \
                         --torch-device cpu \
                         --force"
@@ -249,7 +254,7 @@ for hyperparameter_option in hyper_comb:
                         f"mlagents-learn \
                         {Path(path_to_temp_config_file).absolute()} \
                         --run-id={run_name} \
-                        --num-envs=2 \
+                        --num-envs={num_env} \
                         --no-graphics \
                         --torch-device cpu \
                         --force"
