@@ -38,7 +38,7 @@ public class InnerWallCreator : MonoBehaviour
         m_GameObjects.Add(newCube);
     }
 
-    private float m_DoorWidth = 1.5f;
+    public float m_DoorWidth = 1.5f;
     private float m_DoorFrameHeight = 0.5f;
 
     private Vector3 CreateDoor(Vector3 coordDoor)

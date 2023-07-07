@@ -11,3 +11,6 @@
 # Longtrem plans
 * Increase complexity of the environment.
 * Landing on the target.
+
+# Performance
+* How many parallel env? 4 are too many. 2 maybe ok.
