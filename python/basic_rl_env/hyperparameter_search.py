@@ -13,8 +13,9 @@ from tensorflow.core.util import event_pb2
 from tensorflow.data import TFRecordDataset
 
 
-# Get the run id (number) based on past runs in the result folder.
 def get_run_id() -> int:
+    """Get the run id (number) based on past runs in the result folder.
+    If called multiple times, the result will be an increased number."""
     dir_content = os.listdir(Path("./results/").absolute())
     numbers = []
     for entry in dir_content:
@@ -106,7 +107,7 @@ if os.getcwd() != Path(path_to_working_dir).absolute():
     os.chdir(Path(path_to_working_dir).absolute())
 
 # Open the base config file.
-with open(Path(path_to_config_file).absolute(), mode="r") as config_file:
+with open(Path(path_to_config_file).absolute(), mode="r", encoding="utf8") as config_file:
     config = yaml.safe_load(config_file)
 
 # Variables for control flow.
@@ -142,15 +143,19 @@ if "userconfig" in config:
     # User config information no longer needed.
     config.pop("userconfig")
 
+# Get the id of the first run. Used for logging and summary.
+ID_FIRST_RUN = get_run_id()
+
 # Logging config.
 if production:
     logging.basicConfig(
-        filename=Path(f"./logs/{get_run_id()}_search.log").absolute(), level=logging.INFO
+        filename=Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute(),
+        level=logging.INFO,
     )
 
 # Log the message from the config file.
 if production and message_for_log is not None:
-    logging.info(f"Note: {message_for_log}")
+    logging.info("Note: %s", message_for_log)
 
 hyperparamters = config["behaviors"]["RollerAgent"]["hyperparameters"]
 network = config["behaviors"]["RollerAgent"]["network_settings"]
@@ -213,7 +218,9 @@ for hyperparameter_option in hyper_comb:
 
             # Save modified config as yaml file.
             if production:
-                with open(Path(path_to_temp_config_file).absolute(), mode="w") as new_file:
+                with open(
+                    Path(path_to_temp_config_file).absolute(), mode="w", encoding="utf8"
+                ) as new_file:
                     yaml.dump(tmp_config, new_file)
 
             # Execute ml-agents using a compiled environment.
@@ -265,17 +272,24 @@ for hyperparameter_option in hyper_comb:
 
                 if generate_summary:
                     summary_dict[run_id] = {}
-                    for entry in [*hyperparameter_option, *network_option, *memory_option]:
+                    for entry in [
+                        *hyperparameter_option,
+                        *network_option,
+                        *memory_option,
+                    ]:
                         summary_dict[run_id].update(entry)
 
-                    summary_dict[run_id]["3_last_cumulative_reward"] = get_mean_reward(run_name)
+                    summary_dict[run_id]["last_cumulative_reward"] = get_mean_reward(run_name)
 
+# Create a summary file to provide an overview of used parameters and resulting rewards.
 if generate_summary:
-    path_to_summary_file = f"./summaries/{get_run_id()}.json"
-    with open(Path(path_to_summary_file).absolute(), mode="w", newline="") as summary_file:
+    path_to_summary_file = f"./summaries/{ID_FIRST_RUN}.json"
+    with open(
+        Path(path_to_summary_file).absolute(), mode="w", newline="", encoding="utf8"
+    ) as summary_file:
+        # Sort the dict created during the runs.
+        # The saved file shall be sorted by the highest cummulativ rewards.
         sorted_dict = OrderedDict(
-            sorted(
-                summary_dict.items(), key=lambda v: v[1]["5_last_cumulative_reward"], reverse=True
-            )
+            sorted(summary_dict.items(), key=lambda v: v[1]["last_cumulative_reward"], reverse=True)
         )
         json.dump(sorted_dict, summary_file, indent=4)

@@ -15,27 +15,27 @@ behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 128
-      buffer_size: 10240
-      learning_rate: 1e-3
-      beta: [1e-4, 1e-3, 5e-3, 1e-2]
-      epsilon: 0.2
+      batch_size: [128, 256, 384]
+      buffer_size: [10240, 20480, 40960]
+      learning_rate: [1e-5, 1e-4, 0.5e-3, 1e-3]
+      beta: [1e-4, 5e-3, 1e-3]
+      epsilon: [0.1, 0.2, 0.3]
       lambd: 0.925
-      num_epoch: 3
+      num_epoch: [3, 4]
       learning_rate_schedule: linear
       beta_schedule: constant
       epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: 256
-      num_layers: 3
+      hidden_units: [128, 256, 384]
+      num_layers: [3, 4]
       memory:
-        memory_size: 256
-        sequence_length: 64
+        memory_size: [64, 128, 256]
+        sequence_length: [64, 96, 128]
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 10000
+    max_steps: 1e6
     time_horizon: 64
     summary_freq: 10000
