@@ -1,4 +1,7 @@
 results/
+logs/
+configs/
+summaries/
 *.zip
 *.pdf
 current.yaml
@@ -132,3 +135,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+unity/basic_rl_environment/Assets/RollerAgent.onnx
+unity/basic_rl_environment/Assets/RollerAgent.onnx.meta

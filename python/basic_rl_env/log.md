@@ -136,10 +136,181 @@ learning rate changes to reward signifcant?
 * Test without build. Only in Unity editor.
 * Observation: Runs using build executable are way faster.
 
+## 52
+* Fix: Training wareas wrong positions.
+* Rerun of 51 with same config.
+* Uses build env of unity.
+* Result: Looks better comp. to 51.
+* Error: Run was terminated due to waiting state of worker.
 
-# Next
-* Walls.
+## 53
+* Rerun of 52 due to earlier error.
 
-# Longterem plans
-* Merge both git repositories for easier handling. Problem with dependency?
-* Reintroduce LSTM and test different step counts and options.
+## 54 till 73
+* Parameter search using script.
+* Best results from runs 60 and 66.
+
+## 96
+* More training areas.
+* Uses best parameters from auto runs 76 to 95. Uses same config as run 78.
+* Made error: Wrong beta value used.
+
+## 97
+* Slight change of reward handling in case of collision.
+  * Add -1 and not set to -1.
+* Still uses the wrong beta value!
+
+## 98
+* Rerun of 97 with correct beta value.
+* Target: Compare to run 78.
+* Comparison to run 78: Results differ. This run does not follow 78 after 800k steps in terms of reward.
+* Speculation on the reason: Reward function changed?
+* Need to compare configs between 78 and this run.
+* Interesting observation: episode length between the the runs is comparable.
+
+## 99
+* Increased step number.
+* Terminated with error.
+
+## 100
+* Rerun of 99 after rebuild.
+
+## 103
+* Discrete action test run.
+* Uses parameter as 102 but changes to buffer size.
+  * Docs recommend reduction in buffer size.
+* Beta value to high? Or good? Is now 1e-2. Was way smaller before.
+  * More tests needed with beta value.
+
+## 108
+* Test of script.
+
+## 109
+* Very first LSTM run.
+* Aborted run. 
+
+## 111
+* Aborted.
+
+## 115
+* Not stable. memory_size = 32. sequence_length = 128.
+
+## 119
+* Not stable. memory_size = 64. sequence_length = 128.
+
+## 122
+* Looks good.
+
+## 127
+* Test random location of target.
+* Uses build.
+* Bad result clean run.
+
+## 128
+* Standard run w/o build.
+* Manual run.
+* Looks good at least.
+* Result still no good but used same config as 127.
+
+## 129 and 130
+* Test of rewritten script.
+
+## 131 and following
+* Automated runs.
+* Reward function may need tweaking.
+* Use 154 as base config.
+
+## 161
+* Fix: Target position set to world.
+
+## 162
+* First try of run in editor using navmesh.
+* Performance evaluation:
+  * Performance severly compromised.
+
+## 163
+* Switched the wall navmesh components to navmesh obsticale.
+* Walls were static navmesh set.
+* Performance better but still restricted.
+
+## 164, 165
+* Same as 163 but using build.
+* Question: Performance comparison with previous runs.
+* Navmesh maybe to complex.
+
+# 167
+* Test of rewritten pathfinding.
+* Again check in the editor first.
+* Performance seems better -> Check again with compiled build.
+
+# 168
+* Same as 167 but compiled build.
+* Performance: First 10k steps take 300 secs. Afterwards significant speedup.
+* Terminated.
+
+# 169
+* Reward function introduced.
+* Test run in the editor.
+
+# 170
+* Again run in editor.
+* Learning progress not stable.
+* Fix: One AddReward() changed to SetReward().
+* Question remains: How does a good reward function look here?
+
+# 171
+* Run with revised reward function.
+  * Reward 0f if distance to target increases.
+
+# 172
+* Not nice result.
+* Target only found once.
+
+# 173
+* Reward recuced. beta = 0.5f.
+
+# 174
+* Editor was not started in time.
+* Disregard.
+
+# 175
+* Check more tensorboard data charts.
+
+# 176
+* Further change to tensorboard recording.
+
+# 177 and more
+* Auto run.
+* Check in the morning.
+
+# 201
+* Revised reward:
+  * Closer to target: +0.1
+  * Farther away from target: -0.1
+* Run in editor.
+* Not good results.
+
+# 202 following
+* Script test
+* Disregard
+ 
+# 210 and following
+* Script test again
+
+# 212 and following
+* Test with reward function revised.
+  * -0.2 is worse distance.
+  * +0.1 if better
+
+# 220
+* Test python env.
+* Repeat of run 215.
+
+# 221 and following
+* Large number of runs.
+* Build used.
+* Performance not sufficient.
+* 221 shows ok result.
+
+# 247
+* Test of fixed Collider and step counter.

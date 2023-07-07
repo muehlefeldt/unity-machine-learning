@@ -1,0 +1,22 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.formatting.provider": "none",
+    "python.formatting.blackArgs": [
+        "--line-length",
+        "100"
+    ],
+    "editor.rulers": [
+        100
+    ],
+    
+    "editor.formatOnPaste": false,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "files.autoSave": "afterDelay",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    }
+}
