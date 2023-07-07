@@ -9,7 +9,7 @@ userconfig:
   summary: true
 
   # Provide message for the log file for better traceability.
-  message: "Test script and tf usage."
+  message: "Large number of runs. Basic grid search with various parameters."
 
 behaviors:
   RollerAgent:
@@ -36,6 +36,6 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 1e6
+    max_steps: 0.5e6
     time_horizon: 64
     summary_freq: 10000

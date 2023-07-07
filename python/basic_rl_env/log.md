@@ -314,3 +314,11 @@ learning rate changes to reward signifcant?
 
 # 247
 * Test of fixed Collider and step counter.
+
+# before 340
+* Test runs to evaluate the script. Summary was introduced.
+
+# 340 and following
+* Large number of runs.
+* 2 build env started during training.
+* Check first run and evaluate.
