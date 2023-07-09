@@ -20,6 +20,8 @@ def get_run_id() -> int:
     numbers = []
     for entry in dir_content:
         numbers.append(int(entry.split("_")[0]))
+    if not numbers:
+        return 0
     return max(numbers) + 1
 
 
