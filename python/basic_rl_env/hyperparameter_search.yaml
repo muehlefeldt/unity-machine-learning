@@ -34,7 +34,7 @@ behaviors:
       hidden_units: [128, 256, 384]
       num_layers: 4
       memory:
-        memory_size: 128
+        memory_size: [64, 128]
         sequence_length: 64
     reward_signals:
       extrinsic:
