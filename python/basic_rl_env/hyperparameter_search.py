@@ -26,6 +26,7 @@ def get_run_id() -> int:
 
 
 def get_dynamic_parameters(base_config: list[dict]) -> list:
+    """Get all dynamic parameters from the config dicts."""
     key_values = []
     for section in base_config:
         parameters = section[list(section.keys())[0]]
@@ -41,25 +42,14 @@ def get_dynamic_parameters(base_config: list[dict]) -> list:
 
 
 def get_parameter_combinations(parameters: list[list]) -> list[tuple]:
-    """
-    Get the parameter combinations.
-    """
-    # key_values = []
-    # for key in parameters:
-    # Check if value for key is a list. If so, store key value pair.
-    #    if isinstance(parameters[key], list):
-    #        new = []
-    #        for entry in parameters[key]:
-    #            new.append({"network": {key: entry}})
-    #        key_values.append(new)
-    # test = *parameters
-    combinations = list(itertools.product(*parameters))
+    """Get the parameter combinations."""
+    possile_combinations = list(itertools.product(*parameters))
     if production:
-        logging.info("Found %i value combinations.", len(combinations))
-    return combinations
+        logging.info("Found %i value combinations.", len(possile_combinations))
+    return possile_combinations
 
 
-def update_parameters_with_option(base: dict, option: tuple, id_num: int):
+def update_parameters_with_option(base: dict, para_option: tuple, id_num: int):
     """
     Update key value pairs in temporary dict using the key values list and the current option.
     The run id is only used for logging purposes.
@@ -67,22 +57,25 @@ def update_parameters_with_option(base: dict, option: tuple, id_num: int):
     work_dict = base["behaviors"]["RollerAgent"]
 
     # Dynamic key value pairs are updated in the tmp dict.
-    for entry in option:
-        # Get the key for the entry in the option.
+    for entry in para_option:
+        # Get the key of the section containing the parameter.
         entry_key = list(entry.keys())[0]
+
+        # Get the key of the parameter.
         para_key = list(entry[entry_key].keys())[0]
 
-        # Value for the given key.
+        # Get value of the parameter from the current option.
         value = entry[entry_key][para_key]
 
+        # If memory parameter change location to network settings.
+        # Otherwise write value to selected section and parameter.
         if entry_key == "memory":
             work_dict["network_settings"][entry_key][para_key] = value
         else:
-            # Update the temporary dict.
             work_dict[entry_key][para_key] = value
 
         if production:
-            logging.info(f"[{id_num}] {para_key} = {value}.")
+            logging.info("[%i] %s = %s.", id_num, para_key, value)
     return
 
 
@@ -193,22 +186,11 @@ memory_comb = [()]
 memory = {"memory": {}}
 if "memory" in network["network_settings"]:
     memory = {"memory": config["behaviors"]["RollerAgent"]["network_settings"]["memory"]}
-    # network["network_settings"].pop("memory")
-    # memory_comb = get_parameter_combinations(memory)
 
-# hyper_comb = get_parameter_combinations(hyperparamters)
-# network_comb = get_parameter_combinations(network)
 
 dynamic_parameters = get_dynamic_parameters([hyperparamters, network, memory])
 combinations = get_parameter_combinations(dynamic_parameters)
 
-# Prepare summary.
-# if generate_summary:
-#    headings = []
-#    for section in [hyper_comb[0], network_comb[0], memory_comb[0]]:
-#        for entry in section:
-#            headings.append(list(entry.keys())[0])
-#    summary_dict = {}
 
 # Get the number of runs the current config is goint to produce.
 num_count = len(combinations)
@@ -234,16 +216,6 @@ for option in combinations:
     tmp_config = dict.copy(config)
 
     update_parameters_with_option(tmp_config, option, run_id)
-    # tmp_hyper = update_parameter(hyperparamters, hyperparameter_option, run_id)
-    # tmp_config["behaviors"]["RollerAgent"]["hyperparameters"] = tmp_hyper
-
-    # tmp_network = update_parameter(network, network_option, run_id)
-    # tmp_config["behaviors"]["RollerAgent"]["network_settings"] = tmp_network
-
-    # Memory might not be specified in the yaml file.
-    # if memory is not None:
-    #    tmp_memory = update_parameter(memory, memory_option, run_id)
-    #    tmp_config["behaviors"]["RollerAgent"]["network_settings"]["memory"] = tmp_memory
 
     # Save modified config as yaml file.
     if production:
