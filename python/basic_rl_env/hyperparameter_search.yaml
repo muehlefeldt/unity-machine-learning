@@ -2,15 +2,18 @@ userconfig:
   # Use build env? false for editor.
   build: true
 
+  # Specify number of parallel env to use.
+  num_env: 1
+
+
   # Production mode? false for test run.
-  production: true
+  production: false
 
   # "true" to generate summary file.
   summary: true
-  num_env: 2
 
   # Provide message for the log file for better traceability.
-  message: "Runs over night."
+  message: "Performance tests."
 
 behaviors:
   RollerAgent:
