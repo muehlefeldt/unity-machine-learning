@@ -2,17 +2,20 @@ import itertools
 import json
 import logging
 import os
-import shutil
+
+# import shutil
 import time
 from collections import OrderedDict
 from multiprocessing import Pool
 from pathlib import Path
 from statistics import mean
 
-import tensorflow as tf
+# import tensorflow as tf
 import yaml
-from tensorflow.core.util import event_pb2
-from tensorflow.data import TFRecordDataset
+from tensorboard.backend.event_processing.event_file_loader import EventFileLoader
+
+# from tensorflow.core.util import event_pb2
+# from tensorflow.data import TFRecordDataset
 
 
 def get_run_id() -> int:
@@ -126,9 +129,9 @@ def get_mean_reward(name: str) -> float:
     path_to_result = sorted(Path(path_to_result_folder).glob("events.out.tfevents.*"))[0]
 
     # Using tensorflow to access the tfevents data.
-    datarecord = TFRecordDataset(str(path_to_result))
-    for batch in datarecord:
-        event = event_pb2.Event.FromString(batch.numpy())
+    #datarecord = EventFileLoader(str(path_to_result)).Load()
+    for event in EventFileLoader(str(path_to_result)).Load():
+        #event = event_pb2.Event.FromString(batch.numpy())
         for value in event.summary.value:
             if value.tag == "Environment/Cumulative Reward":
                 cumulative_rewards.append(value.simple_value)
