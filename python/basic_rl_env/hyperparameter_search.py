@@ -2,8 +2,8 @@ import itertools
 import json
 import logging
 import os
-import time
 import shutil
+import time
 from collections import OrderedDict
 from multiprocessing import Pool
 from pathlib import Path
@@ -53,12 +53,18 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
     first_id = get_run_id()
     id_possible_combinations = [
         {
+            # ID of this run config.
             "run_id": first_id + possile_combinations.index(x),
+            # Dynamic parameter values for this run.
             "parameters": x,
+            # User configu´ration.
             "userconfig": userconfig,
+            # Base configuration.
             "base_config": config,
+            # Path to the build environment.
             "path_env": Path(path_to_unity_env).absolute(),
-            "path_copy_env": Path(f"./{first_id + possile_combinations.index(x)}_build").absolute()
+            # Decide on base port for ml-agents.
+            "base_port": 5005 + possile_combinations.index(x),
         }
         for x in possile_combinations
     ]
@@ -142,13 +148,13 @@ def commence_mlagents_run(run_info: dict) -> dict:
     path_to_copied_build = run_info["path_copy_env"]
     num_env = run_info["userconfig"]["num_env"]
 
-    #shutil.copytree(path, path_to_copied_build)
+    # shutil.copytree(path, path_to_copied_build)
 
     if production:
         logging.info("[%i] New run started with id %i.", run_id, run_id)
 
     # Get copy of the base config as loaded.
-    #tmp_config = dict.copy(config)
+    # tmp_config = dict.copy(config)
     tmp_config = dict.copy(run_info["base_config"])
 
     update_parameters_with_option(tmp_config, run_info)
@@ -163,7 +169,7 @@ def commence_mlagents_run(run_info: dict) -> dict:
     return_code = 0
     start_time = time.time()
     run_name = f"{run_id}_basicenv_ppo_auto"
-    #if production:
+    # if production:
     #    if use_build_env:
     run_name = f"{run_id}_basicenv_ppo_auto"
     # Start ml-algents using build version of unity.
@@ -173,11 +179,11 @@ def commence_mlagents_run(run_info: dict) -> dict:
         --env={path} \
         --run-id={run_name}\
         --num-envs={num_env} \
-        --base-port={5005 + run_id} \
+        --base-port={run_info['base_port']} \
         --torch-device cpu \
         --force"
     )
-    run_info["return_code": return_code]
+    run_info["return_code":return_code]
     """    else:
             # Start ml-agents in the unity editor. Requires user interaction.
             run_name = f"{run_id}_basicenv_ppo_manual"
@@ -237,7 +243,7 @@ if __name__ == "__main__":
             if "num_env" in config["userconfig"]:
                 if isinstance(config["userconfig"]["num_env"], int):
                     num_env = config["userconfig"]["num_env"]
-            
+
             if "num_process" in config["userconfig"]:
                 if isinstance(config["userconfig"]["num_process"], int):
                     num_process = config["userconfig"]["num_process"]
@@ -295,7 +301,6 @@ if __name__ == "__main__":
     # run_counter += 1
     #    commence_mlagents_run(option)
 
-
     with Pool(2) as p:
         summary = p.map(commence_mlagents_run, combinations)
 
@@ -321,16 +326,16 @@ if __name__ == "__main__":
                     f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}."
                 )
         """
-        # if generate_summary:
-        #    summary_dict[run_id] = {}
-        #    for entry in [
-        #        *hyperparameter_option,
-        #        *network_option,
-        #        *memory_option,
-        #    ]:
-        #        summary_dict[run_id].update(entry)
+    # if generate_summary:
+    #    summary_dict[run_id] = {}
+    #    for entry in [
+    #        *hyperparameter_option,
+    #        *network_option,
+    #        *memory_option,
+    #    ]:
+    #        summary_dict[run_id].update(entry)
 
-        #    summary_dict[run_id]["last_cumulative_reward"] = get_mean_reward(run_name)
+    #    summary_dict[run_id]["last_cumulative_reward"] = get_mean_reward(run_name)
     """
     # Create a summary file to provide an overview of used parameters and resulting rewards.
     if generate_summary:
