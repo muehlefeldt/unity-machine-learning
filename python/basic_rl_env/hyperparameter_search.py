@@ -134,7 +134,7 @@ def get_mean_reward(name: str) -> float:
         #event = event_pb2.Event.FromString(batch.numpy())
         for value in event.summary.value:
             if value.tag == "Environment/Cumulative Reward":
-                cumulative_rewards.append(value.simple_value)
+                cumulative_rewards.append(value.tensor.float_val[0])
 
     # Return mean of the last 5 recorded cummulative rewards.
     return mean(cumulative_rewards[-5:])
