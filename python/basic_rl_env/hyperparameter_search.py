@@ -210,12 +210,20 @@ def check_userconfig():
 
 
 def update_and_clean_summary(summary_list: list[dict]) -> dict:
-    """Get mean reward of last entries for all runs and save."""
+    """Update and clean the summary information. Creates pure dict from list of dicts.
+    Some information not neeeded or can not be stored as a json.
+    Get mean reward of last entries for all runs and save."""
     summary_dict: dict = {}
     for entry in summary_list:
+        # Store mean reward over the last entries to the run.
         entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
+
+        # Base config to much information in the summary.
         entry.pop("base_config")
+
+        # Path not storeabe as json.
         entry.pop("path_env")
+
         summary_dict[entry["run_id"]] = entry
     return summary_dict
 
@@ -231,7 +239,9 @@ def create_summary_file(summary_list: list[dict]):
         # Sort the dict created during the runs.
         # The saved file shall be sorted by the highest cummulativ rewards.
         sorted_dict = OrderedDict(
-            sorted(final_summary.items(), key=lambda v: v[1]["last_cumulative_reward"], reverse=True)
+            sorted(
+                final_summary.items(), key=lambda v: v[1]["last_cumulative_reward"], reverse=True
+            )
         )
         json.dump(sorted_dict, summary_file, indent=4)
 
@@ -309,7 +319,7 @@ if __name__ == "__main__":
     with Pool(userconfig["num_process"]) as p:
         summary = p.map(commence_mlagents_run, combinations)
 
-    #print(summary)
+    # print(summary)
 
     if generate_summary:
         create_summary_file(summary)
