@@ -41,12 +41,21 @@ def get_dynamic_parameters(base_config: list[dict]) -> list:
     return key_values
 
 
-def get_parameter_combinations(parameters: list[list]) -> list[tuple]:
-    """Get the parameter combinations."""
+def get_parameter_combinations(parameters: list[list]) -> list[dict]:
+    """Get the parameter combinations with associated run id."""
+
+    # Generate the possible combinations of parameter values.
     possile_combinations = list(itertools.product(*parameters))
+
+    # Create final list with format: Id: Parameter combination.
+    ID_FIRST_RUN = get_run_id()
+    id_possible_combinations = [
+        {ID_FIRST_RUN + possile_combinations.index(x): x} for x in possile_combinations
+    ]
+
     if production:
-        logging.info("Found %i value combinations.", len(possile_combinations))
-    return possile_combinations
+        logging.info("Found %i value combinations.", len(id_possible_combinations))
+    return id_possible_combinations
 
 
 def update_parameters_with_option(base: dict, para_option: tuple, id_num: int):
