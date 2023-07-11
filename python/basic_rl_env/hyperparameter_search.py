@@ -131,7 +131,7 @@ def get_mean_reward(name: str) -> float:
     return mean(cumulative_rewards[-5:])
 
 
-def commence_mlagents_run(run_info: dict):
+def commence_mlagents_run(run_info: dict) -> dict:
     # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
     run_id = run_info["run_id"]
     path_to_temp_config_file = f"./configs/{run_id}.yaml"
@@ -142,7 +142,7 @@ def commence_mlagents_run(run_info: dict):
     path_to_copied_build = run_info["path_copy_env"]
     num_env = run_info["userconfig"]["num_env"]
 
-    shutil.copytree(path, path_to_copied_build)
+    #shutil.copytree(path, path_to_copied_build)
 
     if production:
         logging.info("[%i] New run started with id %i.", run_id, run_id)
@@ -177,6 +177,7 @@ def commence_mlagents_run(run_info: dict):
         --torch-device cpu \
         --force"
     )
+    run_info["return_code": return_code]
     """    else:
             # Start ml-agents in the unity editor. Requires user interaction.
             run_name = f"{run_id}_basicenv_ppo_manual"
@@ -188,7 +189,7 @@ def commence_mlagents_run(run_info: dict):
                 --torch-device cpu \
                 --force"
             )"""
-    return
+    return run_info
 
 
 if __name__ == "__main__":
@@ -236,6 +237,10 @@ if __name__ == "__main__":
             if "num_env" in config["userconfig"]:
                 if isinstance(config["userconfig"]["num_env"], int):
                     num_env = config["userconfig"]["num_env"]
+            
+            if "num_process" in config["userconfig"]:
+                if isinstance(config["userconfig"]["num_process"], int):
+                    num_process = config["userconfig"]["num_process"]
 
             # Get the message from the config file to be logged.
             if "message" in config["userconfig"]:
@@ -290,10 +295,13 @@ if __name__ == "__main__":
     # run_counter += 1
     #    commence_mlagents_run(option)
 
-    with Pool(2) as p:
-        p.map(commence_mlagents_run, combinations)
 
-        """
+    with Pool(2) as p:
+        summary = p.map(commence_mlagents_run, combinations)
+
+    print(summary)
+
+    """
         end_time = time.time()
         if production:
             logging.info(f"[{run_id}] return code = {return_code}.")
