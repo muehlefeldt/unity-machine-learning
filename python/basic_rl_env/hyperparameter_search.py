@@ -57,7 +57,7 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
             "run_id": first_id + possile_combinations.index(x),
             # Dynamic parameter values for this run.
             "parameters": x,
-            # User configu´ration.
+            # User configuration.
             "userconfig": userconfig,
             # Base configuration.
             "base_config": config,
@@ -138,64 +138,102 @@ def get_mean_reward(name: str) -> float:
 
 
 def commence_mlagents_run(run_info: dict) -> dict:
+    """Commence a ML-Agents run using the configuration provided in the dict."""
     # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
     run_id = run_info["run_id"]
-    path_to_temp_config_file = f"./configs/{run_id}.yaml"
-
     production = run_info["userconfig"]["production"]
-    use_build_env = run_info["userconfig"]["build"]
-    path = run_info["path_env"]
-    path_to_copied_build = run_info["path_copy_env"]
-    num_env = run_info["userconfig"]["num_env"]
-
-    # shutil.copytree(path, path_to_copied_build)
 
     if production:
         logging.info("[%i] New run started with id %i.", run_id, run_id)
 
     # Get copy of the base config as loaded.
-    # tmp_config = dict.copy(config)
     tmp_config = dict.copy(run_info["base_config"])
 
     update_parameters_with_option(tmp_config, run_info)
+
+    path_to_temp_config_file = f"./configs/{run_id}.yaml"
 
     # Save modified config as yaml file.
     if production:
         with open(Path(path_to_temp_config_file).absolute(), mode="w", encoding="utf8") as new_file:
             yaml.dump(tmp_config, new_file)
 
-    # Execute ml-agents using a compiled environment.
-    # Bypass if in test mode.
-    return_code = 0
-    start_time = time.time()
-    run_name = f"{run_id}_basicenv_ppo_auto"
-    # if production:
-    #    if use_build_env:
-    run_name = f"{run_id}_basicenv_ppo_auto"
-    # Start ml-algents using build version of unity.
-    return_code = os.system(
-        f"mlagents-learn \
-        {Path(path_to_temp_config_file).absolute()} \
-        --env={path} \
-        --run-id={run_name}\
-        --num-envs={num_env} \
-        --base-port={run_info['base_port']} \
-        --torch-device cpu \
-        --force"
-    )
-    run_info["return_code":return_code]
-    """    else:
-            # Start ml-agents in the unity editor. Requires user interaction.
-            run_name = f"{run_id}_basicenv_ppo_manual"
-            return_code = os.system(
-                f"mlagents-learn \
-                {Path(path_to_temp_config_file).absolute()} \
-                --run-id={run_name} \
-                --num-envs={num_env} \
-                --torch-device cpu \
-                --force"
-            )"""
+        return_code = 0
+        run_name = f"{run_id}_basicenv_ppo_auto"
+
+        # Start ml-algents training using build version of unity.
+        start_time = time.time()
+        return_code = os.system(
+            f"mlagents-learn \
+            {Path(path_to_temp_config_file).absolute()} \
+            --env={run_info['path_env']} \
+            --run-id={run_name}\
+            --num-envs={run_info['userconfig']['num_env']} \
+            --base-port={run_info['base_port']} \
+            --torch-device cpu \
+            --force"
+        )
+
+        # Update the dict containing run infos.
+        run_info["duration"] = time.time() - start_time
+        run_info["return_code"] = return_code
+        run_info["run_name"] = run_name
+
     return run_info
+
+
+def check_userconfig():
+    """Check userconfig in the configuration yaml file for content and datatypes."""
+    if not "userconfig" in config:
+        raise ValueError
+    if not "build" in config["userconfig"] and not isinstance(config["userconfig"], bool):
+        raise ValueError
+    if not "production" in config["userconfig"] and not isinstance(
+        config["userconfig"]["production"], bool
+    ):
+        raise ValueError
+    if not "summary" in config["userconfig"] and not isinstance(
+        config["userconfig"]["summary"], bool
+    ):
+        raise ValueError
+    if not "num_env" in config["userconfig"] and not isinstance(
+        config["userconfig"]["num_env"], bool
+    ):
+        raise ValueError
+    if not "num_process" in config["userconfig"] and not isinstance(
+        config["userconfig"]["num_process"], int
+    ):
+        raise ValueError
+    if "message" in config["userconfig"] and not isinstance(config["userconfig"]["message"], str):
+        raise ValueError
+    return
+
+
+def update_and_clean_summary(summary_list: list[dict]) -> dict:
+    """Get mean reward of last entries for all runs and save."""
+    summary_dict: dict = {}
+    for entry in summary_list:
+        entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
+        entry.pop("base_config")
+        entry.pop("path_env")
+        summary_dict[entry["run_id"]] = entry
+    return summary_dict
+
+
+def create_summary_file(summary_list: list[dict]):
+    """Save sorted summary file."""
+    final_summary = update_and_clean_summary(summary_list)
+
+    path_to_summary_file = f"./summaries/{ID_FIRST_RUN}.json"
+    with open(
+        Path(path_to_summary_file).absolute(), mode="w", newline="", encoding="utf8"
+    ) as summary_file:
+        # Sort the dict created during the runs.
+        # The saved file shall be sorted by the highest cummulativ rewards.
+        sorted_dict = OrderedDict(
+            sorted(final_summary.items(), key=lambda v: v[1]["last_cumulative_reward"], reverse=True)
+        )
+        json.dump(sorted_dict, summary_file, indent=4)
 
 
 if __name__ == "__main__":
@@ -215,48 +253,24 @@ if __name__ == "__main__":
     with open(Path(path_to_config_file).absolute(), mode="r", encoding="utf8") as config_file:
         config = yaml.safe_load(config_file)
 
-    # Variables for control flow.
-    use_build_env = False
-    production = False
-    generate_summary = False
+    check_userconfig()
+    userconfig = dict.copy(config["userconfig"])
+    # User config information no longer needed.
+    config.pop("userconfig")
 
-    num_env = 1
-    message_for_log = None
     # Check the loaded config for user specified modes.
-    if "userconfig" in config:
-        if config["userconfig"] is not None:
-            # Build env requested?
-            if "build" in config["userconfig"]:
-                if config["userconfig"]["build"]:
-                    use_build_env = True
+    # Build env requested?
+    use_build_env = userconfig["build"]
 
-            # Production mode requested?
-            if "production" in config["userconfig"]:
-                if config["userconfig"]["production"]:
-                    production = True
+    # Production mode requested?
+    production = userconfig["production"]
 
-            # Summary requested?
-            if "summary" in config["userconfig"]:
-                if config["userconfig"]["summary"]:
-                    generate_summary = True
+    # Summary requested?
+    generate_summary = userconfig["summary"]
+    num_env = userconfig["num_env"]
 
-            if "num_env" in config["userconfig"]:
-                if isinstance(config["userconfig"]["num_env"], int):
-                    num_env = config["userconfig"]["num_env"]
-
-            if "num_process" in config["userconfig"]:
-                if isinstance(config["userconfig"]["num_process"], int):
-                    num_process = config["userconfig"]["num_process"]
-
-            # Get the message from the config file to be logged.
-            if "message" in config["userconfig"]:
-                tmp_message = config["userconfig"]["message"]
-                if tmp_message is not None and isinstance(tmp_message, str):
-                    message_for_log = tmp_message
-
-        userconfig = config["userconfig"]
-        # User config information no longer needed.
-        config.pop("userconfig")
+    # Get the message from the config file to be logged.
+    message_for_log = userconfig["message"]
 
     # Get the id of the first run. Used for logging and summary.
     ID_FIRST_RUN = get_run_id()
@@ -292,20 +306,13 @@ if __name__ == "__main__":
     if production:
         logging.info("%i runs are going to be started.", num_count)
 
-    # Store run durations.
-    run_durations = []
-    # run_counter = 0
-
-    # Combine all possible options for possible runs.
-    # for option in combinations:
-    # run_counter += 1
-    #    commence_mlagents_run(option)
-
-    with Pool(2) as p:
+    with Pool(userconfig["num_process"]) as p:
         summary = p.map(commence_mlagents_run, combinations)
 
-    print(summary)
+    #print(summary)
 
+    if generate_summary:
+        create_summary_file(summary)
     """
         end_time = time.time()
         if production:
