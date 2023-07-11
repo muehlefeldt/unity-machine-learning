@@ -299,8 +299,6 @@ if __name__ == "__main__":
     hyperparamters = {"hyperparameters": config["behaviors"]["RollerAgent"]["hyperparameters"]}
     network = {"network_settings": config["behaviors"]["RollerAgent"]["network_settings"]}
 
-    # base_config = config["behaviors"]["RollerAgent"]
-
     # In case memory is configured in yaml file:
     # Handle memory options seperate from network settings.
     memory_comb = [()]
@@ -322,6 +320,7 @@ if __name__ == "__main__":
 
     if generate_summary:
         create_summary_file(summary)
+
     """
         end_time = time.time()
         if production:
