@@ -316,10 +316,9 @@ if __name__ == "__main__":
     if production:
         logging.info("%i runs are going to be started.", num_count)
 
+    # Perform actual calculations using ml-agents distributed over a number of processes.
     with Pool(userconfig["num_process"]) as p:
         summary = p.map(commence_mlagents_run, combinations)
-
-    # print(summary)
 
     if generate_summary:
         create_summary_file(summary)
@@ -343,27 +342,3 @@ if __name__ == "__main__":
                     f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}."
                 )
         """
-    # if generate_summary:
-    #    summary_dict[run_id] = {}
-    #    for entry in [
-    #        *hyperparameter_option,
-    #        *network_option,
-    #        *memory_option,
-    #    ]:
-    #        summary_dict[run_id].update(entry)
-
-    #    summary_dict[run_id]["last_cumulative_reward"] = get_mean_reward(run_name)
-    """
-    # Create a summary file to provide an overview of used parameters and resulting rewards.
-    if generate_summary:
-        path_to_summary_file = f"./summaries/{ID_FIRST_RUN}.json"
-        with open(
-            Path(path_to_summary_file).absolute(), mode="w", newline="", encoding="utf8"
-        ) as summary_file:
-            # Sort the dict created during the runs.
-            # The saved file shall be sorted by the highest cummulativ rewards.
-            sorted_dict = OrderedDict(
-                sorted(summary_dict.items(), key=lambda v: v[1]["last_cumulative_reward"], reverse=True)
-            )
-            json.dump(sorted_dict, summary_file, indent=4)
-    """
