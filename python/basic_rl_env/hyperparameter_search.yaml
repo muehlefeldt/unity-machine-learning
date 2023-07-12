@@ -15,25 +15,25 @@ userconfig:
   summary: true
 
   # Provide message for the log file for better traceability.
-  message: "Run with pool as test."
+  message: "SAC test."
 
 behaviors:
   RollerAgent:
-    trainer_type: ppo
+    trainer_type: sac
     hyperparameters:
       batch_size: [64, 128]
       buffer_size: 10240
       learning_rate: 1e-5
-      beta: 5e-3
-      epsilon: 0.2
-      lambd: 0.925
-      num_epoch: 3
+      #beta: 5e-3
+      #epsilon: 0.2
+      #lambd: 0.925
+      #num_epoch: 3
       learning_rate_schedule: linear
-      beta_schedule: constant
-      epsilon_schedule: linear
+      #beta_schedule: constant
+      #epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: 128
+      hidden_units: [128, 256]
       num_layers: 4
       memory:
         memory_size: 64
@@ -42,6 +42,6 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 0.01e6
+    max_steps: 0.5e6
     time_horizon: 128
     summary_freq: 10000
