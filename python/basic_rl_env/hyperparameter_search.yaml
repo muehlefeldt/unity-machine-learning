@@ -1,12 +1,12 @@
 userconfig:
   # Use build env? false for editor.
-  build: true
+  build: false
 
   # Specify number of parallel env to use.
   num_env: 1
 
   # Number of parallel processes.
-  num_process: 2
+  num_process: 1
 
   # Production mode? false for test run.
   production: true
@@ -21,7 +21,7 @@ behaviors:
   RollerAgent:
     trainer_type: sac
     hyperparameters:
-      batch_size: [64, 128]
+      batch_size: 128
       buffer_size: 10240
       learning_rate: 1e-5
       #beta: 5e-3
@@ -33,11 +33,11 @@ behaviors:
       #epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: [128, 256]
-      num_layers: 4
+      hidden_units: 128
+      num_layers: 2
       memory:
-        memory_size: 64
-        sequence_length: 64
+        memory_size: [64, 128]
+        sequence_length: 128
     reward_signals:
       extrinsic:
         gamma: 0.99

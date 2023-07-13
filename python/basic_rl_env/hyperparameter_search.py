@@ -40,10 +40,49 @@ def get_dynamic_parameters(base_config: list[dict]) -> list:
             if isinstance(parameters[key], list):
                 new = []
                 for entry in parameters[key]:
-                    new.append({list(section.keys())[0]: {key: entry}})
+                    new.append({"type": list(section.keys())[0], "content": {key: entry}})
                 key_values.append(new)
 
     return key_values
+
+
+def good_memory_settings(option: dict) -> bool:
+    #sequence_dynamic = False
+    sequence_len = None
+    batch_size = None
+    for para in option["parameters"]:
+        try:
+            sequence_len = para["content"]["sequence_length"]
+        except KeyError:
+            continue
+        #if "sequence_length" in para["content"]:
+        #    sequence_dynamic = True
+    for para in option["parameters"]:
+        try:
+            batch_size = para["content"]["batch_size"]
+        except KeyError:
+            continue
+
+    if sequence_len is None:
+         sequence_len = option["base_config"]["behaviors"]["RollerAgent"]["network_settings"][
+            "memory"
+        ]["sequence_length"]
+    
+    if batch_size is None:
+        batch_size = option['base_config']['behaviors']['RollerAgent']['hyperparameters']['batch_size']
+
+    # When using memory, sequence length must be less than or equal to batch size.
+    return sequence_len <= batch_size
+
+    
+
+
+def check_combinations(comb: list[dict]) -> list:
+    good_combinations = []
+    for run_info in comb:
+        if good_memory_settings(run_info):
+            good_combinations.append(run_info)
+    return good_combinations
 
 
 def get_parameter_combinations(parameters: list[list]) -> list[dict]:
@@ -71,6 +110,9 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
         }
         for x in possile_combinations
     ]
+
+    # Check possible parameter combinations and discard implausibe combinations.
+    id_possible_combinations = check_combinations(id_possible_combinations)
 
     if production:
         logging.info("Found %i value combinations.", len(id_possible_combinations))
@@ -129,9 +171,9 @@ def get_mean_reward(name: str) -> float:
     path_to_result = sorted(Path(path_to_result_folder).glob("events.out.tfevents.*"))[0]
 
     # Using tensorflow to access the tfevents data.
-    #datarecord = EventFileLoader(str(path_to_result)).Load()
+    # datarecord = EventFileLoader(str(path_to_result)).Load()
     for event in EventFileLoader(str(path_to_result)).Load():
-        #event = event_pb2.Event.FromString(batch.numpy())
+        # event = event_pb2.Event.FromString(batch.numpy())
         for value in event.summary.value:
             if value.tag == "Environment/Cumulative Reward":
                 cumulative_rewards.append(value.tensor.float_val[0])
@@ -166,16 +208,28 @@ def commence_mlagents_run(run_info: dict) -> dict:
 
         # Start ml-algents training using build version of unity.
         start_time = time.time()
-        return_code = os.system(
-            f"mlagents-learn \
-            {Path(path_to_temp_config_file).absolute()} \
-            --env={run_info['path_env']} \
-            --run-id={run_name}\
-            --num-envs={run_info['userconfig']['num_env']} \
-            --base-port={run_info['base_port']} \
-            --torch-device cpu \
-            --force"
-        )
+
+        if run_info["userconfig"]["build"]:
+            # Run ml-agents with pre build unity environemnts.
+            return_code = os.system(
+                f"mlagents-learn \
+                {Path(path_to_temp_config_file).absolute()} \
+                --env={run_info['path_env']} \
+                --run-id={run_name}\
+                --num-envs={run_info['userconfig']['num_env']} \
+                --base-port={run_info['base_port']} \
+                --torch-device cpu \
+                --force"
+            )
+        else:
+            # Run mlagents with the unity editor.
+            return_code = os.system(
+                f"mlagents-learn \
+                {Path(path_to_temp_config_file).absolute()} \
+                --run-id={run_name}\
+                --torch-device cpu \
+                --force"
+            )
 
         # Update the dict containing run infos.
         run_info["duration"] = time.time() - start_time
@@ -317,9 +371,12 @@ if __name__ == "__main__":
     if production:
         logging.info("%i runs are going to be started.", num_count)
 
-    # Perform actual calculations using ml-agents distributed over a number of processes.
-    with Pool(userconfig["num_process"]) as p:
-        summary = p.map(commence_mlagents_run, combinations)
+    if not userconfig["build"]:
+        summary = list(map(commence_mlagents_run, combinations))
+    else:
+        # Perform actual calculations using ml-agents distributed over a number of processes.
+        with Pool(userconfig["num_process"]) as p:
+            summary = p.map(commence_mlagents_run, combinations)
 
     if generate_summary:
         create_summary_file(summary)
