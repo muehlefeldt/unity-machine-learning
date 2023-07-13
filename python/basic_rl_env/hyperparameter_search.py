@@ -47,34 +47,39 @@ def get_dynamic_parameters(base_config: list[dict]) -> list:
 
 
 def good_memory_settings(option: dict) -> bool:
-    #sequence_dynamic = False
+    """Check run info / configuration for a valid memory configuration."""
+    # Prepare variables.
     sequence_len = None
     batch_size = None
+
+    # Is sequence length a dynamic parameter?
     for para in option["parameters"]:
         try:
             sequence_len = para["content"]["sequence_length"]
         except KeyError:
             continue
-        #if "sequence_length" in para["content"]:
-        #    sequence_dynamic = True
+
+    # Is batch size a dynamic parameter?
     for para in option["parameters"]:
         try:
             batch_size = para["content"]["batch_size"]
         except KeyError:
             continue
 
+    # If not found in dynamic parameters get the default value from the base configuration.
+    # The value should be a single value and not a list.
     if sequence_len is None:
-         sequence_len = option["base_config"]["behaviors"]["RollerAgent"]["network_settings"][
+        sequence_len = option["base_config"]["behaviors"]["RollerAgent"]["network_settings"][
             "memory"
         ]["sequence_length"]
-    
+
     if batch_size is None:
-        batch_size = option['base_config']['behaviors']['RollerAgent']['hyperparameters']['batch_size']
+        batch_size = option["base_config"]["behaviors"]["RollerAgent"]["hyperparameters"][
+            "batch_size"
+        ]
 
     # When using memory, sequence length must be less than or equal to batch size.
     return sequence_len <= batch_size
-
-    
 
 
 def check_combinations(comb: list[dict]) -> list:
@@ -93,10 +98,10 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
 
     # Create final list with format: Id: Parameter combination.
     first_id = get_run_id()
+
     id_possible_combinations = [
         {
-            # ID of this run config.
-            "run_id": first_id + possile_combinations.index(x),
+            # "run_id": first_id + possile_combinations.index(x),
             # Dynamic parameter values for this run.
             "parameters": x,
             # User configuration.
@@ -105,14 +110,21 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
             "base_config": config,
             # Path to the build environment.
             "path_env": Path(path_to_unity_env).absolute(),
-            # Decide on base port for ml-agents.
-            "base_port": 5005 + possile_combinations.index(x),
+            # "base_port": 5005 + possile_combinations.index(x),
         }
         for x in possile_combinations
     ]
 
     # Check possible parameter combinations and discard implausibe combinations.
     id_possible_combinations = check_combinations(id_possible_combinations)
+
+    # Add id and base port to run info.
+    for comb in id_possible_combinations:
+        tmp_id = id_possible_combinations.index(comb)
+        # ID of this run config.
+        comb["run_id"] = first_id + tmp_id
+        # Decide on base port for ml-agents.
+        comb["base_port"] = 5005 + tmp_id
 
     if production:
         logging.info("Found %i value combinations.", len(id_possible_combinations))
@@ -127,28 +139,29 @@ def update_parameters_with_option(base: dict, run_info: dict):
     work_dict = base["behaviors"]["RollerAgent"]
     para_option = run_info["parameters"]
     id_num = run_info["run_id"]
-    production = run_info["userconfig"]["production"]
 
     # Dynamic key value pairs are updated in the tmp dict.
     for entry in para_option:
         # Get the key of the section containing the parameter.
-        entry_key = list(entry.keys())[0]
+        type = entry["type"]
+        entry_key = list(entry["content"].keys())[0]
 
         # Get the key of the parameter.
-        para_key = list(entry[entry_key].keys())[0]
+        #para_key = list(entry["content"][entry_key].keys())[0]
 
         # Get value of the parameter from the current option.
-        value = entry[entry_key][para_key]
+        value = entry["content"][entry_key]
 
         # If memory parameter change location to network settings.
         # Otherwise write value to selected section and parameter.
-        if entry_key == "memory":
-            work_dict["network_settings"][entry_key][para_key] = value
+        #if entry_key == "memory":
+        if type == "memory":
+            work_dict["network_settings"][type][entry_key] = value
         else:
-            work_dict[entry_key][para_key] = value
+            work_dict[type][entry_key] = value
 
-        if production:
-            logging.info("[%i] %s = %s.", id_num, para_key, value)
+        if run_info["userconfig"]["production"]:
+            logging.info("[%i] %s = %s.", id_num, entry_key, value)
     return
 
 
