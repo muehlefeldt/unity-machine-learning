@@ -6,7 +6,7 @@ userconfig:
   num_env: 1
 
   # Number of parallel processes.
-  num_process: 1
+  num_process: 2
 
   # Production mode? false for test run.
   production: true
@@ -21,12 +21,12 @@ behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: [32, 64, 128]
-      buffer_size: 10240
-      learning_rate: 1e-5
+      batch_size: 128
+      buffer_size: [10240, 20480]
+      learning_rate: [1e-3, 1e-5]
       beta: 5e-3
       epsilon: 0.2
-      lambd: 0.925
+      lambd: [0.925, 9.5]
       num_epoch: 3
       learning_rate_schedule: linear
       beta_schedule: constant
@@ -34,7 +34,7 @@ behaviors:
     network_settings:
       normalize: false
       hidden_units: 128
-      num_layers: 2
+      num_layers: [2, 3]
       memory:
         memory_size: 64
         sequence_length: [64, 128]

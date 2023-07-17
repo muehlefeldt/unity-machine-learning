@@ -241,6 +241,7 @@ def commence_mlagents_run(run_info: dict) -> dict:
                         f"--run-id={run_name}",
                         f"--num-envs={run_info['userconfig']['num_env']}",
                         f"--base-port={run_info['base_port']}",
+                        "--no-graphics",
                         "--torch-device",
                         "cpu",
                         "--force",
