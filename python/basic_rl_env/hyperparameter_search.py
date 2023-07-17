@@ -1,7 +1,9 @@
 import itertools
 import json
 import logging
+import math
 import os
+import subprocess
 
 # import shutil
 import time
@@ -21,9 +23,13 @@ from tensorboard.backend.event_processing.event_file_loader import EventFileLoad
 def get_run_id() -> int:
     """Get the run id (number) based on past runs in the result folder.
     If called multiple times, the result will be an increased number."""
-    dir_content = os.listdir(Path("./results/").absolute())
+    dir_contents = [
+        *os.listdir(Path("./results/").absolute()),
+        *os.listdir(Path("./logs/").absolute()),
+        *os.listdir(Path("./summaries/").absolute()),
+    ]
     numbers = []
-    for entry in dir_content:
+    for entry in dir_contents:
         numbers.append(int(entry.split("_")[0]))
     if not numbers:
         return 0
@@ -110,7 +116,8 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
             "base_config": config,
             # Path to the build environment.
             "path_env": Path(path_to_unity_env).absolute(),
-            # "base_port": 5005 + possile_combinations.index(x),
+            # Error state of the run. Default case is false.
+            "error": False,
         }
         for x in possile_combinations
     ]
@@ -147,14 +154,14 @@ def update_parameters_with_option(base: dict, run_info: dict):
         entry_key = list(entry["content"].keys())[0]
 
         # Get the key of the parameter.
-        #para_key = list(entry["content"][entry_key].keys())[0]
+        # para_key = list(entry["content"][entry_key].keys())[0]
 
         # Get value of the parameter from the current option.
         value = entry["content"][entry_key]
 
         # If memory parameter change location to network settings.
         # Otherwise write value to selected section and parameter.
-        #if entry_key == "memory":
+        # if entry_key == "memory":
         if type == "memory":
             work_dict["network_settings"][type][entry_key] = value
         else:
@@ -222,31 +229,53 @@ def commence_mlagents_run(run_info: dict) -> dict:
         # Start ml-algents training using build version of unity.
         start_time = time.time()
 
+        # Do we use a build environment?
         if run_info["userconfig"]["build"]:
             # Run ml-agents with pre build unity environemnts.
-            return_code = os.system(
-                f"mlagents-learn \
-                {Path(path_to_temp_config_file).absolute()} \
-                --env={run_info['path_env']} \
-                --run-id={run_name}\
-                --num-envs={run_info['userconfig']['num_env']} \
-                --base-port={run_info['base_port']} \
-                --torch-device cpu \
-                --force"
-            )
+            try:
+                subprocess.run(
+                    [
+                        "mlagents-learn",
+                        f"{Path(path_to_temp_config_file).absolute()}",
+                        f"--env={run_info['path_env']}",
+                        f"--run-id={run_name}",
+                        f"--num-envs={run_info['userconfig']['num_env']}",
+                        f"--base-port={run_info['base_port']}",
+                        "--torch-device",
+                        "cpu",
+                        "--force",
+                    ],
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.SubprocessError as err:
+                run_info["error"] = True
+                run_info["error_msg"] = str(err)
+
+        # If we do not use a build environment, interaction with the unity editor is needed.
         else:
             # Run mlagents with the unity editor.
-            return_code = os.system(
-                f"mlagents-learn \
-                {Path(path_to_temp_config_file).absolute()} \
-                --run-id={run_name}\
-                --torch-device cpu \
-                --force"
-            )
+            try:
+                subprocess.run(
+                    [
+                        "mlagents-learn",
+                        f"{Path(path_to_temp_config_file).absolute()}",
+                        f"--run-id={run_name}",
+                        "--torch-device",
+                        "cpu",
+                        "--force",
+                    ],
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.SubprocessError as err:
+                run_info["error"] = True
+                run_info["error_msg"] = str(err)
 
         # Update the dict containing run infos.
         run_info["duration"] = time.time() - start_time
         run_info["return_code"] = return_code
+        # ToDo: Can be removed.
         run_info["run_name"] = run_name
 
     return run_info
@@ -285,9 +314,11 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
     Get mean reward of last entries for all runs and save."""
     summary_dict: dict = {}
     for entry in summary_list:
-        # Store mean reward over the last entries to the run.
-        entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
-
+        if not entry["error"]:
+            # Store mean reward over the last entries to the run.
+            entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
+        else:
+            entry["last_cumulative_reward"] = float("-inf")
         # Base config to much information in the summary.
         entry.pop("base_config")
 
@@ -302,7 +333,7 @@ def create_summary_file(summary_list: list[dict]):
     """Save sorted summary file."""
     final_summary = update_and_clean_summary(summary_list)
 
-    path_to_summary_file = f"./summaries/{ID_FIRST_RUN}.json"
+    path_to_summary_file = f"./summaries/{ID_FIRST_RUN}_summary.json"
     with open(
         Path(path_to_summary_file).absolute(), mode="w", newline="", encoding="utf8"
     ) as summary_file:

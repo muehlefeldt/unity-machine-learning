@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: false
+  build: true
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -9,39 +9,39 @@ userconfig:
   num_process: 1
 
   # Production mode? false for test run.
-  production: false
+  production: true
 
   # "true" to generate summary file.
   summary: true
 
   # Provide message for the log file for better traceability.
-  message: "SAC test."
+  message: "ML-Agents error handling"
 
 behaviors:
   RollerAgent:
-    trainer_type: sac
+    trainer_type: ppo
     hyperparameters:
-      batch_size: [32, 128]
+      batch_size: [32, 64, 128]
       buffer_size: 10240
       learning_rate: 1e-5
-      #beta: 5e-3
-      #epsilon: 0.2
-      #lambd: 0.925
-      #num_epoch: 3
+      beta: 5e-3
+      epsilon: 0.2
+      lambd: 0.925
+      num_epoch: 3
       learning_rate_schedule: linear
-      #beta_schedule: constant
-      #epsilon_schedule: linear
+      beta_schedule: constant
+      epsilon_schedule: linear
     network_settings:
       normalize: false
       hidden_units: 128
       num_layers: 2
       memory:
-        memory_size: [64, 128]
-        sequence_length: [32, 128, 256]
+        memory_size: 64
+        sequence_length: [64, 128]
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 0.5e6
+    max_steps: 0.1e6
     time_horizon: 128
     summary_freq: 10000
