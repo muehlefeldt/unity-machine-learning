@@ -350,9 +350,7 @@ def create_summary_file(summary_list: list[dict]):
 
 if __name__ == "__main__":
     # Paths: Config files and unity env.
-    path_to_working_dir = (
-        "C:/Users/max.muehlefeldt/Documents/GitHub/unity-machine-learning/python/basic_rl_env"
-    )
+    path_to_working_dir = "./python/basic_rl_env"
     path_to_config_file = "./hyperparameter_search.yaml"
     path_to_unity_env = "./build"
     path_to_log_dir = "./logs"
