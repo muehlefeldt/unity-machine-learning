@@ -49,7 +49,7 @@ public class RollerAgent : Agent
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
     }
 
-    private int m_MaxSteps;
+    public int maxSteps;
     public int currentStep;
     public override void OnEpisodeBegin()
     {
@@ -60,7 +60,7 @@ public class RollerAgent : Agent
         ResetDist();
 
         // How many steps are allowed.
-        m_MaxSteps = 1000;
+        maxSteps = 400;
         currentStep = 0;
         
         // If the Agent fell, zero its momentum
@@ -276,7 +276,7 @@ public class RollerAgent : Agent
         //AddReward(-0.001f);
         currentStep += 1;
 
-        if (currentStep > m_MaxSteps)
+        if (currentStep > maxSteps)
         {
             RecordData(RecorderCodes.MaxSteps);
             SetReward(-1f);

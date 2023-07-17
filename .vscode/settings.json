@@ -2,10 +2,7 @@
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
     "python.formatting.provider": "none",
-    "python.formatting.blackArgs": [
-        "--line-length",
-        "100"
-    ],
+    "black-formatter.args": ["--line-length", "100"],
     "editor.rulers": [
         100
     ],
@@ -17,6 +14,16 @@
     "files.autoSave": "afterDelay",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter",
-        "editor.formatOnSave": true
-    }
+        "editor.formatOnSave": true,
+    },
+    "python.analysis.typeCheckingMode": "basic",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./python",
+        "-p",
+        "*_test.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }

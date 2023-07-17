@@ -2,6 +2,12 @@ userconfig:
   # Use build env? false for editor.
   build: true
 
+  # Specify number of parallel env to use.
+  num_env: 1
+
+  # Number of parallel processes.
+  num_process: 2
+
   # Production mode? false for test run.
   production: true
 
@@ -9,33 +15,33 @@ userconfig:
   summary: true
 
   # Provide message for the log file for better traceability.
-  message: "Test script and tf usage."
+  message: "ML-Agents error handling"
 
 behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
       batch_size: 128
-      buffer_size: 10240
-      learning_rate: 1e-3
-      beta: [1e-4, 1e-3, 5e-3, 1e-2]
+      buffer_size: [10240, 20480]
+      learning_rate: [1e-3, 1e-5]
+      beta: 5e-3
       epsilon: 0.2
-      lambd: 0.925
+      lambd: [0.925, 9.5]
       num_epoch: 3
       learning_rate_schedule: linear
       beta_schedule: constant
       epsilon_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: 256
-      num_layers: 3
+      hidden_units: 128
+      num_layers: [2, 3]
       memory:
-        memory_size: 256
-        sequence_length: 64
+        memory_size: 64
+        sequence_length: [64, 128]
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 10000
-    time_horizon: 64
+    max_steps: 0.1e6
+    time_horizon: 128
     summary_freq: 10000

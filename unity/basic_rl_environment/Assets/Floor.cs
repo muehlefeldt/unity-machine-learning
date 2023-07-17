@@ -137,9 +137,12 @@ public class Floor : MonoBehaviour
         CreatedWallsCoord.Clear();
         CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall,  coordEndWall));
         
-        CreatedDoorsCoord.Clear();
-        CreatedDoorsCoord.Add(coordDoor);
+        
         
         innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
+        
+        CreatedDoorsCoord.Clear();
+        coordDoor.x -= innerWallCreator.m_DoorWidth / 2;
+        CreatedDoorsCoord.Add(coordDoor);
     }
 }

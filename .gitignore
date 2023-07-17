@@ -2,6 +2,7 @@ results/
 logs/
 configs/
 summaries/
+*_build/
 *.zip
 *.pdf
 current.yaml

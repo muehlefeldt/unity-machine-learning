@@ -486,6 +486,8 @@ MonoBehaviour:
   target: {fileID: 1515308257171817040}
   floor: {fileID: 5324353083616000953}
   m_MaxDist: 0
+  maxSteps: 0
+  currentStep: 0
   forceMultiplier: 10
   reward: 0
   m_DistToTarget: 0
@@ -502,7 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
-  TakeActionsBetweenDecisions: 0
+  TakeActionsBetweenDecisions: 1
 --- !u!1 &5324353082665526278
 GameObject:
   m_ObjectHideFlags: 0
@@ -751,6 +753,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floor: {fileID: 5324353083616000953}
   wallParent: {fileID: 0}
+  m_DoorWidth: 1.5
 --- !u!1 &7271182151014013351
 GameObject:
   m_ObjectHideFlags: 0

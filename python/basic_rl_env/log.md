@@ -314,3 +314,18 @@ learning rate changes to reward signifcant?
 
 # 247
 * Test of fixed Collider and step counter.
+
+# before 340
+* Test runs to evaluate the script. Summary was introduced.
+* Config file restructure.
+
+# 340 and following
+* Large number of runs.
+* 2 build env started during training.
+* Check first run and evaluate.
+* 500k steps in each run.
+* 34992 runs ... too manny?
+* Terminated: ETA was in 2025.
+
+# 342 ff.
+*  Terminated: Config not correct.
