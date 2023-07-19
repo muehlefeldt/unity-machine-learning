@@ -15,18 +15,18 @@ userconfig:
   summary: true
 
   # Provide message for the log file for better traceability.
-  message: "ML-Agents error handling"
+  message: "Check for numpy errors with new venv."
 
 behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
       batch_size: 128
-      buffer_size: [10240, 20480]
-      learning_rate: [1e-3, 1e-5]
+      buffer_size: 20480
+      learning_rate: 1e-3
       beta: 5e-3
       epsilon: 0.2
-      lambd: [0.925, 9.5]
+      lambd: 9.5
       num_epoch: 3
       learning_rate_schedule: linear
       beta_schedule: constant
@@ -34,14 +34,14 @@ behaviors:
     network_settings:
       normalize: false
       hidden_units: 128
-      num_layers: [2, 3]
+      num_layers: 2
       memory:
         memory_size: 64
-        sequence_length: [64, 128]
+        sequence_length: 128
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 0.1e6
+    max_steps: 1e6
     time_horizon: 128
     summary_freq: 10000
