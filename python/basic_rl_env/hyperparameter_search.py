@@ -3,6 +3,7 @@ import json
 import logging
 import math
 import os
+import signal
 import subprocess
 
 # import shutil
@@ -272,6 +273,8 @@ def commence_mlagents_run(run_info: dict) -> dict:
             except subprocess.SubprocessError as err:
                 run_info["error"] = True
                 run_info["error_msg"] = str(err)
+            # except KeyboardInterrupt:
+            #    pro.send_signal(signal.SIGNIT)
 
         # Update the dict containing run infos.
         run_info["duration"] = time.time() - start_time
@@ -331,6 +334,9 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
 
 
 def create_summary_file(summary_list: list[dict]):
+    if summary_list == [{}]:
+        return
+    
     """Save sorted summary file."""
     final_summary = update_and_clean_summary(summary_list)
 
@@ -414,12 +420,20 @@ if __name__ == "__main__":
     if production:
         logging.info("%i runs are going to be started.", num_count)
 
+    summary = [{}]
     if not userconfig["build"]:
         summary = list(map(commence_mlagents_run, combinations))
     else:
         # Perform actual calculations using ml-agents distributed over a number of processes.
-        with Pool(userconfig["num_process"]) as p:
-            summary = p.map(commence_mlagents_run, combinations)
+        with Pool(
+            userconfig["num_process"],
+            initializer=signal.signal,
+            initargs=(signal.SIGINT, signal.SIG_IGN),
+        ) as p:
+            try:
+                summary = p.map(commence_mlagents_run, combinations)
+            except KeyboardInterrupt:
+                print("Done.")
 
     if generate_summary:
         create_summary_file(summary)

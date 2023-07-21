@@ -2,7 +2,7 @@ import os
 from multiprocessing import Pool
 from pathlib import Path
 
-import yaml
+import subprocess
 
 TEST = "String"
 
@@ -23,7 +23,8 @@ def f(x) -> dict:
     #    config = yaml.safe_load(config_file)
 
     #print(TEST)
-    return {"x": x}
+    #return {"x": x}
+    return subprocess.run()
 
 
 if __name__ == "__main__":
