@@ -209,8 +209,8 @@ def commence_mlagents_run(run_info: dict) -> dict:
     run_id = run_info["run_id"]
     production = run_info["userconfig"]["production"]
 
-    if production:
-        logging.info("[%i] New run started with id %i.", run_id, run_id)
+    # if production:
+    #    logging.info("[%i] New run started with id %i.", run_id, run_id)
 
     # Get copy of the base config as loaded.
     tmp_config = dict.copy(run_info["base_config"])
@@ -282,6 +282,9 @@ def commence_mlagents_run(run_info: dict) -> dict:
         # ToDo: Can be removed.
         run_info["run_name"] = run_name
 
+        #if not run_info["userconfig"]["keep_files"]:
+        #    os.remove(Path(path_to_temp_config_file).absolute())
+
     return run_info
 
 
@@ -309,6 +312,10 @@ def check_userconfig():
         raise ValueError
     if "message" in config["userconfig"] and not isinstance(config["userconfig"]["message"], str):
         raise ValueError
+    #if not "keep_files" in config["userconfig"] and not isinstance(
+    #    config["userconfig"]["keep_files"], bool
+    #):
+    #    raise ValueError
     return
 
 
@@ -336,7 +343,7 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
 def create_summary_file(summary_list: list[dict]):
     if summary_list == [{}]:
         return
-    
+
     """Save sorted summary file."""
     final_summary = update_and_clean_summary(summary_list)
 
@@ -390,13 +397,17 @@ if __name__ == "__main__":
 
     # Get the id of the first run. Used for logging and summary.
     ID_FIRST_RUN = get_run_id()
+    
+    #created_files = []
 
     # Logging config.
     if production:
+        log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
         logging.basicConfig(
-            filename=Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute(),
+            filename=log_path,
             level=logging.INFO,
         )
+        #created_files.append(log_path)
 
     # Log the message from the config file.
     if production and message_for_log is not None:

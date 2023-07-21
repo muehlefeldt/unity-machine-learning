@@ -14,6 +14,9 @@ userconfig:
   # "true" to generate summary file.
   summary: true
 
+  # Set to false to delete all files after the programm finishes.
+  #keep_files: true
+
   # Provide message for the log file for better traceability.
   message: "Check for numpy errors with new venv."
 
