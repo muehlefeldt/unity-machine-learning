@@ -1,8 +1,8 @@
 import itertools
 import json
 import logging
-import math
 import os
+import shutil
 import signal
 import subprocess
 
@@ -25,9 +25,9 @@ def get_run_id() -> int:
     """Get the run id (number) based on past runs in the result folder.
     If called multiple times, the result will be an increased number."""
     dir_contents = [
-        *os.listdir(Path("./results/").absolute()),
-        *os.listdir(Path("./logs/").absolute()),
-        *os.listdir(Path("./summaries/").absolute()),
+        *os.listdir(Path(PATHS["results_dir"]).absolute()),
+        *os.listdir(Path(PATHS["log_dir"]).absolute()),
+        *os.listdir(Path(PATHS["summaries_dir"]).absolute()),
     ]
     numbers = []
     for entry in dir_contents:
@@ -90,6 +90,7 @@ def good_memory_settings(option: dict) -> bool:
 
 
 def check_combinations(comb: list[dict]) -> list:
+    """Check the parameter combinations and reject invalid combinations."""
     good_combinations = []
     for run_info in comb:
         if good_memory_settings(run_info):
@@ -104,11 +105,10 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
     possile_combinations = list(itertools.product(*parameters))
 
     # Create final list with format: Id: Parameter combination.
-    first_id = get_run_id()
+    first_id = ID_FIRST_RUN
 
     id_possible_combinations = [
         {
-            # "run_id": first_id + possile_combinations.index(x),
             # Dynamic parameter values for this run.
             "parameters": x,
             # User configuration.
@@ -116,7 +116,7 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
             # Base configuration.
             "base_config": config,
             # Path to the build environment.
-            "path_env": Path(path_to_unity_env).absolute(),
+            "paths": PATHS,
             # Error state of the run. Default case is false.
             "error": False,
         }
@@ -173,16 +173,6 @@ def update_parameters_with_option(base: dict, run_info: dict):
     return
 
 
-# def get_number_of_runs(list_of_key_values: list[dict]) -> int:
-#    """ Get the number of runs to be performed. Calculation based on the """
-#    num_runs = 1
-#    for entry in list_of_key_values:
-#        num_runs = entry.keys()[0]
-#        print()
-#
-#    return num_runs
-
-
 def get_mean_reward(name: str) -> float:
     """Get the mean reward over the last 5 cumulative rewards entries in the tfevents file."""
     cumulative_rewards = []
@@ -217,11 +207,11 @@ def commence_mlagents_run(run_info: dict) -> dict:
 
     update_parameters_with_option(tmp_config, run_info)
 
-    path_to_temp_config_file = f"./configs/{run_id}.yaml"
+    run_info["config_file"] = f"{run_info['paths']['configs_dir']}/{run_id}.yaml"
 
     # Save modified config as yaml file.
     if production:
-        with open(Path(path_to_temp_config_file).absolute(), mode="w", encoding="utf8") as new_file:
+        with open(Path(run_info["config_file"]).absolute(), mode="w", encoding="utf8") as new_file:
             yaml.dump(tmp_config, new_file)
 
         return_code = 0
@@ -237,8 +227,8 @@ def commence_mlagents_run(run_info: dict) -> dict:
                 subprocess.run(
                     [
                         "mlagents-learn",
-                        f"{Path(path_to_temp_config_file).absolute()}",
-                        f"--env={run_info['path_env']}",
+                        f"{Path(run_info['config_file']).absolute()}",
+                        f"--env={run_info['paths']['unity_env']}",
                         f"--run-id={run_name}",
                         f"--num-envs={run_info['userconfig']['num_env']}",
                         f"--base-port={run_info['base_port']}",
@@ -261,7 +251,7 @@ def commence_mlagents_run(run_info: dict) -> dict:
                 subprocess.run(
                     [
                         "mlagents-learn",
-                        f"{Path(path_to_temp_config_file).absolute()}",
+                        f"{Path(run_info['config_file']).absolute()}",
                         f"--run-id={run_name}",
                         "--torch-device",
                         "cpu",
@@ -273,49 +263,49 @@ def commence_mlagents_run(run_info: dict) -> dict:
             except subprocess.SubprocessError as err:
                 run_info["error"] = True
                 run_info["error_msg"] = str(err)
-            # except KeyboardInterrupt:
-            #    pro.send_signal(signal.SIGNIT)
 
         # Update the dict containing run infos.
+        # Stores the directory path needed for possible delete of created files.
         run_info["duration"] = time.time() - start_time
         run_info["return_code"] = return_code
-        # ToDo: Can be removed.
         run_info["run_name"] = run_name
-
-        #if not run_info["userconfig"]["keep_files"]:
-        #    os.remove(Path(path_to_temp_config_file).absolute())
+        run_info["result_dir"] = f"{run_info['paths']['results_dir']}/{run_name}"
 
     return run_info
 
 
 def check_userconfig():
     """Check userconfig in the configuration yaml file for content and datatypes."""
+
     if not "userconfig" in config:
         raise ValueError
-    if not "build" in config["userconfig"] and not isinstance(config["userconfig"], bool):
+
+    keys_to_lookup = [
+        "build",
+        "production",
+        "summary",
+        "num_env",
+        "num_process",
+        "message",
+        "keep_files",
+    ]
+    for key in keys_to_lookup:
+        if not key in config["userconfig"]:
+            raise ValueError
+
+    keys_bool_values = ["build", "production", "summary", "keep_files"]
+    for key in keys_bool_values:
+        if not isinstance(config["userconfig"][key], bool):
+            raise ValueError
+
+    keys_int_values = ["num_env", "num_process"]
+    for key in keys_int_values:
+        if not isinstance(config["userconfig"][key], int) or config["userconfig"][key] < 1:
+            raise ValueError
+
+    if not isinstance(config["userconfig"]["message"], str):
         raise ValueError
-    if not "production" in config["userconfig"] and not isinstance(
-        config["userconfig"]["production"], bool
-    ):
-        raise ValueError
-    if not "summary" in config["userconfig"] and not isinstance(
-        config["userconfig"]["summary"], bool
-    ):
-        raise ValueError
-    if not "num_env" in config["userconfig"] and not isinstance(
-        config["userconfig"]["num_env"], bool
-    ):
-        raise ValueError
-    if not "num_process" in config["userconfig"] and not isinstance(
-        config["userconfig"]["num_process"], int
-    ):
-        raise ValueError
-    if "message" in config["userconfig"] and not isinstance(config["userconfig"]["message"], str):
-        raise ValueError
-    #if not "keep_files" in config["userconfig"] and not isinstance(
-    #    config["userconfig"]["keep_files"], bool
-    #):
-    #    raise ValueError
+
     return
 
 
@@ -334,16 +324,13 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
         entry.pop("base_config")
 
         # Path not storeabe as json.
-        entry.pop("path_env")
+        entry.pop("paths")
 
         summary_dict[entry["run_id"]] = entry
     return summary_dict
 
 
 def create_summary_file(summary_list: list[dict]):
-    if summary_list == [{}]:
-        return
-
     """Save sorted summary file."""
     final_summary = update_and_clean_summary(summary_list)
 
@@ -360,23 +347,74 @@ def create_summary_file(summary_list: list[dict]):
         )
         json.dump(sorted_dict, summary_file, indent=4)
 
+    # If requested delete summary file.
+    if not userconfig["keep_files"]:
+        try:
+            os.remove(Path(path_to_summary_file).absolute())
+        except OSError:
+            print("Not able to remove summary file.")
+
+
+def check_directories():
+    """Ensure requiered directories exist."""
+    for name in ["./logs", "./summaries", "./results", "./configs", "/build"]:
+        # Succeds even if directory already exists.
+        os.makedirs(Path(name).absolute(), exist_ok=True)
+
+
+def remove_run_files_log(summary_list: list[dict]):
+    """Delete files that have been created. Main purpose is to minimise number of irrelevant run id.
+    Especially useful during debug runs. Set appropiate option in config file."""
+
+    # Remove files created during mlagents-learn runs. Config file of each run and the directory
+    # in the results directory.
+    for run_info in summary_list:
+        try:
+            os.remove(Path(run_info["config_file"]).absolute())
+        except OSError:
+            print("Not able to delete run config file.")
+
+        shutil.rmtree(Path(run_info["result_dir"]).absolute(), ignore_errors=True)
+
+    # Delete log file.
+    try:
+        # Remove handlers from logging configuration. Enable the log file to be deleted.
+        logging.getLogger().handlers.clear()
+        os.remove(log_path.absolute())
+    except OSError:
+        print("Not able to delete log file.")
+
+    return
+
 
 if __name__ == "__main__":
     # Paths: Config files and unity env.
-    path_to_working_dir = "./python/basic_rl_env"
-    path_to_config_file = "./hyperparameter_search.yaml"
-    path_to_unity_env = "./build"
-    path_to_log_dir = "./logs"
+    PATHS = {
+        "working_dir": "./python/basic_rl_env",
+        "config_file": "./hyperparameter_search.yaml",
+        "unity_env": "./build",
+        "log_dir": "./logs",
+        "summaries_dir": "./summaries",
+        "results_dir": "./results",
+        "configs_dir": "./configs",
+    }
 
     # Ensure correct working dir.
-    if os.getcwd() != Path(path_to_working_dir).absolute():
-        os.chdir(Path(path_to_working_dir).absolute())
+    if os.getcwd() != Path(PATHS["working_dir"]).absolute():
+        os.chdir(Path(PATHS["working_dir"]).absolute())
+
+    check_directories()
 
     # Open the base config file.
-    with open(Path(path_to_config_file).absolute(), mode="r", encoding="utf8") as config_file:
+    with open(Path(PATHS["config_file"]).absolute(), mode="r", encoding="utf8") as config_file:
         config = yaml.safe_load(config_file)
 
-    check_userconfig()
+    try:
+        check_userconfig()
+    except ValueError:
+        print("Error: Check user_config in configuration file.")
+        raise
+
     userconfig = dict.copy(config["userconfig"])
     # User config information no longer needed.
     config.pop("userconfig")
@@ -397,20 +435,19 @@ if __name__ == "__main__":
 
     # Get the id of the first run. Used for logging and summary.
     ID_FIRST_RUN = get_run_id()
-    
-    #created_files = []
+
+    # created_files = []
 
     # Logging config.
-    if production:
-        log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
-        logging.basicConfig(
-            filename=log_path,
-            level=logging.INFO,
-        )
-        #created_files.append(log_path)
+    log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
+    logging.basicConfig(
+        filename=log_path,
+        level=logging.INFO,
+    )
+    # created_files.append(log_path)
 
     # Log the message from the config file.
-    if production and message_for_log is not None:
+    if message_for_log is not None:
         logging.info("Note: %s", message_for_log)
 
     hyperparamters = {"hyperparameters": config["behaviors"]["RollerAgent"]["hyperparameters"]}
@@ -449,23 +486,5 @@ if __name__ == "__main__":
     if generate_summary:
         create_summary_file(summary)
 
-    """
-        end_time = time.time()
-        if production:
-            logging.info(f"[{run_id}] return code = {return_code}.")
-
-        # Logging and error code handling.
-        if return_code != 0:
-            if production:
-                logging.warning(f"[{run_id}] error code.")
-        else:
-            run_durations.append(end_time - start_time)
-            duration = (num_count - run_counter) * mean(run_durations)
-
-            if production:
-                logging.info(f"[{run_id}] Duration: {int(run_durations[-1])} sec.")
-                logging.info(f"[{run_id}] Avg. duration: {int(mean(run_durations))} sec.")
-                logging.info(
-                    f"[{run_id}] Expected end time of all runs: {time.strftime('%d %b %Y %H:%M:%S', time.localtime(time.time() + duration))}."
-                )
-        """
+    if not userconfig["keep_files"]:
+        remove_run_files_log(summary)
