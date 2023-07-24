@@ -6,7 +6,7 @@ userconfig:
   num_env: 1
 
   # Number of parallel processes.
-  num_process: 2
+  num_process: 1
 
   # Production mode? false for test run.
   production: true
@@ -15,7 +15,7 @@ userconfig:
   summary: true
 
   # Set to false to delete all files after the programm finishes.
-  #keep_files: true
+  keep_files: false
 
   # Provide message for the log file for better traceability.
   message: "Check for numpy errors with new venv."
@@ -25,7 +25,7 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       batch_size: 64
-      buffer_size: [10240, 20480]
+      buffer_size: 10240
       learning_rate: 1e-3
       beta: 5e-3
       epsilon: 0.2
@@ -45,6 +45,6 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 0.5e6
+    max_steps: 0.01e6
     time_horizon: 128
     summary_freq: 10000
