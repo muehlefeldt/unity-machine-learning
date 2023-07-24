@@ -105,7 +105,7 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
     possile_combinations = list(itertools.product(*parameters))
 
     # Create final list with format: Id: Parameter combination.
-    first_id = get_run_id()
+    first_id = ID_FIRST_RUN
 
     id_possible_combinations = [
         {
@@ -378,7 +378,9 @@ def remove_run_files_log(summary_list: list[dict]):
 
     # Delete log file.
     try:
-        os.remove(log_path)
+        # Remove handlers from logging configuration. Enable the log file to be deleted.
+        logging.getLogger().handlers.clear()
+        os.remove(log_path.absolute())
     except OSError:
         print("Not able to delete log file.")
 
