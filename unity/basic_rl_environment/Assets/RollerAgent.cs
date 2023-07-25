@@ -318,7 +318,7 @@ public class RollerAgent : Agent
         }
         else
         {
-            reward = 0f;
+            reward = -0.1f;
         }
     }
     
