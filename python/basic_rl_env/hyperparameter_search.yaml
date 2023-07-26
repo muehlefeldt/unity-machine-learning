@@ -1,12 +1,12 @@
 userconfig:
   # Use build env? false for editor.
-  build: true
+  build: false
 
   # Specify number of parallel env to use.
   num_env: 1
 
   # Number of parallel processes.
-  num_process: 2
+  num_process: 1
 
   # Production mode? false for test run.
   production: true
@@ -15,36 +15,36 @@ userconfig:
   summary: true
 
   # Set to false to delete all files after the programm finishes.
-  keep_files: true
+  keep_files: false
 
   # Provide message for the log file for better traceability.
-  message: "Check for numpy errors with new venv."
+  message: "Check for numpy errors."
 
 behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 64
-      buffer_size: [10240, 20480]
-      learning_rate: 1e-3
-      beta: 5e-3
+      batch_size: 256
+      buffer_size: 409600
+      learning_rate: [1e-3, 1e-4, 1e-5]
+      beta: 0.001
       epsilon: 0.2
-      lambd: 9.25
+      lambd: 0.99
       num_epoch: 3
       learning_rate_schedule: linear
-      beta_schedule: constant
-      epsilon_schedule: linear
     network_settings:
-      normalize: false
+      normalize: true
       hidden_units: 128
       num_layers: [2, 3, 4]
       memory:
         memory_size: 64
         sequence_length: 64
+      vis_encode_type: simple
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    max_steps: 0.5e6
-    time_horizon: 128
+    keep_checkpoints: 5
+    max_steps: 2e6
+    time_horizon: 1000
     summary_freq: 10000
