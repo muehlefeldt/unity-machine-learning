@@ -311,15 +311,18 @@ public class RollerAgent : Agent
         if (m_DistToTarget < m_LastDistToTarget)
         {
             reward = 0.1f;
+            //SetReward(reward);
         }
         else if (m_DistToTarget > m_LastDistToTarget)
         {
             reward = -0.2f;
+            //SetReward(reward);
         }
         else
         {
             reward = -0.1f;
         }
+
     }
     
     /// <summary>
