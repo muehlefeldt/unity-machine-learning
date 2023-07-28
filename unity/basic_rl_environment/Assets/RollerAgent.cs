@@ -297,12 +297,21 @@ public class RollerAgent : Agent
     private void CalculateReward()
     {
         
-        var beta = 0.5f;
+        var beta = 0.35f;
         var omega = 0.3f;
-        var fGui = beta * Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
-        //print(fGui);
+        var fGui = Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
         
-        reward = fGui;
+        GetPath();
+        
+        var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
+        print(angleToTarget);
+        var fAng = Mathf.Exp(-1f * Mathf.Pow(angleToTarget, 2f)/ (2 * Mathf.Pow(omega, 2) ));
+        
+        //var dirTransform = transform.TransformDirection(transform.forward);
+        //var currentRay = new Ray(transform.position, dirTransform);
+
+        
+        reward = (1 - beta) * fGui + beta * fAng;
 
     }
     
