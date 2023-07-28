@@ -60,7 +60,7 @@ public class RollerAgent : Agent
         ResetDist();
 
         // How many steps are allowed.
-        maxSteps = 2000;
+        maxSteps = 1000;
         currentStep = 0;
         
         // If the Agent fell, zero its momentum
@@ -310,8 +310,8 @@ public class RollerAgent : Agent
         //var dirTransform = transform.TransformDirection(transform.forward);
         //var currentRay = new Ray(transform.position, dirTransform);
 
-        
-        reward = (1 - beta) * fGui + beta * fAng;
+        var stepPunishment = currentStep / maxSteps;
+        reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
 
     }
     
