@@ -296,32 +296,13 @@ public class RollerAgent : Agent
     public float reward = 0f;
     private void CalculateReward()
     {
-        /*// If distance increases to target no reward issued.
-        if (m_DistToTarget >= m_LastDistToTarget)
-        {
-            reward = 0f;
-            return reward;
-        }
+        
         var beta = 0.5f;
         var omega = 0.3f;
-        var x = m_DistToTarget / m_MaxDist;
-
-        reward = beta * Mathf.Exp(-1 * Mathf.Pow(x, 2f) / (2f * Mathf.Pow(omega, 2f)));
-        return reward;*/
-        if (m_DistToTarget < m_LastDistToTarget)
-        {
-            reward = 0.1f;
-            //SetReward(reward);
-        }
-        else if (m_DistToTarget > m_LastDistToTarget)
-        {
-            reward = -0.2f;
-            //SetReward(reward);
-        }
-        else
-        {
-            reward = -0.1f;
-        }
+        var fGui = beta * Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
+        //print(fGui);
+        
+        reward = fGui;
 
     }
     
@@ -405,6 +386,8 @@ public class RollerAgent : Agent
     /// </summary>
     /// <remarks>Distance is basis for reward function.</remarks>
     public float m_DistToTarget = 0f;
+    public float m_DistToTargetNormal = 0f;
+    
     private float m_LastDistToTarget = 0f;
     private float m_BestDistToTarget = float.PositiveInfinity;
     private bool m_DistImproved = false;
@@ -420,7 +403,10 @@ public class RollerAgent : Agent
         {
             m_DistToTarget += Vector3.Distance(m_Path[i - 1], m_Path[i]);
         }
-
+        
+        // Calculate normalised distance to target.
+        m_DistToTargetNormal = m_DistToTarget / m_MaxDist;
+        
         if (m_DistToTarget < m_BestDistToTarget)
         {
             m_BestDistToTarget = m_DistToTarget;
