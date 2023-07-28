@@ -332,6 +332,9 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
 
 def create_summary_file(summary_list: list[dict]):
     """Save sorted summary file."""
+    if summary_list == [{}]:
+        return
+    
     final_summary = update_and_clean_summary(summary_list)
 
     path_to_summary_file = f"./summaries/{ID_FIRST_RUN}_summary.json"
