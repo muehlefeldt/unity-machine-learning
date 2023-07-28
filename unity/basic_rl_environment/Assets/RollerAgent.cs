@@ -60,7 +60,7 @@ public class RollerAgent : Agent
         ResetDist();
 
         // How many steps are allowed.
-        maxSteps = 400;
+        maxSteps = 2000;
         currentStep = 0;
         
         // If the Agent fell, zero its momentum
