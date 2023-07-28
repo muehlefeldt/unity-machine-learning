@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Check for numpy errors."
+  message: "Revised reward function based on direction and distance."
 
 behaviors:
   RollerAgent:
