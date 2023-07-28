@@ -395,7 +395,7 @@ if __name__ == "__main__":
     PATHS = {
         "working_dir": "./python/basic_rl_env",
         "config_file": "./hyperparameter_search.yaml",
-        "unity_env": "./build",
+        "unity_env": str(Path("C:/build/windows").absolute()),
         "log_dir": "./logs",
         "summaries_dir": "./summaries",
         "results_dir": "./results",
