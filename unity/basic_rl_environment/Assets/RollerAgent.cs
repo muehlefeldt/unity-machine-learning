@@ -283,8 +283,8 @@ public class RollerAgent : Agent
             EndEpisode();
         }
         
-        CalculateReward();
-        SetReward(reward);
+        //CalculateReward();
+        SetReward(-0.0001f);
     }
     
     /// <summary>
