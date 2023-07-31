@@ -39,44 +39,30 @@ def get_run_id() -> int:
 
 
 def get_dynamic_parameters(base_config: dict, address: list) -> list:
-    """Get all dynamic parameters from the config dicts."""
-    """ key_values = []
-    for section in base_config:
-        parameters = section[list(section.keys())[0]]
-        for key in parameters:
-            # Check if value for key is a list. If so, store key value pair.
-            if isinstance(parameters[key], list):
-                new = []
-                for entry in parameters[key]:
-                    new.append({"type": list(section.keys())[0], "content": {key: entry}})
-                key_values.append(new)
- """
-    new = []
+    """Get all dynamic parameters from the config dict. Recursive function to parse nested dicts.
+    Dynmic values are given as list.
+    """
+    new = []  # List to be returned.
     for key, value in base_config.items():
-        # print(key, value)
-
-        """if isinstance(value, dict):
-        address.append(key)
-        result = get_dynamic_parameters(value, address)
-        if result != []:
-            for entry in result:
-                new.append(entry)"""
+        # Dynamic values:
         if isinstance(value, list):
-            print(key, value)
+            # Every value of the found list as separate value stored.
             tmp_new = []
             for entry in value:
                 tmp_new.append(
                     {
                         "address": address + [key],
-                        "key": key,
                         "value": entry,
                     }
                 )
             new.append(tmp_new)
+        # Nested dict:
         elif isinstance(value, dict):
-            # address.append(key)
+            # Recursive call:
             result = get_dynamic_parameters(value, address + [key])
-            if result != []:
+            # Should the returned list be empty, no dynamic values found and result can be
+            # discarded.
+            if result:
                 for entry in result:
                     new.append(entry)
     return new
@@ -101,6 +87,10 @@ def good_memory_settings(run_config: dict) -> bool:
 
 
 def set_dict_value(config_dict: dict, key_chain: list, value):
+    """Recursive set function for a provided dict.
+    Value is set at the position specified in the key chain.
+    """
+    # Recursion anchor. Last entry in key chain reached. Value can be set.
     if len(key_chain) == 1:
         config_dict[key_chain[-1]] = value
     else:
@@ -111,7 +101,6 @@ def get_parameter_combinations(parameters: list[dict]) -> list[dict]:
     """Get the parameter combinations with associated run id."""
 
     # Generate the possible combinations of parameter values.
-    # parameters = [[i] for i in parameters]
     possile_combinations = list(itertools.product(*parameters))
 
     # Create final list with format: Id: Parameter combination.
@@ -291,18 +280,24 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
     Get mean reward of last entries for all runs and save."""
     summary_dict: dict = {}
     for entry in summary_list:
-        if not entry["error"]:
-            # Store mean reward over the last entries to the run.
-            entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
-        else:
-            entry["last_cumulative_reward"] = float("-inf")
-        # Base config to much information in the summary.
-        entry.pop("base_config")
+        try:
+            if not entry["error"]:
+                # Store mean reward over the last entries to the run.
+                entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
+            else:
+                # If error occured during mlagents run store default value.
+                # Only requiered to ensure correct sort.
+                entry["last_cumulative_reward"] = float("-inf")
 
-        # Path not storeabe as json.
-        entry.pop("paths")
+            # Run config to much information in the summary.
+            entry.pop("run_config")
 
-        summary_dict[entry["run_id"]] = entry
+            # Path not storeabe as json.
+            entry.pop("paths")
+
+            summary_dict[entry["run_id"]] = entry
+        except KeyError:
+            print("KeyError during summary generation.")
     return summary_dict
 
 
@@ -350,7 +345,7 @@ def remove_run_files_log(summary_list: list[dict]):
     for run_info in summary_list:
         try:
             os.remove(Path(run_info["config_file"]).absolute())
-        except OSError:
+        except (OSError, KeyError):
             print("Not able to delete run config file.")
 
         shutil.rmtree(Path(run_info["result_dir"]).absolute(), ignore_errors=True)
