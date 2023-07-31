@@ -15,10 +15,10 @@ userconfig:
   summary: true
 
   # Set to false to delete all files after the programm finishes.
-  keep_files: true
+  keep_files: false
 
   # Provide message for the log file for better traceability.
-  message: "Revised reward function based on direction and distance."
+  message: "Sparse reward. Curiosity."
 
 behaviors:
   RollerAgent:
@@ -35,7 +35,7 @@ behaviors:
     network_settings:
       normalize: true
       hidden_units: 128
-      num_layers: 4
+      num_layers: 6
       memory:
         memory_size: 64
         sequence_length: 64
@@ -44,7 +44,13 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
+      curiosity:
+        strength: 1.0
+        gamma: 0.99
+        learning_rate: 3e-4
+        network_settings: 
+          hidden_units: 128
     keep_checkpoints: 5
-    max_steps: 2e6
+    max_steps: 3e6
     time_horizon: 1000
     summary_freq: 10000
