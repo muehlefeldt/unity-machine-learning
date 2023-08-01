@@ -115,7 +115,7 @@ public class RollerAgent : Agent
 
         return currentHit.distance / floor.GetMaxPossibleDist();
     }
-
+    
     public override void CollectObservations(VectorSensor sensor)
     {
         // Target and Agent positions
@@ -133,9 +133,9 @@ public class RollerAgent : Agent
         sensor.AddObservation(m_RBody.velocity.x);
         sensor.AddObservation(m_RBody.velocity.z);
         
-        // Agent rotation.
+        // Agent rotation. Y axis only.
         Quaternion rotation = m_RBody.rotation;
-        sensor.AddObservation(rotation.eulerAngles / 360.0f);  // [0,1]
+        sensor.AddObservation(rotation.eulerAngles.y / 360.0f);  // [0,1]
     }
 
     /// <summary>
