@@ -276,12 +276,12 @@ public class RollerAgent : Agent
         //AddReward(-0.001f);
         currentStep += 1;
 
-        if (currentStep > maxSteps)
-        {
-            RecordData(RecorderCodes.MaxSteps);
-            SetReward(-1f);
-            EndEpisode();
-        }
+        //if (currentStep > maxSteps)
+        //{
+        //    RecordData(RecorderCodes.MaxSteps);
+        //    SetReward(-1f);
+        //    EndEpisode();
+        //}
         
         //CalculateReward();
         SetReward(-0.0001f);
