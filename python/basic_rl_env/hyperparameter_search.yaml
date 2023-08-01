@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Sparse reward. Curiosity. Reworked config file handling."
+  message: "Sparse reward. Curiosity. Reduced observations by the agent."
 
 behaviors:
   RollerAgent:
@@ -45,11 +45,11 @@ behaviors:
         gamma: 0.99
         strength: 1.0
       curiosity:
-        strength: [0.2, 0.5, 0.8]
+        strength: 0.5
         gamma: 0.99
-        learning_rate: [1e-4, 3e-4, 1e-3]
+        learning_rate: 1e-4
         network_settings: 
-          hidden_units: [64, 128, 256]
+          hidden_units: 256
     keep_checkpoints: 5
     max_steps: 1e6
     time_horizon: 1000
