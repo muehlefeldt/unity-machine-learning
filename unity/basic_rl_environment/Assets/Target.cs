@@ -20,14 +20,14 @@ public class Target : MonoBehaviour
         var xCorner = cornerCoords[^2];
         var zCorner = cornerCoords[1];
 
-        var zPosition = Vector3.zero;
+        Vector3 zPosition;
         if (floor.CreateWall)
         {
             // If dynamic wall: Get position of the wall.
             var wallCoords = floor.CreatedWallsCoord;
             var zeroWallPosition = wallCoords[0].Item1;
             
-            // Two z values are possible due to two possible rooms for the target. Position is chossen at random
+            // Two z values are possible due to two possible rooms for the target. Position is chosen at random
             // from the two calculated options.
             var zOptions = new List<Vector3>();
             zOptions.Add(Vector3.Lerp(zeroCorner, zeroWallPosition, GetRandom()));
@@ -43,7 +43,7 @@ public class Target : MonoBehaviour
         // x Position is in every case the same.
         var xPosition = Vector3.Lerp(zeroCorner, xCorner, GetRandom());
         
-        // Ensure correct height in y for the target and set the position.
+        // Ensure correct height in y for the target and set the position. Use x and z from the corresponding vectors.
         var pos = Vector3.zero;
         pos.x = xPosition.x;
         pos.y = 0.5f;
