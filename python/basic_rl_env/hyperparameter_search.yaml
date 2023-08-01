@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Sparse reward. Curiosity. Reduced observations by the agent."
+  message: "Sparse reward. Curiosity. Reduced observations by the agent. No maxstep. No wall. Try to overfit."
 
 behaviors:
   RollerAgent:
@@ -34,8 +34,8 @@ behaviors:
       learning_rate_schedule: linear
     network_settings:
       normalize: true
-      hidden_units: 128
-      num_layers: 4
+      hidden_units: 256
+      num_layers: 6
       memory:
         memory_size: 64
         sequence_length: 64
@@ -51,6 +51,6 @@ behaviors:
         network_settings: 
           hidden_units: 256
     keep_checkpoints: 5
-    max_steps: 1e6
+    max_steps: 2e6
     time_horizon: 1000
     summary_freq: 10000
