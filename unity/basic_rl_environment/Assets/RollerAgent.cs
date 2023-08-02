@@ -232,16 +232,19 @@ public class RollerAgent : Agent
                 break;
         }
 
-        // Rotate
+        // Rotate the agent.
         var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
         transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
-
+        
+        // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
         m_RBody.MovePosition(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
         
+        // Get the distance to the target.
         CalculateDistanceToTarget();
-
+        
+        // On collision with wall terminate the episode.
         if (m_CollisionDetected)
         {
             RecordData(RecorderCodes.Wall);
@@ -250,7 +253,7 @@ public class RollerAgent : Agent
             EndEpisode();
         }
         
-        // Reached target
+        // Reached target. Success.
         if (m_DistToTarget < 1.42f)
         {
             RecordData(RecorderCodes.Target);
@@ -258,13 +261,14 @@ public class RollerAgent : Agent
             EndEpisode();
         }
         
-        // Verify agent state (position) is plausible.
+        // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
         if (!IsAgentPositionPlausible())
         {
             m_ImplausiblePosition = true;
             EndEpisode();
         }
-
+    
+        // Fix the rotation of the agent. Does not warant the termination of the episode.
         if (!IsAgentRotationPlausible())
         {
             //m_ImplausiblePosition = true;
@@ -272,7 +276,7 @@ public class RollerAgent : Agent
             //EndEpisode();
         }
 
-            // Punish each step.
+        // Punish each step.
         //AddReward(-0.001f);
         currentStep += 1;
 

@@ -482,7 +482,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
+  MaxStep: 5000
   target: {fileID: 1515308257171817040}
   floor: {fileID: 5324353083616000953}
   m_MaxDist: 0
