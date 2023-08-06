@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: true
+  build: false
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -15,7 +15,7 @@ userconfig:
   summary: true
 
   # Set to false to delete all files after the programm finishes.
-  keep_files: true
+  keep_files: false
 
   # Provide message for the log file for better traceability.
   message: "Sparse reward. Reduced observations by the agent. No maxstep. No wall. Try to overfit. Curiosty."
@@ -25,7 +25,7 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       batch_size: 512
-      buffer_size: 409600
+      buffer_size: 102400
       learning_rate: 1e-4
       beta: 2.5e-3
       epsilon: 0.2
@@ -35,8 +35,8 @@ behaviors:
     network_settings:
       #conditioning_type: none
       normalize: false
-      hidden_units: 512
-      num_layers: 10
+      hidden_units: 256
+      num_layers: 0
       memory:
         memory_size: 128
         sequence_length: 64
@@ -45,13 +45,13 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-      curiosity:
-        strength: 0.5
-        gamma: 0.99
-        learning_rate: 3e-4
-        network_settings: 
-          hidden_units: 512
+      #curiosity:
+      #  strength: 0.5
+      #  gamma: 0.99
+      #  learning_rate: 3e-4
+      #  network_settings: 
+      #    hidden_units: 512
     keep_checkpoints: 5
-    max_steps: 10e6
+    max_steps: 0.3e6
     time_horizon: 1000
     summary_freq: 10000

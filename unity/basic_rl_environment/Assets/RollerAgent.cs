@@ -51,6 +51,7 @@ public class RollerAgent : Agent
 
     public int maxSteps;
     public int currentStep;
+    private bool m_TargetReached = false;
     public override void OnEpisodeBegin()
     {
         floor.Prepare();
@@ -68,6 +69,7 @@ public class RollerAgent : Agent
         {
             m_CollisionDetected = false;
             m_ImplausiblePosition = false;
+            m_TargetReached = false;
             ResetAgentPosition();
         }
 
@@ -89,6 +91,17 @@ public class RollerAgent : Agent
         /*var currentRay = new Ray(transform.localPosition, transform.TransformDirection(Vector3.forward));
         RaycastHit currentHit;
         Physics.Raycast(currentRay, out currentHit, maxDistance: Mathf.Infinity);*/
+        /*m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
+        m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
+        m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
+        m_RayRightDist = PerformRaycastGetDistance(Vector3.right);
+        m_RayUpDist = PerformRaycastGetDistance(Vector3.up);
+        m_RayDownDist = PerformRaycastGetDistance(Vector3.down);*/
+        
+    }
+    
+    private void PrepareObservations()
+    {
         m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
         m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
         m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
@@ -118,9 +131,8 @@ public class RollerAgent : Agent
     
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Target and Agent positions
-        //sensor.AddObservation(target.localPosition);
-        //sensor.AddObservation(this.transform.localPosition);
+        // Idea: Ensure updated sensor data when setting observations. 
+        PrepareObservations();
         
         sensor.AddObservation(m_RayForwardDist);
         sensor.AddObservation(m_RayBackDist);
@@ -130,9 +142,8 @@ public class RollerAgent : Agent
         sensor.AddObservation(m_RayDownDist);
 
         // Agent velocity.
-        sensor.AddObservation(m_RBody.velocity.x);
-        sensor.AddObservation(m_RBody.velocity.z);
-        
+        sensor.AddObservation(m_RBody.velocity);
+
         // Agent rotation. Y axis only.
         Quaternion rotation = m_RBody.rotation;
         sensor.AddObservation(rotation.eulerAngles.y / 360.0f);  // [0,1]
@@ -182,15 +193,15 @@ public class RollerAgent : Agent
         var rightLeft = actionBuffers.DiscreteActions[0];
         var upDown = actionBuffers.DiscreteActions[1];
         var forwardBackwards = actionBuffers.DiscreteActions[2];
-        var r = actionBuffers.DiscreteActions[3];
+        //var r = actionBuffers.DiscreteActions[3];
 
         // Check if any movement is requested.
-        var all = new List<int>(){rightLeft, upDown, forwardBackwards, r};
+        var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r*/};
         if (!(all.Contains(2) || all.Contains(3)))
         {
             return;
         } 
-
+        
         switch (rightLeft)
         {
             case 2:
@@ -221,7 +232,7 @@ public class RollerAgent : Agent
                 break;
         }
 
-        var rotate = 0f;
+        /*var rotate = 0f;
         switch (r)
         {
             case 2:
@@ -230,12 +241,12 @@ public class RollerAgent : Agent
             case 3:
                 rotate = -1f;
                 break;
-        }
+        }*/
 
         // Rotate the agent.
-        var turnSpeed = 200;
+        /*var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
-        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);*/
         
         // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
@@ -258,6 +269,7 @@ public class RollerAgent : Agent
         {
             RecordData(RecorderCodes.Target);
             SetReward(1f);
+            m_TargetReached = true;
             EndEpisode();
         }
         
@@ -288,7 +300,7 @@ public class RollerAgent : Agent
         //}
         
         //CalculateReward();
-        SetReward(-0.0001f);
+        //SetReward(-0.0001f);
     }
     
     /// <summary>
@@ -544,7 +556,7 @@ public class RollerAgent : Agent
             discreteActionsOut[2] = 1;
         }
         // Rotation. Right, left and no rotation.
-        if (Input.GetKey(KeyCode.E))
+        /*if (Input.GetKey(KeyCode.E))
         {
             discreteActionsOut[3] = 2;
         }
@@ -555,6 +567,6 @@ public class RollerAgent : Agent
         else
         {
             discreteActionsOut[3] = 1;
-        }
+        }*/
     }
 }
