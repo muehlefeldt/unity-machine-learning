@@ -188,7 +188,7 @@ public class RollerAgent : Agent
     public float forceMultiplier = 10f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        Vector3 controlSignal = Vector3.zero;
+        /*Vector3 controlSignal = Vector3.zero;
         
         var rightLeft = actionBuffers.DiscreteActions[0];
         var upDown = actionBuffers.DiscreteActions[1];
@@ -196,7 +196,7 @@ public class RollerAgent : Agent
         //var r = actionBuffers.DiscreteActions[3];
 
         // Check if any movement is requested.
-        var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r*/};
+        var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
         if (!(all.Contains(2) || all.Contains(3)))
         {
             return;
@@ -230,23 +230,53 @@ public class RollerAgent : Agent
             case 3:
                 controlSignal.z = -1f;
                 break;
-        }
+        }*/
+        
+        Vector3 controlSignal = Vector3.zero;
+        
+        var actions = actionBuffers.DiscreteActions[0];
+        
+        //var r = actionBuffers.DiscreteActions[3];
 
-        /*var rotate = 0f;
-        switch (r)
+        // Check if any movement is requested.
+        /*var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
+        if (!(all.Contains(2) || all.Contains(3)))
+        {
+            return;
+        } */
+        var rotate = 0f;
+        switch (actions)
         {
             case 2:
-                rotate = 1f;
+                controlSignal.x = 1f;
                 break;
             case 3:
+                controlSignal.x = -1f;
+                break;
+            case 4:
+                controlSignal.y = 1f;
+                break;
+            case 5:
+                controlSignal.y = -1f;
+                break;
+            case 6:
+                controlSignal.z = 1f;
+                break;
+            case 7:
+                controlSignal.z = -1f;
+                break;
+            case 8:
+                rotate = 1f;
+                break;
+            case 9:
                 rotate = -1f;
                 break;
-        }*/
+        }
 
         // Rotate the agent.
-        /*var turnSpeed = 200;
+        var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
-        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);*/
+        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
         
         // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
@@ -517,7 +547,7 @@ public class RollerAgent : Agent
         //var rotation = discreteActionsOut[3];
         
         // X. Right, left and no movement.
-        if (Input.GetKey(KeyCode.D))
+        /*if (Input.GetKey(KeyCode.D))
         {
             discreteActionsOut[0] = 2;
         }
@@ -556,7 +586,7 @@ public class RollerAgent : Agent
             discreteActionsOut[2] = 1;
         }
         // Rotation. Right, left and no rotation.
-        /*if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.E))
         {
             discreteActionsOut[3] = 2;
         }
@@ -568,5 +598,46 @@ public class RollerAgent : Agent
         {
             discreteActionsOut[3] = 1;
         }*/
+        if (Input.GetKey(KeyCode.D))
+        {
+            discreteActionsOut[0] = 2;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            discreteActionsOut[0] = 3;
+        }
+        
+        // Y. Up, down and no movement.
+        else if (Input.GetKey(KeyCode.X))
+        {
+            discreteActionsOut[0] = 4;
+        }
+        else if (Input.GetKey(KeyCode.Y))
+        {
+            discreteActionsOut[0] = 5;
+        }
+        // Z. Forward, backwards and no movement.
+        else if (Input.GetKey(KeyCode.W))
+        {
+            discreteActionsOut[0] = 6;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            discreteActionsOut[0] = 7;
+        }
+        
+        // Rotation. Right, left and no rotation.
+        else if (Input.GetKey(KeyCode.E))
+        {
+            discreteActionsOut[0] = 8;
+        }
+        else if (Input.GetKey(KeyCode.Q))
+        {
+            discreteActionsOut[0] = 9;
+        }
+        else
+        {
+            discreteActionsOut[0] = 1;
+        }
     }
 }

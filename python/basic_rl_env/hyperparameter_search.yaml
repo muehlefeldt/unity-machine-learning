@@ -15,7 +15,7 @@ userconfig:
   summary: true
 
   # Set to false to delete all files after the programm finishes.
-  keep_files: false
+  keep_files: true
 
   # Provide message for the log file for better traceability.
   message: "Sparse reward. Reduced observations by the agent. No maxstep. No wall. Try to overfit. Curiosty."
@@ -52,6 +52,6 @@ behaviors:
       #  network_settings: 
       #    hidden_units: 512
     keep_checkpoints: 5
-    max_steps: 0.3e6
+    max_steps: 1e6
     time_horizon: 1000
     summary_freq: 10000
