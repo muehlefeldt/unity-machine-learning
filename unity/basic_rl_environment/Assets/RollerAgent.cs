@@ -322,7 +322,7 @@ public class RollerAgent : Agent
         //}
         
         //CalculateReward();
-        SetReward(-1f / MaxStep);
+        //SetReward(-1f / MaxStep);
     }
     
     /// <summary>
