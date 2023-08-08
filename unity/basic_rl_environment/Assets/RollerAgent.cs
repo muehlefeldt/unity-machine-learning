@@ -128,7 +128,7 @@ public class RollerAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // Idea: Ensure updated sensor data when setting observations. 
-        //PrepareObservations();
+        PrepareObservations();
         
         sensor.AddObservation(m_RayForwardDist);
         sensor.AddObservation(m_RayBackDist);
