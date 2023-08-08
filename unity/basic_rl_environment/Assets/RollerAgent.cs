@@ -243,28 +243,28 @@ public class RollerAgent : Agent
         var rotate = 0f;
         switch (actions)
         {
-            case 2:
+            case 1:
                 controlSignal.x = 1f;
                 break;
-            case 3:
+            case 2:
                 controlSignal.x = -1f;
                 break;
-            case 4:
+            case 3:
                 controlSignal.y = 1f;
                 break;
-            case 5:
+            case 4:
                 controlSignal.y = -1f;
                 break;
-            case 6:
+            case 5:
                 controlSignal.z = 1f;
                 break;
-            case 7:
+            case 6:
                 controlSignal.z = -1f;
                 break;
-            case 8:
+            case 7:
                 rotate = 1f;
                 break;
-            case 9:
+            case 8:
                 rotate = -1f;
                 break;
         }
