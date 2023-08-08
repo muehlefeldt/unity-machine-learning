@@ -48,9 +48,7 @@ public class RollerAgent : Agent
         var currentRotationY = transform.eulerAngles.y;
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
     }
-
-    public int maxSteps;
-    public int currentStep;
+    
     private bool m_TargetReached = false;
     public override void OnEpisodeBegin()
     {
@@ -60,10 +58,6 @@ public class RollerAgent : Agent
         // ToDo: Why reset here distances?
         ResetDist();
 
-        // How many steps are allowed.
-        maxSteps = 1000;
-        currentStep = 0;
-        
         // If the Agent fell, zero its momentum
         if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
         {
@@ -86,8 +80,10 @@ public class RollerAgent : Agent
     private float m_RayRightDist;
     private float m_RayUpDist;
     private float m_RayDownDist;
+    //public int CurrentStep = 0;
     void FixedUpdate()
     {
+        //CurrentStep = StepCount;
         /*var currentRay = new Ray(transform.localPosition, transform.TransformDirection(Vector3.forward));
         RaycastHit currentHit;
         Physics.Raycast(currentRay, out currentHit, maxDistance: Mathf.Infinity);*/
@@ -132,7 +128,7 @@ public class RollerAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // Idea: Ensure updated sensor data when setting observations. 
-        PrepareObservations();
+        //PrepareObservations();
         
         sensor.AddObservation(m_RayForwardDist);
         sensor.AddObservation(m_RayBackDist);
@@ -290,7 +286,7 @@ public class RollerAgent : Agent
         {
             RecordData(RecorderCodes.Wall);
             SetReward(-1f);
-            Debug.Log("Collision");
+            //Debug.Log("Collision");
             EndEpisode();
         }
         
@@ -318,10 +314,6 @@ public class RollerAgent : Agent
             //EndEpisode();
         }
 
-        // Punish each step.
-        //AddReward(-0.001f);
-        currentStep += 1;
-
         //if (currentStep > maxSteps)
         //{
         //    RecordData(RecorderCodes.MaxSteps);
@@ -330,7 +322,7 @@ public class RollerAgent : Agent
         //}
         
         //CalculateReward();
-        //SetReward(-0.0001f);
+        SetReward(-1f / MaxStep);
     }
     
     /// <summary>
@@ -356,8 +348,8 @@ public class RollerAgent : Agent
         //var dirTransform = transform.TransformDirection(transform.forward);
         //var currentRay = new Ray(transform.position, dirTransform);
 
-        var stepPunishment = currentStep / maxSteps;
-        reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
+        //var stepPunishment = currentStep / maxSteps;
+        //reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
 
     }
     
@@ -419,11 +411,11 @@ public class RollerAgent : Agent
                 break;
             
             case RecorderCodes.RotationError:
-                statsRecorder.Add("Wall hit", 0f);
-                statsRecorder.Add("Max Steps reached", 0f);
-                statsRecorder.Add("Target Reached", 0f);
+                //statsRecorder.Add("Wall hit", 0f);
+                //statsRecorder.Add("Max Steps reached", 0f);
+                //statsRecorder.Add("Target Reached", 0f);
                 statsRecorder.Add("Rotation Error", 1f);
-                statsRecorder.Add("Out of bounds", 0f);
+                //statsRecorder.Add("Out of bounds", 0f);
                 break;
             
             case RecorderCodes.OutOfBounds:

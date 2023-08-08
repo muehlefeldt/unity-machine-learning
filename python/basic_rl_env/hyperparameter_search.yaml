@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: false
+  build: true
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Sparse reward. Reduced observations by the agent. No maxstep. No wall. Try to overfit. Curiosty."
+  message: "Rerun of 730."
 
 behaviors:
   RollerAgent:
@@ -26,7 +26,7 @@ behaviors:
     hyperparameters:
       batch_size: 512
       buffer_size: 102400
-      learning_rate: 1e-4
+      learning_rate: 1e-3
       beta: 2.5e-3
       epsilon: 0.2
       lambd: 0.95
@@ -52,6 +52,6 @@ behaviors:
       #  network_settings: 
       #    hidden_units: 512
     keep_checkpoints: 5
-    max_steps: 1e6
+    max_steps: 5e6
     time_horizon: 1000
     summary_freq: 10000
