@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: false
+  build: true
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Rerun of 730."
+  message: "Rerun of 730. Build and 8 training areas. Fix to the discrete actions."
 
 behaviors:
   RollerAgent:
