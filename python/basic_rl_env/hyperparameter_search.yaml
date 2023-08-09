@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Rerun of 730. Build and 8 training areas. Fix to the discrete actions."
+  message: "Rerun of 730. Build and 8 training areas. Punish each step. Research learning rate."
 
 behaviors:
   RollerAgent:
@@ -26,7 +26,7 @@ behaviors:
     hyperparameters:
       batch_size: 512
       buffer_size: 102400
-      learning_rate: 1e-3
+      learning_rate: [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
       beta: 2.5e-3
       epsilon: 0.2
       lambd: 0.95
@@ -52,6 +52,6 @@ behaviors:
       #  network_settings: 
       #    hidden_units: 512
     keep_checkpoints: 5
-    max_steps: 5e6
+    max_steps: 1e6
     time_horizon: 1000
     summary_freq: 10000
