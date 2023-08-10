@@ -18,20 +18,30 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Rerun of 730. Build and 8 training areas. Punish each step. Research batch and buffer size."
+  message: "Rerun of 789. Build and 8 training areas. Punish each step. Research epsilon."
 
 behaviors:
   RollerAgent:
+    # Common Trainer Configurations.
     trainer_type: ppo
+    keep_checkpoints: 5
+    max_steps: 1e6
+    time_horizon: 1000
+    summary_freq: 10000
+
     hyperparameters:
-      batch_size: [32, 64, 128]
-      buffer_size: [10240, 20480, 50120, 102400]
+      # Common Trainer Configurations.
+      batch_size: 64
+      buffer_size: 50120
       learning_rate: 1e-3
+      learning_rate_schedule: linear
+
+      # PPO-specific Configurations.
       beta: 2.5e-3
-      epsilon: 0.2
+      epsilon: [0.1, 0.15]
       lambd: 0.95
       num_epoch: 3
-      learning_rate_schedule: linear
+      
     network_settings:
       #conditioning_type: none
       normalize: false
@@ -51,7 +61,4 @@ behaviors:
       #  learning_rate: 3e-4
       #  network_settings: 
       #    hidden_units: 512
-    keep_checkpoints: 5
-    max_steps: 1e6
-    time_horizon: 1000
-    summary_freq: 10000
+    
