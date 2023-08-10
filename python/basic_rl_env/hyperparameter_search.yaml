@@ -18,15 +18,15 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Rerun of 730. Build and 8 training areas. Punish each step. Research learning rate."
+  message: "Rerun of 730. Build and 8 training areas. Punish each step. Research batch and buffer size."
 
 behaviors:
   RollerAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 512
-      buffer_size: 102400
-      learning_rate: [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
+      batch_size: [64, 128, 256, 512]
+      buffer_size: [102400, 204800, 309600]
+      learning_rate: 1e-3
       beta: 2.5e-3
       epsilon: 0.2
       lambd: 0.95
