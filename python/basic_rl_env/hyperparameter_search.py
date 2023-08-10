@@ -162,7 +162,7 @@ def get_mean_reward(name: str) -> float:
                 cumulative_rewards.append(value.tensor.float_val[0])
 
     # Return mean of the last 5 recorded cummulative rewards.
-    return mean(cumulative_rewards[-5:])
+    return mean(cumulative_rewards[-100:])
 
 
 def commence_mlagents_run(run_info: dict) -> dict:
