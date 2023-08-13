@@ -658,8 +658,8 @@ MonoBehaviour:
   CreatedDoorsCoord: []
   innerWallCreator: {fileID: 1595673323979307659}
   finished: 0
-  CreateWall: 1
-  RandomWallPosition: 1
+  CreateWall: 0
+  RandomWallPosition: 0
   RanndomDoorPosition: 0
 --- !u!65 &7692793173245375662
 BoxCollider:

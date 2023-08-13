@@ -18,14 +18,14 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Rerun of 789. Build and 8 training areas. Punish each step. Door reintroduced. Wall random. Door fixed."
+  message: "Rerun of 789. Build and 8 training areas. Punish each step. No wall."
 
 behaviors:
   RollerAgent:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 10e6
+    max_steps: 1e6
     time_horizon: 1000
     summary_freq: 10000
 
@@ -33,7 +33,7 @@ behaviors:
       # Common Trainer Configurations.
       batch_size: 64
       buffer_size: 50120
-      learning_rate: [1e-3, 1e-4]
+      learning_rate: 1e-2
       learning_rate_schedule: linear
 
       # PPO-specific Configurations.
