@@ -592,44 +592,44 @@ public class RollerAgent : Agent
         }*/
         if (Input.GetKey(KeyCode.D))
         {
-            discreteActionsOut[0] = 2;
+            discreteActionsOut[0] = 1;
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            discreteActionsOut[0] = 3;
+            discreteActionsOut[0] = 2;
         }
         
         // Y. Up, down and no movement.
         else if (Input.GetKey(KeyCode.X))
         {
-            discreteActionsOut[0] = 4;
+            discreteActionsOut[0] = 3;
         }
         else if (Input.GetKey(KeyCode.Y))
         {
-            discreteActionsOut[0] = 5;
+            discreteActionsOut[0] = 4;
         }
         // Z. Forward, backwards and no movement.
         else if (Input.GetKey(KeyCode.W))
         {
-            discreteActionsOut[0] = 6;
+            discreteActionsOut[0] = 5;
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            discreteActionsOut[0] = 7;
+            discreteActionsOut[0] = 6;
         }
         
         // Rotation. Right, left and no rotation.
         else if (Input.GetKey(KeyCode.E))
         {
-            discreteActionsOut[0] = 8;
+            discreteActionsOut[0] = 7;
         }
         else if (Input.GetKey(KeyCode.Q))
         {
-            discreteActionsOut[0] = 9;
+            discreteActionsOut[0] = 8;
         }
         else
         {
-            discreteActionsOut[0] = 1;
+            discreteActionsOut[0] = 0;
         }
     }
 }
