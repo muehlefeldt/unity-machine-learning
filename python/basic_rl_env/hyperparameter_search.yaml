@@ -45,7 +45,7 @@ behaviors:
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
-      hidden_units: 256
+      hidden_units: 512
       num_layers: 0
       memory:
         memory_size: 128
