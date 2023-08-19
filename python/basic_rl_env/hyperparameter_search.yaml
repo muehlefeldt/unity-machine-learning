@@ -18,14 +18,14 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Rerun of 730. Build and 8 training areas. To show mats."
+  message: "Rerun of 730. Build and 8 training areas. To show mats. Less steps, more hidden units."
 
 behaviors:
   RollerAgent:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 300e6
+    max_steps: 10e6
     time_horizon: 1000
     summary_freq: 10000
 
@@ -45,8 +45,8 @@ behaviors:
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
-      hidden_units: 512
-      num_layers: 0
+      hidden_units: [1024, 2048]
+      num_layers: [0,1,2]
       memory:
         memory_size: 128
         sequence_length: 64
