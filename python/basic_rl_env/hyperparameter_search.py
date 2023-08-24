@@ -12,7 +12,9 @@ import time
 from collections import OrderedDict
 from multiprocessing import Pool
 from pathlib import Path
-from statistics import mean
+from statistics import mean, stdev
+
+import numpy as np
 
 # import tensorflow as tf
 import yaml
@@ -145,7 +147,7 @@ def get_parameter_combinations(parameters: list[dict]) -> list[dict]:
     return id_possible_combinations
 
 
-def get_mean_reward(name: str) -> float:
+def get_mean_reward(name: str) -> tuple[float, float]:
     """Get the mean reward over the last 5 cumulative rewards entries in the tfevents file."""
     cumulative_rewards = []
 
@@ -162,7 +164,8 @@ def get_mean_reward(name: str) -> float:
                 cumulative_rewards.append(value.tensor.float_val[0])
 
     # Return mean of the last 5 recorded cummulative rewards.
-    return mean(cumulative_rewards[-100:])
+    rewards_of_interest = cumulative_rewards[-100:]
+    return mean(rewards_of_interest), np.round(np.std(rewards_of_interest), 10)
 
 
 def commence_mlagents_run(run_info: dict) -> dict:
@@ -283,7 +286,10 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
         try:
             if not entry["error"]:
                 # Store mean reward over the last entries to the run.
-                entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
+                (
+                    entry["last_cumulative_reward"],
+                    entry["last_cumulative_reward_std"],
+                ) = get_mean_reward(entry["run_name"])
             else:
                 # If error occured during mlagents run store default value.
                 # Only requiered to ensure correct sort.
