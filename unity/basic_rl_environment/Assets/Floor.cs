@@ -124,25 +124,43 @@ public class Floor : MonoBehaviour
     /// Create a inner wall.
     /// Reference: https://answers.unity.com/questions/52747/how-i-can-create-a-cube-with-specific-coordenates.html
     /// </summary>
+    public bool CreateWall = true;
+    public bool RandomWallPosition = true;
+    public bool RanndomDoorPosition = true;
+
     public void CreateInnerWall()
     {
-        var randomWallIndex = Random.Range(3, 6);
-        var begin = m_PossibleWallLocations[randomWallIndex];
-        var randomDoorIncrement = Random.Range(2, 8);
-        var coordStartWall = m_GlobalVertices[begin];
-        var coordDoor = m_GlobalVertices[begin + randomDoorIncrement];
-        var coordEndWall = m_GlobalVertices[begin + m_IndexWallEnd];
-        
-        // Empty saved coords. 
-        CreatedWallsCoord.Clear();
-        CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall,  coordEndWall));
-        
-        
-        
-        innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
-        
-        CreatedDoorsCoord.Clear();
-        coordDoor.x -= innerWallCreator.m_DoorWidth / 2;
-        CreatedDoorsCoord.Add(coordDoor);
+        if (CreateWall == true)
+        {
+            var randomWallIndex = 4;
+            if (RandomWallPosition == true)
+            {
+                randomWallIndex = Random.Range(3, 6);
+            }
+
+            var begin = m_PossibleWallLocations[randomWallIndex];
+
+            var randomDoorIncrement = 5;
+            if (RanndomDoorPosition == true)
+            {
+                randomDoorIncrement = Random.Range(2, 8);
+            }
+
+            var coordStartWall = m_GlobalVertices[begin];
+            var coordDoor = m_GlobalVertices[begin + randomDoorIncrement];
+            var coordEndWall = m_GlobalVertices[begin + m_IndexWallEnd];
+
+            // Empty saved coords. 
+            CreatedWallsCoord.Clear();
+            CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall, coordEndWall));
+
+
+
+            innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
+
+            CreatedDoorsCoord.Clear();
+            coordDoor.x -= innerWallCreator.m_DoorWidth / 2;
+            CreatedDoorsCoord.Add(coordDoor);
+        }
     }
 }

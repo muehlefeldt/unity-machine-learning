@@ -1,3 +1,4 @@
+import copy
 import itertools
 import json
 import logging
@@ -11,7 +12,9 @@ import time
 from collections import OrderedDict
 from multiprocessing import Pool
 from pathlib import Path
-from statistics import mean
+from statistics import mean, stdev
+
+import numpy as np
 
 # import tensorflow as tf
 import yaml
@@ -37,68 +40,66 @@ def get_run_id() -> int:
     return max(numbers) + 1
 
 
-def get_dynamic_parameters(base_config: list[dict]) -> list:
-    """Get all dynamic parameters from the config dicts."""
-    key_values = []
-    for section in base_config:
-        parameters = section[list(section.keys())[0]]
-        for key in parameters:
-            # Check if value for key is a list. If so, store key value pair.
-            if isinstance(parameters[key], list):
-                new = []
-                for entry in parameters[key]:
-                    new.append({"type": list(section.keys())[0], "content": {key: entry}})
-                key_values.append(new)
+def get_dynamic_parameters(base_config: dict, address: list) -> list:
+    """Get all dynamic parameters from the config dict. Recursive function to parse nested dicts.
+    Dynmic values are given as list.
+    """
+    new = []  # List to be returned.
+    for key, value in base_config.items():
+        # Dynamic values:
+        if isinstance(value, list):
+            # Every value of the found list as separate value stored.
+            tmp_new = []
+            for entry in value:
+                tmp_new.append(
+                    {
+                        "address": address + [key],
+                        "value": entry,
+                    }
+                )
+            new.append(tmp_new)
+        # Nested dict:
+        elif isinstance(value, dict):
+            # Recursive call:
+            result = get_dynamic_parameters(value, address + [key])
+            # Should the returned list be empty, no dynamic values found and result can be
+            # discarded.
+            if result:
+                for entry in result:
+                    new.append(entry)
+    return new
 
-    return key_values
 
-
-def good_memory_settings(option: dict) -> bool:
+def good_memory_settings(run_config: dict) -> bool:
     """Check run info / configuration for a valid memory configuration."""
-    # Prepare variables.
-    sequence_len = None
-    batch_size = None
-
-    # Is sequence length a dynamic parameter?
-    for para in option["parameters"]:
-        try:
-            sequence_len = para["content"]["sequence_length"]
-        except KeyError:
-            continue
-
-    # Is batch size a dynamic parameter?
-    for para in option["parameters"]:
-        try:
-            batch_size = para["content"]["batch_size"]
-        except KeyError:
-            continue
-
-    # If not found in dynamic parameters get the default value from the base configuration.
-    # The value should be a single value and not a list.
-    if sequence_len is None:
-        sequence_len = option["base_config"]["behaviors"]["RollerAgent"]["network_settings"][
+    try:
+        sequence_len = run_config["base_config"]["behaviors"]["RollerAgent"]["network_settings"][
             "memory"
         ]["sequence_length"]
 
-    if batch_size is None:
-        batch_size = option["base_config"]["behaviors"]["RollerAgent"]["hyperparameters"][
+        batch_size = run_config["base_config"]["behaviors"]["RollerAgent"]["hyperparameters"][
             "batch_size"
         ]
+    except KeyError:
+        # KeyError may occur if no memory is set. In this case the check is not requiered.
+        return True
 
     # When using memory, sequence length must be less than or equal to batch size.
     return sequence_len <= batch_size
 
 
-def check_combinations(comb: list[dict]) -> list:
-    """Check the parameter combinations and reject invalid combinations."""
-    good_combinations = []
-    for run_info in comb:
-        if good_memory_settings(run_info):
-            good_combinations.append(run_info)
-    return good_combinations
+def set_dict_value(config_dict: dict, key_chain: list, value):
+    """Recursive set function for a provided dict.
+    Value is set at the position specified in the key chain.
+    """
+    # Recursion anchor. Last entry in key chain reached. Value can be set.
+    if len(key_chain) == 1:
+        config_dict[key_chain[-1]] = value
+    else:
+        set_dict_value(config_dict[key_chain[0]], key_chain[1:], value)
 
 
-def get_parameter_combinations(parameters: list[list]) -> list[dict]:
+def get_parameter_combinations(parameters: list[dict]) -> list[dict]:
     """Get the parameter combinations with associated run id."""
 
     # Generate the possible combinations of parameter values.
@@ -106,74 +107,47 @@ def get_parameter_combinations(parameters: list[list]) -> list[dict]:
 
     # Create final list with format: Id: Parameter combination.
     first_id = ID_FIRST_RUN
+    tmp_id = 0
 
-    id_possible_combinations = [
-        {
-            # Dynamic parameter values for this run.
-            "parameters": x,
-            # User configuration.
-            "userconfig": userconfig,
-            # Base configuration.
-            "base_config": config,
-            # Path to the build environment.
-            "paths": PATHS,
-            # Error state of the run. Default case is false.
-            "error": False,
-        }
-        for x in possile_combinations
-    ]
+    id_possible_combinations = []
+    for combination in possile_combinations:
+        # Use deepcopy to ensure a copy without any references to the copied dict are created.
+        tmp_config = copy.deepcopy(config)
+        for entry in combination:
+            print(entry)
+            address = entry["address"]
+            set_dict_value(tmp_config, address, entry["value"])
 
-    # Check possible parameter combinations and discard implausibe combinations.
-    id_possible_combinations = check_combinations(id_possible_combinations)
-
-    # Add id and base port to run info.
-    for comb in id_possible_combinations:
-        tmp_id = id_possible_combinations.index(comb)
-        # ID of this run config.
-        comb["run_id"] = first_id + tmp_id
-        # Decide on base port for ml-agents.
-        comb["base_port"] = 5005 + tmp_id
+        # Check possible parameter combinations and discard implausibe combinations.
+        # Otherwise add combination of parameters to the runs to be commensed.
+        if good_memory_settings(tmp_config):
+            id_possible_combinations.append(
+                {
+                    # Dynamic parameter values for this run.
+                    "parameters": combination,
+                    # User configuration.
+                    "userconfig": userconfig,
+                    # Run configuration to be used during the run.
+                    "run_config": tmp_config,
+                    # Path to the build environment.
+                    "paths": PATHS,
+                    # Error state of the run. Default case is false.
+                    "error": False,
+                    # ID of this run config.
+                    "run_id": first_id + tmp_id,
+                    # Decide on base port for ml-agents.
+                    "base_port": 5005 + tmp_id,
+                }
+            )
+        tmp_id += 1
 
     if production:
         logging.info("Found %i value combinations.", len(id_possible_combinations))
+
     return id_possible_combinations
 
 
-def update_parameters_with_option(base: dict, run_info: dict):
-    """
-    Update key value pairs in temporary dict using the key values list and the current option.
-    The run id is only used for logging purposes.
-    """
-    work_dict = base["behaviors"]["RollerAgent"]
-    para_option = run_info["parameters"]
-    id_num = run_info["run_id"]
-
-    # Dynamic key value pairs are updated in the tmp dict.
-    for entry in para_option:
-        # Get the key of the section containing the parameter.
-        type = entry["type"]
-        entry_key = list(entry["content"].keys())[0]
-
-        # Get the key of the parameter.
-        # para_key = list(entry["content"][entry_key].keys())[0]
-
-        # Get value of the parameter from the current option.
-        value = entry["content"][entry_key]
-
-        # If memory parameter change location to network settings.
-        # Otherwise write value to selected section and parameter.
-        # if entry_key == "memory":
-        if type == "memory":
-            work_dict["network_settings"][type][entry_key] = value
-        else:
-            work_dict[type][entry_key] = value
-
-        if run_info["userconfig"]["production"]:
-            logging.info("[%i] %s = %s.", id_num, entry_key, value)
-    return
-
-
-def get_mean_reward(name: str) -> float:
+def get_mean_reward(name: str) -> tuple[float, float]:
     """Get the mean reward over the last 5 cumulative rewards entries in the tfevents file."""
     cumulative_rewards = []
 
@@ -190,7 +164,8 @@ def get_mean_reward(name: str) -> float:
                 cumulative_rewards.append(value.tensor.float_val[0])
 
     # Return mean of the last 5 recorded cummulative rewards.
-    return mean(cumulative_rewards[-5:])
+    rewards_of_interest = cumulative_rewards[-100:]
+    return mean(rewards_of_interest), np.round(np.std(rewards_of_interest), 10)
 
 
 def commence_mlagents_run(run_info: dict) -> dict:
@@ -199,20 +174,13 @@ def commence_mlagents_run(run_info: dict) -> dict:
     run_id = run_info["run_id"]
     production = run_info["userconfig"]["production"]
 
-    # if production:
-    #    logging.info("[%i] New run started with id %i.", run_id, run_id)
-
-    # Get copy of the base config as loaded.
-    tmp_config = dict.copy(run_info["base_config"])
-
-    update_parameters_with_option(tmp_config, run_info)
-
+    # Location of the config file saved to run info.
     run_info["config_file"] = f"{run_info['paths']['configs_dir']}/{run_id}.yaml"
 
     # Save modified config as yaml file.
     if production:
         with open(Path(run_info["config_file"]).absolute(), mode="w", encoding="utf8") as new_file:
-            yaml.dump(tmp_config, new_file)
+            yaml.dump(run_info["run_config"], new_file)
 
         return_code = 0
         run_name = f"{run_id}_basicenv_ppo_auto"
@@ -315,18 +283,27 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
     Get mean reward of last entries for all runs and save."""
     summary_dict: dict = {}
     for entry in summary_list:
-        if not entry["error"]:
-            # Store mean reward over the last entries to the run.
-            entry["last_cumulative_reward"] = get_mean_reward(entry["run_name"])
-        else:
-            entry["last_cumulative_reward"] = float("-inf")
-        # Base config to much information in the summary.
-        entry.pop("base_config")
+        try:
+            if not entry["error"]:
+                # Store mean reward over the last entries to the run.
+                (
+                    entry["last_cumulative_reward"],
+                    entry["last_cumulative_reward_std"],
+                ) = get_mean_reward(entry["run_name"])
+            else:
+                # If error occured during mlagents run store default value.
+                # Only requiered to ensure correct sort.
+                entry["last_cumulative_reward"] = float("-inf")
 
-        # Path not storeabe as json.
-        entry.pop("paths")
+            # Run config to much information in the summary.
+            entry.pop("run_config")
 
-        summary_dict[entry["run_id"]] = entry
+            # Path not storeabe as json.
+            entry.pop("paths")
+
+            summary_dict[entry["run_id"]] = entry
+        except KeyError:
+            print("KeyError during summary generation.")
     return summary_dict
 
 
@@ -334,7 +311,7 @@ def create_summary_file(summary_list: list[dict]):
     """Save sorted summary file."""
     if summary_list == [{}]:
         return
-    
+
     final_summary = update_and_clean_summary(summary_list)
 
     path_to_summary_file = f"./summaries/{ID_FIRST_RUN}_summary.json"
@@ -374,7 +351,7 @@ def remove_run_files_log(summary_list: list[dict]):
     for run_info in summary_list:
         try:
             os.remove(Path(run_info["config_file"]).absolute())
-        except OSError:
+        except (OSError, KeyError):
             print("Not able to delete run config file.")
 
         shutil.rmtree(Path(run_info["result_dir"]).absolute(), ignore_errors=True)
@@ -395,7 +372,7 @@ if __name__ == "__main__":
     PATHS = {
         "working_dir": "./python/basic_rl_env",
         "config_file": "./hyperparameter_search.yaml",
-        "unity_env": "./build",
+        "unity_env": str(Path("C:/build/windows").absolute()),
         "log_dir": "./logs",
         "summaries_dir": "./summaries",
         "results_dir": "./results",
@@ -439,37 +416,26 @@ if __name__ == "__main__":
     # Get the id of the first run. Used for logging and summary.
     ID_FIRST_RUN = get_run_id()
 
-    # created_files = []
-
     # Logging config.
     log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
     logging.basicConfig(
         filename=log_path,
         level=logging.INFO,
     )
-    # created_files.append(log_path)
 
     # Log the message from the config file.
     if message_for_log is not None:
         logging.info("Note: %s", message_for_log)
 
-    hyperparamters = {"hyperparameters": config["behaviors"]["RollerAgent"]["hyperparameters"]}
-    network = {"network_settings": config["behaviors"]["RollerAgent"]["network_settings"]}
-
-    # In case memory is configured in yaml file:
-    # Handle memory options seperate from network settings.
-    memory_comb = [()]
-    memory = {"memory": {}}
-    if "memory" in network["network_settings"]:
-        memory = {"memory": config["behaviors"]["RollerAgent"]["network_settings"]["memory"]}
-
-    dynamic_parameters = get_dynamic_parameters([hyperparamters, network, memory])
+    # Get dynamic parameters from the config file.
+    # Create all possible and valid combinations of these parameters.
+    dynamic_parameters = get_dynamic_parameters(config, [])
     combinations = get_parameter_combinations(dynamic_parameters)
 
     # Get the number of runs the current config is goint to produce.
-    num_count = len(combinations)
+    NUM_COUNT = len(combinations)
     if production:
-        logging.info("%i runs are going to be started.", num_count)
+        logging.info("%i runs are going to be started.", NUM_COUNT)
 
     summary = [{}]
     if not userconfig["build"]:

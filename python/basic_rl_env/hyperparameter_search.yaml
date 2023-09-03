@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: false
+  build: true
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -15,36 +15,50 @@ userconfig:
   summary: true
 
   # Set to false to delete all files after the programm finishes.
-  keep_files: false
+  keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Check for numpy errors."
+  message: "Num layer and curiosity. Plus more steps."
 
 behaviors:
   RollerAgent:
+    # Common Trainer Configurations.
     trainer_type: ppo
+    keep_checkpoints: 5
+    max_steps: 10e6
+    time_horizon: 1000
+    summary_freq: 10000
+
     hyperparameters:
-      batch_size: 256
-      buffer_size: 409600
-      learning_rate: [1e-3, 1e-4, 1e-5]
-      beta: 0.001
-      epsilon: 0.2
-      lambd: 0.99
-      num_epoch: 3
+      # Common Trainer Configurations.
+      batch_size: 512
+      buffer_size: 102400
+      learning_rate: 1e-3
       learning_rate_schedule: linear
+
+      # PPO-specific Configurations.
+      beta: 0.0025
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 2
+      
     network_settings:
-      normalize: true
-      hidden_units: 128
-      num_layers: [2, 3, 4]
+      conditioning_type: none # Can be none, because no goal observation is used.
+      normalize: false
+      hidden_units: 1024
+      num_layers: 2
       memory:
-        memory_size: 64
+        memory_size: 128
         sequence_length: 64
-      vis_encode_type: simple
+      #vis_encode_type: simple
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-    keep_checkpoints: 5
-    max_steps: 2e6
-    time_horizon: 1000
-    summary_freq: 10000
+      curiosity:
+        strength: 0.5
+        gamma: 0.99
+        learning_rate: 3e-4
+        network_settings: 
+          hidden_units: 512
+    

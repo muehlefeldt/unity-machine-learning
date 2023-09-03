@@ -48,9 +48,8 @@ public class RollerAgent : Agent
         var currentRotationY = transform.eulerAngles.y;
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
     }
-
-    public int maxSteps;
-    public int currentStep;
+    
+    private bool m_TargetReached = false;
     public override void OnEpisodeBegin()
     {
         floor.Prepare();
@@ -59,15 +58,12 @@ public class RollerAgent : Agent
         // ToDo: Why reset here distances?
         ResetDist();
 
-        // How many steps are allowed.
-        maxSteps = 400;
-        currentStep = 0;
-        
         // If the Agent fell, zero its momentum
         if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
         {
             m_CollisionDetected = false;
             m_ImplausiblePosition = false;
+            m_TargetReached = false;
             ResetAgentPosition();
         }
 
@@ -84,11 +80,24 @@ public class RollerAgent : Agent
     private float m_RayRightDist;
     private float m_RayUpDist;
     private float m_RayDownDist;
+    //public int CurrentStep = 0;
     void FixedUpdate()
     {
+        //CurrentStep = StepCount;
         /*var currentRay = new Ray(transform.localPosition, transform.TransformDirection(Vector3.forward));
         RaycastHit currentHit;
         Physics.Raycast(currentRay, out currentHit, maxDistance: Mathf.Infinity);*/
+        /*m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
+        m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
+        m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
+        m_RayRightDist = PerformRaycastGetDistance(Vector3.right);
+        m_RayUpDist = PerformRaycastGetDistance(Vector3.up);
+        m_RayDownDist = PerformRaycastGetDistance(Vector3.down);*/
+        
+    }
+    
+    private void PrepareObservations()
+    {
         m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
         m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
         m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
@@ -115,12 +124,11 @@ public class RollerAgent : Agent
 
         return currentHit.distance / floor.GetMaxPossibleDist();
     }
-
+    
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Target and Agent positions
-        //sensor.AddObservation(target.localPosition);
-        //sensor.AddObservation(this.transform.localPosition);
+        // Idea: Ensure updated sensor data when setting observations. 
+        PrepareObservations();
         
         sensor.AddObservation(m_RayForwardDist);
         sensor.AddObservation(m_RayBackDist);
@@ -130,12 +138,11 @@ public class RollerAgent : Agent
         sensor.AddObservation(m_RayDownDist);
 
         // Agent velocity.
-        sensor.AddObservation(m_RBody.velocity.x);
-        sensor.AddObservation(m_RBody.velocity.z);
-        
-        // Agent rotation.
+        sensor.AddObservation(m_RBody.velocity);
+
+        // Agent rotation. Y axis only.
         Quaternion rotation = m_RBody.rotation;
-        sensor.AddObservation(rotation.eulerAngles / 360.0f);  // [0,1]
+        sensor.AddObservation(rotation.eulerAngles.y / 360.0f);  // [0,1]
     }
 
     /// <summary>
@@ -177,20 +184,20 @@ public class RollerAgent : Agent
     public float forceMultiplier = 10f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        Vector3 controlSignal = Vector3.zero;
+        /*Vector3 controlSignal = Vector3.zero;
         
         var rightLeft = actionBuffers.DiscreteActions[0];
         var upDown = actionBuffers.DiscreteActions[1];
         var forwardBackwards = actionBuffers.DiscreteActions[2];
-        var r = actionBuffers.DiscreteActions[3];
+        //var r = actionBuffers.DiscreteActions[3];
 
         // Check if any movement is requested.
-        var all = new List<int>(){rightLeft, upDown, forwardBackwards, r};
+        var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
         if (!(all.Contains(2) || all.Contains(3)))
         {
             return;
         } 
-
+        
         switch (rightLeft)
         {
             case 2:
@@ -219,52 +226,87 @@ public class RollerAgent : Agent
             case 3:
                 controlSignal.z = -1f;
                 break;
-        }
+        }*/
+        
+        Vector3 controlSignal = Vector3.zero;
+        
+        var actions = actionBuffers.DiscreteActions[0];
+        
+        //var r = actionBuffers.DiscreteActions[3];
 
-        var rotate = 0f;
-        switch (r)
+        // Check if any movement is requested.
+        /*var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
+        if (!(all.Contains(2) || all.Contains(3)))
         {
+            return;
+        } */
+        var rotate = 0f;
+        switch (actions)
+        {
+            case 1:
+                controlSignal.x = 1f;
+                break;
             case 2:
-                rotate = 1f;
+                controlSignal.x = -1f;
                 break;
             case 3:
+                controlSignal.y = 1f;
+                break;
+            case 4:
+                controlSignal.y = -1f;
+                break;
+            case 5:
+                controlSignal.z = 1f;
+                break;
+            case 6:
+                controlSignal.z = -1f;
+                break;
+            case 7:
+                rotate = 1f;
+                break;
+            case 8:
                 rotate = -1f;
                 break;
         }
 
-        // Rotate
+        // Rotate the agent.
         var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
         transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
-
+        
+        // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
         m_RBody.MovePosition(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
         
+        // Get the distance to the target.
         CalculateDistanceToTarget();
-
+        
+        // On collision with wall terminate the episode.
         if (m_CollisionDetected)
         {
             RecordData(RecorderCodes.Wall);
             SetReward(-1f);
-            Debug.Log("Collision");
+            //Debug.Log("Collision");
             EndEpisode();
         }
         
-        // Reached target
+        // Reached target. Success.
         if (m_DistToTarget < 1.42f)
         {
             RecordData(RecorderCodes.Target);
             SetReward(1f);
+            m_TargetReached = true;
             EndEpisode();
         }
         
-        // Verify agent state (position) is plausible.
+        // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
         if (!IsAgentPositionPlausible())
         {
             m_ImplausiblePosition = true;
             EndEpisode();
         }
-
+    
+        // Fix the rotation of the agent. Does not warant the termination of the episode.
         if (!IsAgentRotationPlausible())
         {
             //m_ImplausiblePosition = true;
@@ -272,19 +314,15 @@ public class RollerAgent : Agent
             //EndEpisode();
         }
 
-            // Punish each step.
-        //AddReward(-0.001f);
-        currentStep += 1;
-
-        if (currentStep > maxSteps)
-        {
-            RecordData(RecorderCodes.MaxSteps);
-            SetReward(-1f);
-            EndEpisode();
-        }
+        //if (currentStep > maxSteps)
+        //{
+        //    RecordData(RecorderCodes.MaxSteps);
+        //    SetReward(-1f);
+        //    EndEpisode();
+        //}
         
-        CalculateReward();
-        SetReward(reward);
+        //CalculateReward();
+        SetReward(-1f / MaxStep);
     }
     
     /// <summary>
@@ -296,32 +334,22 @@ public class RollerAgent : Agent
     public float reward = 0f;
     private void CalculateReward()
     {
-        /*// If distance increases to target no reward issued.
-        if (m_DistToTarget >= m_LastDistToTarget)
-        {
-            reward = 0f;
-            return reward;
-        }
-        var beta = 0.5f;
+        
+        var beta = 0.35f;
         var omega = 0.3f;
-        var x = m_DistToTarget / m_MaxDist;
+        var fGui = Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
+        
+        GetPath();
+        
+        var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
+        print(angleToTarget);
+        var fAng = Mathf.Exp(-1f * Mathf.Pow(angleToTarget, 2f)/ (2 * Mathf.Pow(omega, 2) ));
+        
+        //var dirTransform = transform.TransformDirection(transform.forward);
+        //var currentRay = new Ray(transform.position, dirTransform);
 
-        reward = beta * Mathf.Exp(-1 * Mathf.Pow(x, 2f) / (2f * Mathf.Pow(omega, 2f)));
-        return reward;*/
-        if (m_DistToTarget < m_LastDistToTarget)
-        {
-            reward = 0.1f;
-            //SetReward(reward);
-        }
-        else if (m_DistToTarget > m_LastDistToTarget)
-        {
-            reward = -0.2f;
-            //SetReward(reward);
-        }
-        else
-        {
-            reward = -0.1f;
-        }
+        //var stepPunishment = currentStep / maxSteps;
+        //reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
 
     }
     
@@ -383,11 +411,11 @@ public class RollerAgent : Agent
                 break;
             
             case RecorderCodes.RotationError:
-                statsRecorder.Add("Wall hit", 0f);
-                statsRecorder.Add("Max Steps reached", 0f);
-                statsRecorder.Add("Target Reached", 0f);
+                //statsRecorder.Add("Wall hit", 0f);
+                //statsRecorder.Add("Max Steps reached", 0f);
+                //statsRecorder.Add("Target Reached", 0f);
                 statsRecorder.Add("Rotation Error", 1f);
-                statsRecorder.Add("Out of bounds", 0f);
+                //statsRecorder.Add("Out of bounds", 0f);
                 break;
             
             case RecorderCodes.OutOfBounds:
@@ -405,6 +433,8 @@ public class RollerAgent : Agent
     /// </summary>
     /// <remarks>Distance is basis for reward function.</remarks>
     public float m_DistToTarget = 0f;
+    public float m_DistToTargetNormal = 0f;
+    
     private float m_LastDistToTarget = 0f;
     private float m_BestDistToTarget = float.PositiveInfinity;
     private bool m_DistImproved = false;
@@ -420,7 +450,10 @@ public class RollerAgent : Agent
         {
             m_DistToTarget += Vector3.Distance(m_Path[i - 1], m_Path[i]);
         }
-
+        
+        // Calculate normalised distance to target.
+        m_DistToTargetNormal = m_DistToTarget / m_MaxDist;
+        
         if (m_DistToTarget < m_BestDistToTarget)
         {
             m_BestDistToTarget = m_DistToTarget;
@@ -506,7 +539,7 @@ public class RollerAgent : Agent
         //var rotation = discreteActionsOut[3];
         
         // X. Right, left and no movement.
-        if (Input.GetKey(KeyCode.D))
+        /*if (Input.GetKey(KeyCode.D))
         {
             discreteActionsOut[0] = 2;
         }
@@ -556,6 +589,47 @@ public class RollerAgent : Agent
         else
         {
             discreteActionsOut[3] = 1;
+        }*/
+        if (Input.GetKey(KeyCode.D))
+        {
+            discreteActionsOut[0] = 1;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            discreteActionsOut[0] = 2;
+        }
+        
+        // Y. Up, down and no movement.
+        else if (Input.GetKey(KeyCode.X))
+        {
+            discreteActionsOut[0] = 3;
+        }
+        else if (Input.GetKey(KeyCode.Y))
+        {
+            discreteActionsOut[0] = 4;
+        }
+        // Z. Forward, backwards and no movement.
+        else if (Input.GetKey(KeyCode.W))
+        {
+            discreteActionsOut[0] = 5;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            discreteActionsOut[0] = 6;
+        }
+        
+        // Rotation. Right, left and no rotation.
+        else if (Input.GetKey(KeyCode.E))
+        {
+            discreteActionsOut[0] = 7;
+        }
+        else if (Input.GetKey(KeyCode.Q))
+        {
+            discreteActionsOut[0] = 8;
+        }
+        else
+        {
+            discreteActionsOut[0] = 0;
         }
     }
 }
