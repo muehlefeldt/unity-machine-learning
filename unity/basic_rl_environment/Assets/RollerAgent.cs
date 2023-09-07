@@ -18,7 +18,7 @@ using Vector3 = UnityEngine.Vector3;
 public class RollerAgent : Agent
 {
     private Rigidbody m_RBody;
-    public Target target;
+    //public Target target;
     public Floor floor;
     public float m_MaxDist;
 
@@ -29,7 +29,7 @@ public class RollerAgent : Agent
     }
     
     /// <summary>
-    /// Reset the position of the agent to a default position.
+    /// Reset the position of the agent to a fixed default position.
     /// </summary>
     private void ResetAgentPosition()
     {
@@ -68,7 +68,7 @@ public class RollerAgent : Agent
         }
 
         // Move the target to a new spot
-        target.ResetPosition();
+        floor.ResetTargetPosition();
 
         m_MaxDist = floor.GetMaxPossibleDist();
         CalculateDistanceToTarget();
@@ -481,7 +481,7 @@ public class RollerAgent : Agent
         
         var agentPosition = transform.position;
         var doorPositions = floor.CreatedDoorsCoord;
-        var targetPosition = target.transform.position;
+        var targetPosition = floor.target.transform.position;
         
         // First point of the path is the agent position.
         m_Path.Add(agentPosition);

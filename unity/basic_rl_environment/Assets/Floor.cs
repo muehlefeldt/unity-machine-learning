@@ -22,12 +22,19 @@ public class Floor : MonoBehaviour
 
     public InnerWallCreator innerWallCreator;
 
+    public AllRooms RoomsInEnv;
+    public RollerAgent agent;
+    public Target target;
+
     public bool finished = false;
     // Start is called before the first frame update
     void Awake()
     {
         // Get the MeshFilter component of the floor object
         MeshFilter floorMeshFilter = GetComponent<MeshFilter>();
+        
+        // Setup the room management.
+        RoomsInEnv = new AllRooms(CreateWall, targetAlwaysInOtherRoomFromAgent);
 
         // Ensure the MeshFilter and its shared mesh exist
         if (floorMeshFilter != null && floorMeshFilter.sharedMesh != null)
@@ -127,11 +134,21 @@ public class Floor : MonoBehaviour
     public bool CreateWall = true;
     public bool RandomWallPosition = true;
     public bool RanndomDoorPosition = true;
+    public bool targetAlwaysInOtherRoomFromAgent = false;
 
+    //private bool m_AgentInFirstRoom = false;
+    
+    /// <summary>
+    /// Create rooms by creating a inner wall.
+    /// </summary>
     public void CreateInnerWall()
     {
-        if (CreateWall == true)
+        // The wall inner wall is only created if selected in the Unity editor. Set to true as default.
+        if (CreateWall)
         {
+            // Previously created rooms can be removed.
+            RoomsInEnv.Clear();
+            
             var randomWallIndex = 4;
             if (RandomWallPosition == true)
             {
@@ -154,13 +171,35 @@ public class Floor : MonoBehaviour
             CreatedWallsCoord.Clear();
             CreatedWallsCoord.Add(new Tuple<Vector3, Vector3>(coordStartWall, coordEndWall));
 
-
-
             innerWallCreator.CreateWallWithDoor(coordDoor, coordStartWall, coordEndWall);
 
             CreatedDoorsCoord.Clear();
             coordDoor.x -= innerWallCreator.m_DoorWidth / 2;
             CreatedDoorsCoord.Add(coordDoor);
+            
+            // Add the created rooms to the room management object.
+            RoomsInEnv.AddRoom(new List<Vector3>{globalCornerCoord[0], globalCornerCoord[1], coordStartWall,
+                coordEndWall});
+            
+            RoomsInEnv.AddRoom(new List<Vector3>{globalCornerCoord[2], globalCornerCoord[3], coordStartWall,
+                coordEndWall});
         }
+        else
+        {
+            // Env has only one room when no wall is created. Only one room needs to be stored.
+            RoomsInEnv.Clear(); 
+            RoomsInEnv.AddRoom(globalCornerCoord);
+        }
+
+        
+    }
+    
+    /// <summary>
+    /// Reset the position of the target to a random position. Based on the created rooms in the environment.
+    /// </summary>
+    public void ResetTargetPosition()
+    {
+        var newTargetPos = RoomsInEnv.GetRandomTargetPosition(agent.transform.position);
+        target.ResetPosition(newTargetPos);
     }
 }

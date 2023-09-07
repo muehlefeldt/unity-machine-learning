@@ -21,7 +21,10 @@ public class Room
     /// <param name="corners"></param>
     public Room(List<Vector3> corners)
     {
+        // Store the corner coords unsorted.
         m_CornersGlobalCoords = corners;
+        
+        // Store max and min values corners for later use.
         var sortedX = corners.OrderBy(v => v.x).ToList();
         var sortedZ = corners.OrderBy(v => v.z).ToList();
         m_MinXGlobalCoord = sortedX[0];
@@ -32,18 +35,14 @@ public class Room
     
     /// <summary>
     /// Does this room contain the given global coordinates? Decision is based on the known global corner coordinates
-    /// of the room.
+    /// of the room. Does ignore walls and other objects in the room. Simply based on coords.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Returns true if global coords are within in the room. Otherwise false.</returns>
     public bool DoesContainGlobalCoord(Vector3 coord)
     {
-        var sortedByX = m_CornersGlobalCoords;
-        var sortedByZ = m_CornersGlobalCoords.OrderBy(v => v.z).ToList();
-        
-        if (coord.x <= sortedByX[0].x &&
-            coord.x >= sortedByX[3].x &&
-            coord.z <= sortedByZ[0].z &&
-            coord.z <= sortedByZ[3].z)
+        // Check if coord lies between the corner coords. Only x and z is relevant.
+        if (m_MinXGlobalCoord.x <= coord.x && coord.x <= m_MaxXGlobalCoord.x &&
+            m_MinZGlobalCoord.z <= coord.z && coord.z <= m_MaxZGlobalCoord.z)
         {
             return true;
         }
@@ -87,7 +86,8 @@ public class Room
     }
     /// <summary>
     /// Calculate a random position within the room. Returns a Vector3 containing global coordinates (world coords).
-    /// Calculation is based on the known corners of the room.
+    /// Calculation is based on the known corners of the room. Takes an minimum distance from the walls into
+    /// account.
     /// </summary>
     /// <returns></returns>
     public Vector3 GetRandomPositionWithin()

@@ -335,6 +335,7 @@ GameObject:
   - component: {fileID: 5324353081925522771}
   - component: {fileID: 5324353081925522770}
   - component: {fileID: 5324353081925522769}
+  - component: {fileID: 6229546468222189732}
   m_Layer: 0
   m_Name: RollerAgent
   m_TagString: Untagged
@@ -483,7 +484,6 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 5000
-  target: {fileID: 1515308257171817040}
   floor: {fileID: 5324353083616000953}
   m_MaxDist: 0
   forceMultiplier: 10
@@ -504,6 +504,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 1
   TakeActionsBetweenDecisions: 0
+--- !u!114 &6229546468222189732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5324353081925522775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88b6042bc9a5d4aa58d931eae49442e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
 --- !u!1 &5324353082665526278
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,10 +673,13 @@ MonoBehaviour:
   m_MaxDist: 0
   CreatedDoorsCoord: []
   innerWallCreator: {fileID: 1595673323979307659}
+  agent: {fileID: 5324353081925522770}
+  target: {fileID: 1515308257171817040}
   finished: 0
   CreateWall: 1
   RandomWallPosition: 0
   RanndomDoorPosition: 0
+  targetAlwaysInOtherRoomFromAgent: 1
 --- !u!65 &7692793173245375662
 BoxCollider:
   m_ObjectHideFlags: 0
