@@ -2,6 +2,7 @@ results/
 logs/
 configs/
 summaries/
+demonstrations/
 *_build/
 *.zip
 *.pdf

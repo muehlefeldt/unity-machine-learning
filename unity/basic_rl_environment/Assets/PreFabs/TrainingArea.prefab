@@ -336,6 +336,7 @@ GameObject:
   - component: {fileID: 5324353081925522770}
   - component: {fileID: 5324353081925522769}
   - component: {fileID: 6229546468222189732}
+  - component: {fileID: 6546955944541316944}
   m_Layer: 0
   m_Name: RollerAgent
   m_TagString: Untagged
@@ -520,6 +521,22 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+--- !u!114 &6546955944541316944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5324353081925522775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Record: 0
+  NumStepsToRecord: 0
+  DemonstrationName: FixedWallDoor
+  DemonstrationDirectory: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations
 --- !u!1 &5324353082665526278
 GameObject:
   m_ObjectHideFlags: 0

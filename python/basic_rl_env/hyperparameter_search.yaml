@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: true
+  build: false
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -18,14 +18,14 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Num layer and curiosity. Plus more steps."
+  message: "Target always in other room. Fixed door and inner wall location. Test with editor. GAIL test."
 
 behaviors:
   RollerAgent:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 10e6
+    max_steps: 1e6
     time_horizon: 1000
     summary_freq: 10000
 
@@ -45,8 +45,8 @@ behaviors:
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
-      hidden_units: 1024
-      num_layers: 2
+      hidden_units: 256
+      #num_layers: 2
       memory:
         memory_size: 128
         sequence_length: 64
@@ -55,10 +55,29 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-      curiosity:
-        strength: 0.5
+      #curiosity:
+      #  strength: 1.5
+      #  gamma: 0.99
+      #  learning_rate: 3e-4
+      #  network_settings: 
+      #    hidden_units: 512
+      gail:
+        demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations
+        strength: 1.0
         gamma: 0.99
-        learning_rate: 3e-4
-        network_settings: 
-          hidden_units: 512
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+        learning_rate: 0.0003
+        use_actions: false
+        use_vail: false
+    behavioral_cloning:
+      demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations
+      steps: 50000
+      strength: 1.0
+      samples_per_update: 0
+
+
+
     
