@@ -8,6 +8,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
@@ -18,14 +19,39 @@ using Vector3 = UnityEngine.Vector3;
 public class RollerAgent : Agent
 {
     private Rigidbody m_RBody;
+
+    private List<Vector3> m_SensorDirections;
     //public Target target;
     public Floor floor;
     public float m_MaxDist;
+    
+    // Select sensor count of the agent.
+    public int sensorCount = 4;
 
     // Start is called before the first frame update
     void Start () {
         m_RBody = GetComponent<Rigidbody>();
         ResetAgentPosition();
+        m_SensorDirections = GetSensorDirections();
+        
+        // Set the observation size to the requested sensor count + 2 sensors up and down.
+        GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount;
+    }
+
+    private List<Vector3> GetSensorDirections()
+    {
+        var directions = new List<Vector3>();
+        directions.Add(Vector3.forward);
+
+        var angle = 360f / sensorCount;
+        
+        for (int i = 1; i < sensorCount; i++)
+        {
+            var vector = Quaternion.Euler(0, - angle * i, 0) * Vector3.forward;
+            directions.Add(vector);
+        }
+
+        return directions;
     }
     
     /// <summary>
@@ -74,12 +100,13 @@ public class RollerAgent : Agent
         CalculateDistanceToTarget();
     }
 
-    private float m_RayForwardDist;
+    /*private float m_RayForwardDist;
     private float m_RayBackDist;
     private float m_RayLeftDist;
     private float m_RayRightDist;
     private float m_RayUpDist;
-    private float m_RayDownDist;
+    private float m_RayDownDist;*/
+    private List<float> m_RayDistances = new List<float>();
     //public int CurrentStep = 0;
     void FixedUpdate()
     {
@@ -96,14 +123,22 @@ public class RollerAgent : Agent
         
     }
     
+    /// <summary>
+    /// Prepare observations. Get sensor data to be used.
+    /// </summary>
     private void PrepareObservations()
     {
-        m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
-        m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
-        m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
-        m_RayRightDist = PerformRaycastGetDistance(Vector3.right);
-        m_RayUpDist = PerformRaycastGetDistance(Vector3.up);
-        m_RayDownDist = PerformRaycastGetDistance(Vector3.down);
+        m_RayDistances.Clear(); // Removed old measurements.
+        
+        // Get up and down distance data.
+        m_RayDistances.Add(PerformRaycastGetDistance(Vector3.up));
+        m_RayDistances.Add(PerformRaycastGetDistance(Vector3.down));
+        
+        // Get the remaining distance measurements as requested through the editor.
+        foreach (var dir in m_SensorDirections)
+        {
+            m_RayDistances.Add(PerformRaycastGetDistance(dir));
+        }
     }
     
     /// <summary>
@@ -117,10 +152,17 @@ public class RollerAgent : Agent
         var currentRay = new Ray(transform.position, dirTransform);
         RaycastHit currentHit;
         Physics.Raycast(currentRay, out currentHit, maxDistance: floor.GetMaxPossibleDist());
+        
+        // Draw gizmo lines to help with debugging.
         if (dir == Vector3.forward)
         {
             Debug.DrawRay(transform.position, dirTransform * floor.GetMaxPossibleDist(), Color.red);
         }
+        else
+        {
+            Debug.DrawRay(transform.position, dirTransform * floor.GetMaxPossibleDist(), Color.gray);
+        }
+        
 
         return currentHit.distance / floor.GetMaxPossibleDist();
     }
@@ -129,14 +171,12 @@ public class RollerAgent : Agent
     {
         // Idea: Ensure updated sensor data when setting observations. 
         PrepareObservations();
-        
-        sensor.AddObservation(m_RayForwardDist);
-        sensor.AddObservation(m_RayBackDist);
-        sensor.AddObservation(m_RayLeftDist);
-        sensor.AddObservation(m_RayRightDist);
-        sensor.AddObservation(m_RayUpDist);
-        sensor.AddObservation(m_RayDownDist);
 
+        foreach (var dist in m_RayDistances)
+        {
+            sensor.AddObservation(dist);
+        }
+        
         // Agent velocity.
         sensor.AddObservation(m_RBody.velocity);
 
