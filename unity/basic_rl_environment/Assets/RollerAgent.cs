@@ -29,13 +29,13 @@ public class RollerAgent : Agent
     public int sensorCount = 4;
 
     // Start is called before the first frame update
-    void Start () {
+    void Awake () {
         m_RBody = GetComponent<Rigidbody>();
         ResetAgentPosition();
         m_SensorDirections = GetSensorDirections();
         
         // Set the observation size to the requested sensor count + 2 sensors up and down.
-        GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount;
+        GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount + 4;
     }
 
     private List<Vector3> GetSensorDirections()
