@@ -25,7 +25,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 30e6
+    max_steps: 5e6
     time_horizon: 1000
     summary_freq: 10000
 
@@ -73,10 +73,10 @@ behaviors:
       #  learning_rate: 0.0003
       #  use_actions: false
       #  use_vail: false
-    #behavioral_cloning:
-    #  demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\FixedWallDoor.demo
-    #  steps: [100000, 250000, 500000]
-    #  strength: 1.0
+    behavioral_cloning:
+      demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\NoWall16Sensors.demo
+      steps: 500000
+      strength: 1.0
 
 
 
