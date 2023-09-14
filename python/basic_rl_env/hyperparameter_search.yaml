@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Target always in other room. Fixed door and inner wall location. Using bc, extrinsic reward and gail. Reduced beta. Multiple configs. Shorter runs."
+  message: "No inner wall. Test gail, w/o bc. Shorter run."
 
 behaviors:
   RollerAgent:
@@ -62,21 +62,22 @@ behaviors:
       #  learning_rate: 3e-4
       #  network_settings: 
       #    hidden_units: 512
-      #gail:
-      #  demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\FixedWallDoor.demo
-      #  strength: [0.005, 0.01, 0.1]
-      #  gamma: 0.99
-      #  network_settings:
-      #    normalize: false
-      #    hidden_units: 128
-      #    num_layers: 2
-      #  learning_rate: 0.0003
-      #  use_actions: false
-      #  use_vail: false
-    behavioral_cloning:
-      demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\NoWall16Sensors.demo
-      steps: 500000
-      strength: 1.0
+      gail:
+        demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\NoWall16Sensors.demo
+        #demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\FixedWallDoor.demo
+        strength: 0.1
+        gamma: 0.99
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+        learning_rate: 0.0003
+        use_actions: false
+        use_vail: false
+    #behavioral_cloning:
+      #demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\NoWall16Sensors.demo
+      #steps: 500000
+      #strength: 1.0
 
 
 
