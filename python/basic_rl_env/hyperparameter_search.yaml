@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: false
+  build: true
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "No inner wall. Test gail with bc. Gail strength reduced. Shorter run. Expert trainer provided by NN from run 948."
+  message: "No inner wall. Test gail with bc. Shorter runs. Expert trainer provided by NN from run 948. Parameter search with good expert data."
 
 behaviors:
   RollerAgent:
@@ -65,7 +65,7 @@ behaviors:
       gail:
         demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\948NoDoor.demo
         #demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\FixedWallDoor.demo
-        strength: 0.01
+        strength: [0.01, 0.08, 0.1, 0.2]
         gamma: 0.99
         network_settings:
           normalize: false
@@ -76,8 +76,8 @@ behaviors:
         use_vail: false
     behavioral_cloning:
       demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\948NoDoor.demo
-      steps: 500000
-      strength: 1.0
+      steps: [500000, 1000000, 1500000, 2500000]
+      strength: [0.5, 0.7, 1.0]
 
 
 
