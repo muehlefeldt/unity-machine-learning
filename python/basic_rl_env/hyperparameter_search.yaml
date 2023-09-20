@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "No inner wall. Test gail with bc. Shorter runs. Expert trainer provided by NN from run 948. Parameter search with good expert data. With more episodes."
+  message: "No inner wall. Test with bc. No GAIL. Expert trainer provided by NN from run 948. Long demo."
 
 behaviors:
   RollerAgent:
@@ -62,18 +62,18 @@ behaviors:
       #  learning_rate: 3e-4
       #  network_settings: 
       #    hidden_units: 512
-      gail:
-        demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\948Long.demo
+      #gail:
+      #  demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\948Long.demo
         #demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\FixedWallDoor.demo
-        strength: 0.1
-        gamma: 0.99
-        network_settings:
-          normalize: false
-          hidden_units: 128
-          num_layers: 2
-        learning_rate: 0.0003
-        use_actions: false
-        use_vail: false
+      #  strength: 0.1
+      #  gamma: 0.99
+      #  network_settings:
+      #    normalize: false
+      #    hidden_units: 128
+      #    num_layers: 2
+      #  learning_rate: 0.0003
+      #  use_actions: false
+      #  use_vail: false
     behavioral_cloning:
       demo_path: C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\demonstrations\948Long.demo
       steps: [500000, 1000000]
