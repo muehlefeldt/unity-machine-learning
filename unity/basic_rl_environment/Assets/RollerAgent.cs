@@ -81,7 +81,6 @@ public class RollerAgent : Agent
         floor.Prepare();
         floor.CreateInnerWall();
         
-        // ToDo: Why reset here distances?
         ResetDist();
 
         // If the Agent fell, zero its momentum
@@ -94,34 +93,17 @@ public class RollerAgent : Agent
         }
 
         // Move the target to a new spot
+        if (floor.targetFixedPosition)
+        {
+            ResetAgentPosition();
+        }
         floor.ResetTargetPosition();
 
         m_MaxDist = floor.GetMaxPossibleDist();
         CalculateDistanceToTarget();
     }
-
-    /*private float m_RayForwardDist;
-    private float m_RayBackDist;
-    private float m_RayLeftDist;
-    private float m_RayRightDist;
-    private float m_RayUpDist;
-    private float m_RayDownDist;*/
+    
     private List<float> m_RayDistances = new List<float>();
-    //public int CurrentStep = 0;
-    void FixedUpdate()
-    {
-        //CurrentStep = StepCount;
-        /*var currentRay = new Ray(transform.localPosition, transform.TransformDirection(Vector3.forward));
-        RaycastHit currentHit;
-        Physics.Raycast(currentRay, out currentHit, maxDistance: Mathf.Infinity);*/
-        /*m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
-        m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
-        m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
-        m_RayRightDist = PerformRaycastGetDistance(Vector3.right);
-        m_RayUpDist = PerformRaycastGetDistance(Vector3.up);
-        m_RayDownDist = PerformRaycastGetDistance(Vector3.down);*/
-        
-    }
     
     /// <summary>
     /// Prepare observations. Get sensor data to be used.
@@ -224,62 +206,9 @@ public class RollerAgent : Agent
     public float forceMultiplier = 10f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        /*Vector3 controlSignal = Vector3.zero;
-        
-        var rightLeft = actionBuffers.DiscreteActions[0];
-        var upDown = actionBuffers.DiscreteActions[1];
-        var forwardBackwards = actionBuffers.DiscreteActions[2];
-        //var r = actionBuffers.DiscreteActions[3];
-
-        // Check if any movement is requested.
-        var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
-        if (!(all.Contains(2) || all.Contains(3)))
-        {
-            return;
-        } 
-        
-        switch (rightLeft)
-        {
-            case 2:
-                controlSignal.x = 1f;
-                break;
-            case 3:
-                controlSignal.x = -1f;
-                break;
-        }
-        
-        switch (upDown)
-        {
-            case 2:
-                controlSignal.y = 1f;
-                break;
-            case 3:
-                controlSignal.y = -1f;
-                break;
-        }
-        
-        switch (forwardBackwards)
-        {
-            case 2:
-                controlSignal.z = 1f;
-                break;
-            case 3:
-                controlSignal.z = -1f;
-                break;
-        }*/
-        
         Vector3 controlSignal = Vector3.zero;
-        
         var actions = actionBuffers.DiscreteActions[0];
         
-        //var r = actionBuffers.DiscreteActions[3];
-
-        // Check if any movement is requested.
-        /*var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
-        if (!(all.Contains(2) || all.Contains(3)))
-        {
-            return;
-        } */
         var rotate = 0f;
         switch (actions)
         {
@@ -475,9 +404,9 @@ public class RollerAgent : Agent
     public float m_DistToTarget = 0f;
     public float m_DistToTargetNormal = 0f;
     
-    private float m_LastDistToTarget = 0f;
+    /*private float m_LastDistToTarget = 0f;
     private float m_BestDistToTarget = float.PositiveInfinity;
-    private bool m_DistImproved = false;
+    private bool m_DistImproved = false;*/
     private void CalculateDistanceToTarget()
     {
         ResetDist();
@@ -494,53 +423,48 @@ public class RollerAgent : Agent
         // Calculate normalised distance to target.
         m_DistToTargetNormal = m_DistToTarget / m_MaxDist;
         
-        if (m_DistToTarget < m_BestDistToTarget)
+        /*if (m_DistToTarget < m_BestDistToTarget)
         {
             m_BestDistToTarget = m_DistToTarget;
             m_DistImproved = true;
-        }
+        }*/
     }
 
     private void ResetDist()
     {
-        m_LastDistToTarget = m_DistToTarget;
+        /*m_LastDistToTarget = m_DistToTarget;
         m_DistToTarget = 0f;
-        m_DistImproved = false;
+        m_DistImproved = false;*/
+        m_DistToTarget = 0f;
     }
     
     /// <summary>
     /// Get the path from the agent to the target.
     /// </summary>
-    /// <remarks>
-    /// ToDo
-    /// </remarks>
     private List<Vector3> m_Path = new List<Vector3>();
     private void GetPath()
     {
         m_Path.Clear();
         
         var agentPosition = transform.position;
-        var doorPositions = floor.CreatedDoorsCoord;
+        var doorPositions = floor.GetDoorPosition();
         var targetPosition = floor.target.transform.position;
         
         // First point of the path is the agent position.
         m_Path.Add(agentPosition);
-
-        foreach (var coord in doorPositions)
+        
+        if (agentPosition.z > targetPosition.z)
         {
-            if (agentPosition.z > targetPosition.z)
+            if ((agentPosition.z > doorPositions.z) && (doorPositions.z > targetPosition.z))
             {
-                if ((agentPosition.z > coord.z) && (coord.z > targetPosition.z))
-                {
-                    m_Path.Add(coord);
-                }
+                m_Path.Add(doorPositions);
             }
-            else
+        }
+        else
+        {
+            if ((agentPosition.z < doorPositions.z) && (doorPositions.z < targetPosition.z))
             {
-                if ((agentPosition.z < coord.z) && (coord.z < targetPosition.z))
-                {
-                    m_Path.Add(coord);
-                }
+                m_Path.Add(doorPositions);
             }
         }
         

@@ -687,17 +687,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c321ff55c24d3d4fa4adb11570e79c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  globalCornerCoord: []
   m_MaxDist: 0
-  CreatedDoorsCoord: []
   innerWallCreator: {fileID: 1595673323979307659}
   agent: {fileID: 5324353081925522770}
   target: {fileID: 1515308257171817040}
-  finished: 0
-  CreateWall: 0
+  doorWidth: 2
+  CreateWall: 1
   RandomWallPosition: 0
   RanndomDoorPosition: 0
   targetAlwaysInOtherRoomFromAgent: 1
+  targetFixedPosition: 1
 --- !u!65 &7692793173245375662
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -791,8 +790,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floor: {fileID: 5324353083616000953}
-  wallParent: {fileID: 0}
-  m_DoorWidth: 1.5
 --- !u!1 &7271182151014013351
 GameObject:
   m_ObjectHideFlags: 0
