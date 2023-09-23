@@ -238,88 +238,88 @@ learning rate changes to reward signifcant?
 * Question: Performance comparison with previous runs.
 * Navmesh maybe to complex.
 
-# 167
+## 167
 * Test of rewritten pathfinding.
 * Again check in the editor first.
 * Performance seems better -> Check again with compiled build.
 
-# 168
+## 168
 * Same as 167 but compiled build.
 * Performance: First 10k steps take 300 secs. Afterwards significant speedup.
 * Terminated.
 
-# 169
+## 169
 * Reward function introduced.
 * Test run in the editor.
 
-# 170
+## 170
 * Again run in editor.
 * Learning progress not stable.
 * Fix: One AddReward() changed to SetReward().
 * Question remains: How does a good reward function look here?
 
-# 171
+## 171
 * Run with revised reward function.
   * Reward 0f if distance to target increases.
 
-# 172
+## 172
 * Not nice result.
 * Target only found once.
 
-# 173
+## 173
 * Reward recuced. beta = 0.5f.
 
-# 174
+## 174
 * Editor was not started in time.
 * Disregard.
 
-# 175
+## 175
 * Check more tensorboard data charts.
 
-# 176
+## 176
 * Further change to tensorboard recording.
 
-# 177 and more
+## 177 and more
 * Auto run.
 * Check in the morning.
 
-# 201
+## 201
 * Revised reward:
   * Closer to target: +0.1
   * Farther away from target: -0.1
 * Run in editor.
 * Not good results.
 
-# 202 following
+## 202 following
 * Script test
 * Disregard
  
-# 210 and following
+## 210 and following
 * Script test again
 
-# 212 and following
+## 212 and following
 * Test with reward function revised.
   * -0.2 is worse distance.
   * +0.1 if better
 
-# 220
+## 220
 * Test python env.
 * Repeat of run 215.
 
-# 221 and following
+## 221 and following
 * Large number of runs.
 * Build used.
 * Performance not sufficient.
 * 221 shows ok result.
 
-# 247
+## 247
 * Test of fixed Collider and step counter.
 
-# before 340
+## before 340
 * Test runs to evaluate the script. Summary was introduced.
 * Config file restructure.
 
-# 340 and following
+## 340 and following
 * Large number of runs.
 * 2 build env started during training.
 * Check first run and evaluate.
@@ -327,5 +327,30 @@ learning rate changes to reward signifcant?
 * 34992 runs ... too manny?
 * Terminated: ETA was in 2025.
 
-# 342 ff.
+## 342 ff.
 *  Terminated: Config not correct.
+
+## 946
+* 16 sensors.
+* No wall.
+
+## 1016
+* Part of overfit test.
+* 5e6 ep.
+* Fixed inner wall and door.
+* Bad result.
+
+## 1016
+* Part of overfit test.
+* Very long run with 30e6 episodes.
+* Fixed inner wall and door.
+* Shocking result with -1 convergence.
+* Problem with code?
+
+## 1017
+* Overfit test.
+* No inner wall. No door.
+* 5e6 ep.
+* Reduced sensor number back to default with 4 sensors.
+* Fast convergence im comparison to 946 (16 sensors) and 8 ...
+
