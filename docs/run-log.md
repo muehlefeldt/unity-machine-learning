@@ -353,5 +353,12 @@ learning rate changes to reward signifcant?
 * No inner wall. No door.
 * 5e6 ep.
 * Reduced sensor number back to default with 4 sensors.
-* Fast convergence im comparison to 946 (16 sensors) and 8 ...
+* Fast convergence in comparison to 946 (16 sensors) and 8 ...
 * Maxstep reduced back to default 5000.
+* Ok result at 1.5e6 ep.
+
+## 1018
+* Overfit test.
+* Inner wall and door. 
+* Increased ep to 50e6.
+* Rest comparable to 1017. 

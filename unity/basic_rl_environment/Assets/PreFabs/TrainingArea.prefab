@@ -692,7 +692,7 @@ MonoBehaviour:
   agent: {fileID: 5324353081925522770}
   target: {fileID: 1515308257171817040}
   doorWidth: 2
-  CreateWall: 0
+  CreateWall: 1
   RandomWallPosition: 0
   RanndomDoorPosition: 0
   targetAlwaysInOtherRoomFromAgent: 1

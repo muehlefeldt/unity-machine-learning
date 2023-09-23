@@ -18,14 +18,14 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Overfit test: Agent and target fixed. 512 hidden units."
+  message: "Overfit test: Agent and target fixed. Door and wall fixed. 512 hidden units."
 
 behaviors:
   RollerAgent:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 5e6
+    max_steps: 50e6
     time_horizon: 1000
     summary_freq: 10000
 

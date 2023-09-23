@@ -129,31 +129,15 @@ public class Floor : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        /*if (m_GlobalVertices != null)
-        {
-            foreach (var corner in m_GlobalVertices)
-            {
-                Gizmos.DrawSphere(m_FloorMatrix.MultiplyPoint3x4(corner), 0.1f);
-            }
-        }*/
-        // if (m_CornersGlobalCoords != null)
-        // {
-        //     foreach (var coord in m_CornersGlobalCoords)
-        //     {
-        //         Gizmos.DrawSphere(coord, 0.5f);
-        //     }
-        // }
-        // if (CreatedWallsCoord != null)
-        // {
-        //     foreach (var coords in CreatedWallsCoord)
-        //     {
-        //         Gizmos.DrawSphere(coords.Item1, 0.5f);
-        //         Gizmos.DrawSphere(coords.Item2, 0.5f);
-        //     }
-        // }
         foreach (var coord in new List<Vector3>(){m_WallStartGlobalCoord, m_WallEndGlobalCoord})
         {
-            Gizmos.DrawSphere(coord, 0.5f);
+            Gizmos.DrawSphere(coord, 0.3f);
+            //Handles.Label(coord, "Wall");
+        }
+        foreach (var coord in new List<Vector3>(){m_DoorStartGlobalCoord, m_DoorCentreGlobalCoord, m_DoorEndGlobalCoord})
+        {
+            Gizmos.DrawWireSphere(coord, 0.3f);
+            //Handles.Label(coord, "Door");
         }
         
     }
