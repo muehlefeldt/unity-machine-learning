@@ -346,6 +346,7 @@ learning rate changes to reward signifcant?
 * Fixed inner wall and door.
 * Shocking result with -1 convergence.
 * Problem with code?
+* Maxstep to 15k. 
 
 ## 1017
 * Overfit test.
@@ -353,4 +354,4 @@ learning rate changes to reward signifcant?
 * 5e6 ep.
 * Reduced sensor number back to default with 4 sensors.
 * Fast convergence im comparison to 946 (16 sensors) and 8 ...
-
+* Maxstep reduced back to default 5000.

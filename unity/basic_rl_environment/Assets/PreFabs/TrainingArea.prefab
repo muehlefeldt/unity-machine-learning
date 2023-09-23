@@ -484,10 +484,10 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 15000
+  MaxStep: 5000
   floor: {fileID: 5324353083616000953}
   m_MaxDist: 0
-  sensorCount: 16
+  sensorCount: 4
   forceMultiplier: 10
   reward: 0
   m_DistToTarget: 0
@@ -692,7 +692,7 @@ MonoBehaviour:
   agent: {fileID: 5324353081925522770}
   target: {fileID: 1515308257171817040}
   doorWidth: 2
-  CreateWall: 1
+  CreateWall: 0
   RandomWallPosition: 0
   RanndomDoorPosition: 0
   targetAlwaysInOtherRoomFromAgent: 1
