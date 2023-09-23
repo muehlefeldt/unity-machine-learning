@@ -362,3 +362,8 @@ learning rate changes to reward signifcant?
 * Inner wall and door. 
 * Increased ep to 50e6.
 * Rest comparable to 1017. 
+* Terminated after 20e6 ep.
+
+## 1019
+* More steps per ep allowed. 25000 instead of 5000.
+* Overfit test.
