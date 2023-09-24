@@ -25,7 +25,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 10e6
+    max_steps: 5e6
     time_horizon: 1000
     summary_freq: 10000
 
@@ -38,7 +38,7 @@ behaviors:
 
       # PPO-specific Configurations.
       #beta: 0.0025
-      beta: 0.0025
+      beta: 1e-2
       epsilon: 0.2
       lambd: 0.95
       num_epoch: 2

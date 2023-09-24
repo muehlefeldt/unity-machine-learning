@@ -373,3 +373,8 @@ learning rate changes to reward signifcant?
 * Same as 1019 but fewer steps.
 * Overfit test.
 * When does the run converge to 1?
+
+## 1021
+* Overfit test.
+* Beta increased.
+* Steps per ep. reduced back to 5k.
