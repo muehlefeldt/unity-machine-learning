@@ -367,3 +367,9 @@ learning rate changes to reward signifcant?
 ## 1019
 * More steps per ep allowed. 25000 instead of 5000.
 * Overfit test.
+* Same as 1018 otherwise.
+
+## 1020
+* Same as 1019 but fewer steps.
+* Overfit test.
+* When does the run converge to 1?
