@@ -378,3 +378,9 @@ learning rate changes to reward signifcant?
 * Overfit test.
 * Beta increased.
 * Steps per ep. reduced back to 5k.
+
+## 1022 and more
+* Overfit tests.
+* Learning rate and schedule
+* beta and schedule 
+* Only for 1e6 steps
