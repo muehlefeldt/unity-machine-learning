@@ -397,3 +397,12 @@ learning rate changes to reward signifcant?
 
 ## 1062
 * Change to reward function. Not every step punished.
+
+## 1063
+* Increased maxstep per ep to 25k.
+* Every step punished.
+* Problem with position check? Implausible position may be plausible ...
+
+## 1064
+* Position check of the agent removed. 
+* In theory the agent should not be able to leave the training area. 
