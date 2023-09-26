@@ -393,3 +393,7 @@ learning rate changes to reward signifcant?
 * Collision handling changed. Collision between agent and other object does not end ep.
 * Simple run with basic config.
 * Overfit test.
+* Converged towards -1. Hit always the ep. max step limit.
+
+## 1062
+* Change to reward function. Not every step punished.

@@ -272,6 +272,7 @@ public class RollerAgent : Agent
         // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
         if (!IsAgentPositionPlausible())
         {
+            RecordData(RecorderCodes.Implausible);
             m_ImplausiblePosition = true;
             EndEpisode();
         }
@@ -292,7 +293,7 @@ public class RollerAgent : Agent
         //}
         
         //CalculateReward();
-        AddReward(-1f / MaxStep);
+        //AddReward(-1f / MaxStep);
     }
     
     /// <summary>
@@ -335,11 +336,13 @@ public class RollerAgent : Agent
 
     private void OnCollisionEnter(Collision other)
     {
+        RecordData(RecorderCodes.Wall);
         AddReward(-0.5f);
     }
 
     private void OnCollisionStay(Collision other)
     {
+        RecordData(RecorderCodes.Wall);
         AddReward(-0.1f);
     }
 
@@ -382,7 +385,7 @@ public class RollerAgent : Agent
                 statsRecorder.Add("Out of bounds", 0f);
                 break;
 
-            case  RecorderCodes.Target:
+            case RecorderCodes.Target:
                 statsRecorder.Add("Wall hit", 0f);
                 statsRecorder.Add("Max Steps reached", 0f);
                 statsRecorder.Add("Target Reached", 1f);
@@ -391,11 +394,11 @@ public class RollerAgent : Agent
                 break;
             
             case RecorderCodes.RotationError:
-                //statsRecorder.Add("Wall hit", 0f);
-                //statsRecorder.Add("Max Steps reached", 0f);
-                //statsRecorder.Add("Target Reached", 0f);
+                statsRecorder.Add("Wall hit", 0f);
+                statsRecorder.Add("Max Steps reached", 0f);
+                statsRecorder.Add("Target Reached", 0f);
                 statsRecorder.Add("Rotation Error", 1f);
-                //statsRecorder.Add("Out of bounds", 0f);
+                statsRecorder.Add("Out of bounds", 0f);
                 break;
             
             case RecorderCodes.OutOfBounds:
