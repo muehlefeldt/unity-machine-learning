@@ -210,6 +210,9 @@ public class RollerAgent : Agent
         return true;
     }
     
+    /// <summary>
+    /// Called on action input.
+    /// </summary>
     private bool m_ImplausiblePosition = false;
     public float forceMultiplier = 10f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -257,16 +260,7 @@ public class RollerAgent : Agent
         
         // Get the distance to the target.
         CalculateDistanceToTarget();
-        
-        // On collision with wall terminate the episode.
-        /*if (m_CollisionDetected)
-        {
-            RecordData(RecorderCodes.Wall);
-            SetReward(-0.5f);
-            //Debug.Log("Collision");
-            //EndEpisode();
-        }*/
-        
+
         // Reached target. Success.
         if (m_DistToTarget < 1.42f)
         {
@@ -287,19 +281,10 @@ public class RollerAgent : Agent
         // Fix the rotation of the agent. Does not warant the termination of the episode.
         if (!IsAgentRotationPlausible())
         {
-            //m_ImplausiblePosition = true;
             FixAgentRotation();
-            //EndEpisode();
         }
-
-        //if (currentStep > maxSteps)
-        //{
-        //    RecordData(RecorderCodes.MaxSteps);
-        //    SetReward(-1f);
-        //    EndEpisode();
-        //}
+        
         AddReward(GetReward());
-        //CalculateReward();
         AddReward(-1f / MaxStep);
     }
     
@@ -334,23 +319,19 @@ public class RollerAgent : Agent
         //reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
 
     }
-    
-    /// <summary>
-    /// Collision handling. Reset of the agent position if agent collides with other game objects.
-    /// </summary>
-    /// <param name="other"></param>
-    /*private bool m_CollisionDetected = false;
-    private void OnTriggerEnter(Collider other)
-    {
-        m_CollisionDetected = true;
-    }*/
 
+    /// <summary>
+    /// Initial collision event.
+    /// </summary>
     private void OnCollisionEnter(Collision other)
     {
         RecordData(RecorderCodes.Wall);
         AddReward(-0.5f);
     }
-
+    
+    /// <summary>
+    /// If the collision continues after the initial event reduced punishment.
+    /// </summary>
     private void OnCollisionStay(Collision other)
     {
         RecordData(RecorderCodes.Wall);
