@@ -254,9 +254,9 @@ public class RollerAgent : Agent
         if (m_CollisionDetected)
         {
             RecordData(RecorderCodes.Wall);
-            SetReward(-1f);
+            SetReward(-0.5f);
             //Debug.Log("Collision");
-            EndEpisode();
+            //EndEpisode();
         }
         
         // Reached target. Success.

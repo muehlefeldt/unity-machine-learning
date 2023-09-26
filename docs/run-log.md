@@ -384,3 +384,4 @@ learning rate changes to reward signifcant?
 * Learning rate and schedule
 * beta and schedule 
 * Only for 1e6 steps
+* Env: Fixed door, agent and target.
