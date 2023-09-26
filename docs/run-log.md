@@ -385,3 +385,11 @@ learning rate changes to reward signifcant?
 * beta and schedule 
 * Only for 1e6 steps
 * Env: Fixed door, agent and target.
+
+## 1060
+* Terminated. Error in Unity.
+
+## 1061
+* Collision handling changed. Collision between agent and other object does not end ep.
+* Simple run with basic config.
+* Overfit test.

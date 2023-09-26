@@ -110,6 +110,6 @@ public class InnerWallCreator : MonoBehaviour
     private void SetCollider(GameObject obj)
     {
         //obj.transform.parent = wallParent.transform;
-        obj.GetComponent<Collider>().isTrigger = true;
+        //obj.GetComponent<Collider>().isTrigger = true;
     }
 }

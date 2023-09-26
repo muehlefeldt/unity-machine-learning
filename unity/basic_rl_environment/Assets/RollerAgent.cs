@@ -84,9 +84,10 @@ public class RollerAgent : Agent
         ResetDist();
 
         // If the Agent fell, zero its momentum
-        if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
+        // if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
+        if (transform.localPosition.y < 0 || m_ImplausiblePosition)
         {
-            m_CollisionDetected = false;
+            //m_CollisionDetected = false;
             m_ImplausiblePosition = false;
             m_TargetReached = false;
             ResetAgentPosition();
@@ -251,13 +252,13 @@ public class RollerAgent : Agent
         CalculateDistanceToTarget();
         
         // On collision with wall terminate the episode.
-        if (m_CollisionDetected)
+        /*if (m_CollisionDetected)
         {
             RecordData(RecorderCodes.Wall);
             SetReward(-0.5f);
             //Debug.Log("Collision");
             //EndEpisode();
-        }
+        }*/
         
         // Reached target. Success.
         if (m_DistToTarget < 1.42f)
@@ -291,7 +292,7 @@ public class RollerAgent : Agent
         //}
         
         //CalculateReward();
-        SetReward(-1f / MaxStep);
+        AddReward(-1f / MaxStep);
     }
     
     /// <summary>
@@ -326,12 +327,22 @@ public class RollerAgent : Agent
     /// Collision handling. Reset of the agent position if agent collides with other game objects.
     /// </summary>
     /// <param name="other"></param>
-    private bool m_CollisionDetected = false;
+    /*private bool m_CollisionDetected = false;
     private void OnTriggerEnter(Collider other)
     {
         m_CollisionDetected = true;
+    }*/
+
+    private void OnCollisionEnter(Collision other)
+    {
+        AddReward(-0.5f);
     }
-    
+
+    private void OnCollisionStay(Collision other)
+    {
+        AddReward(-0.1f);
+    }
+
     /// <summary>
     /// Codes used for tensorboard stats recorder.
     /// </summary>
