@@ -706,7 +706,6 @@ MonoBehaviour:
   m_MaxDist: 0
   sensorCount: 4
   forceMultiplier: 10
-  reward: 0
   m_DistToTarget: 0
   m_DistToTargetNormal: 0
 --- !u!114 &5324353081925522769
@@ -912,8 +911,8 @@ MonoBehaviour:
   target: {fileID: 1515308257171817040}
   doorWidth: 2
   CreateWall: 1
-  RandomWallPosition: 0
-  RanndomDoorPosition: 0
+  RandomWallPosition: 1
+  RanndomDoorPosition: 1
   targetAlwaysInOtherRoomFromAgent: 1
   targetFixedPosition: 1
 --- !u!65 &7692793173245375662

@@ -418,3 +418,17 @@ learning rate changes to reward signifcant?
 
 ## 1067
 * Reward function: Punish more distance -0.15 and reward less dist to target with 0.1.
+* Looks good.
+
+## 1068
+* Random door. Rest same as 1067.
+* Reward based on distance.
+* Looks good.
+
+## 1069
+* Door and wall random.
+* Agent and target position fixed.
+
+## 1070
+* Build.
+* Slight change in collision punishment. Stay collision more punished.

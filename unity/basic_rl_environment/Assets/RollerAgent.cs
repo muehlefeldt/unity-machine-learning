@@ -354,7 +354,7 @@ public class RollerAgent : Agent
     private void OnCollisionStay(Collision other)
     {
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.1f);
+        AddReward(-0.3f);
     }
 
     /// <summary>

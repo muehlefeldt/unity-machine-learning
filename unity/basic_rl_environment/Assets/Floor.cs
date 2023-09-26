@@ -232,7 +232,7 @@ public class Floor : MonoBehaviour
     private void SetDoorCoords()
     {
         var r = 0.5f;
-        if (RandomWallPosition)
+        if (RanndomDoorPosition)
         {
             r = GetRandom(0.3f);
         }
