@@ -411,3 +411,10 @@ learning rate changes to reward signifcant?
 ## 1065
 * Collision problems. The agent clips through contact points of the walls.
 * Still part of overfit test.
+
+## 1066
+* Reward function: + for better distance, otherwise -.
+* 5k max steps per ep.
+
+## 1067
+* Reward function: Punish more distance -0.15 and reward less dist to target with 0.1.

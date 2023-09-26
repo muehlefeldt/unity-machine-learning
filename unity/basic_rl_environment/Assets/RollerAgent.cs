@@ -9,6 +9,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using Unity.VisualScripting;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
@@ -297,7 +298,7 @@ public class RollerAgent : Agent
         //    SetReward(-1f);
         //    EndEpisode();
         //}
-        
+        AddReward(GetReward());
         //CalculateReward();
         AddReward(-1f / MaxStep);
     }
@@ -308,20 +309,24 @@ public class RollerAgent : Agent
     /// <remarks>
     /// ToDo: Wenn du die Entfernung zum Ziel nicht verringerst, dann gibt es eine Bestrafung.
     /// </remarks>
-    public float reward = 0f;
-    private void CalculateReward()
+    //public float reward = 0f;
+    private float GetReward()
     {
-        
-        var beta = 0.35f;
-        var omega = 0.3f;
-        var fGui = Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
-        
-        GetPath();
-        
-        var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
-        print(angleToTarget);
-        var fAng = Mathf.Exp(-1f * Mathf.Pow(angleToTarget, 2f)/ (2 * Mathf.Pow(omega, 2) ));
-        
+        if (m_LastDistToTarget > m_DistToTarget)
+        {
+            return 0.1f;
+        }
+        return -0.15f;
+        // var beta = 0.35f;
+        // var omega = 0.3f;
+        // var fGui = Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
+        //
+        // GetPath();
+        //
+        // var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
+        // print(angleToTarget);
+        // var fAng = Mathf.Exp(-1f * Mathf.Pow(angleToTarget, 2f)/ (2 * Mathf.Pow(omega, 2) ));
+
         //var dirTransform = transform.TransformDirection(transform.forward);
         //var currentRay = new Ray(transform.position, dirTransform);
 
@@ -423,12 +428,14 @@ public class RollerAgent : Agent
     /// <remarks>Distance is basis for reward function.</remarks>
     public float m_DistToTarget = 0f;
     public float m_DistToTargetNormal = 0f;
+    private float m_LastDistToTarget = 0f;
     
     /*private float m_LastDistToTarget = 0f;
     private float m_BestDistToTarget = float.PositiveInfinity;
     private bool m_DistImproved = false;*/
     private void CalculateDistanceToTarget()
     {
+        m_LastDistToTarget = m_DistToTarget;
         ResetDist();
         
         // Get the path from agent to target.
