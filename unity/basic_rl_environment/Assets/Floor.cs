@@ -126,6 +126,26 @@ public class Floor : MonoBehaviour
             }
         }
     }
+    
+    /// <summary>
+    /// Check if global position is outside the floor perimeter.
+    /// </summary>
+    /// <param name="pos">Global position to check.</param>
+    /// <returns>True if the position is outside of the floor.</returns>
+    public bool IsOutsideFloor(Vector3 pos)
+    {
+        if (pos.x < m_MinXGlobalCoord.x || pos.x > m_MaxXGlobalCoord.x)
+        {
+            return true;
+        }
+
+        if (pos.z < m_MinZGlobalCoord.z || pos.z > m_MaxZGlobalCoord.z)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     void OnDrawGizmos()
     {

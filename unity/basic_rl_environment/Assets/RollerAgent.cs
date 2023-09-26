@@ -182,6 +182,12 @@ public class RollerAgent : Agent
             return false;
         }
 
+        if (floor.IsOutsideFloor(transform.position))
+        {
+            RecordData(RecorderCodes.OutOfBounds);
+            return false;
+        }
+
         return true;
     }
     
@@ -270,12 +276,12 @@ public class RollerAgent : Agent
         }
         
         // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
-        // if (!IsAgentPositionPlausible())
-        // {
-        //     RecordData(RecorderCodes.Implausible);
-        //     m_ImplausiblePosition = true;
-        //     EndEpisode();
-        // }
+        if (!IsAgentPositionPlausible())
+        {
+            //RecordData(RecorderCodes.Implausible);
+            m_ImplausiblePosition = true;
+            EndEpisode();
+        }
     
         // Fix the rotation of the agent. Does not warant the termination of the episode.
         if (!IsAgentRotationPlausible())

@@ -406,3 +406,8 @@ learning rate changes to reward signifcant?
 ## 1064
 * Position check of the agent removed. 
 * In theory the agent should not be able to leave the training area. 
+* Terminated.
+
+## 1065
+* Collision problems. The agent clips through contact points of the walls.
+* Still part of overfit test.
