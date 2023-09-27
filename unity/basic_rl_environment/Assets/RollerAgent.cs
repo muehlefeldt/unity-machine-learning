@@ -58,14 +58,14 @@ public class RollerAgent : Agent
     /// <summary>
     /// Reset the position of the agent to a fixed default position.
     /// </summary>
-    public bool varyAgentPosition = true;
+    public bool varyAgentStartPosition = true;
     private void ResetAgentPosition()
     {
         m_RBody.angularVelocity = Vector3.zero;
         m_RBody.velocity = Vector3.zero;
         transform.rotation = Quaternion.identity;
         
-        if (varyAgentPosition)
+        if (varyAgentStartPosition)
         {
             var x = Random.Range(-3f, 3f);
             var z = Random.Range(2f, 4f);
@@ -96,19 +96,20 @@ public class RollerAgent : Agent
 
         // If the Agent fell, zero its momentum
         // if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
-        if (transform.localPosition.y < 0 || m_ImplausiblePosition)
-        {
-            //m_CollisionDetected = false;
-            m_ImplausiblePosition = false;
-            //m_TargetReached = false;
-            ResetAgentPosition();
-        }
+        // if (transform.localPosition.y < 0 || m_ImplausiblePosition)
+        // {
+        //     //m_CollisionDetected = false;
+        //     m_ImplausiblePosition = false;
+        //     //m_TargetReached = false;
+        //     ResetAgentPosition();
+        // }
 
         // Move the target to a new spot
-        if (floor.targetFixedPosition)
-        {
-            ResetAgentPosition();
-        }
+        // if (floor.targetFixedPosition)
+        // {
+        //     ResetAgentPosition();
+        // }
+        ResetAgentPosition();
         floor.ResetTargetPosition();
 
         m_MaxDist = floor.GetMaxPossibleDist();
