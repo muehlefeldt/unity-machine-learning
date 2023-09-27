@@ -432,3 +432,9 @@ learning rate changes to reward signifcant?
 ## 1070
 * Build.
 * Slight change in collision punishment. Stay collision more punished.
+
+## 1071
+* Slightly varied agent position.
+
+## 1072
+* Target pos not fixed.

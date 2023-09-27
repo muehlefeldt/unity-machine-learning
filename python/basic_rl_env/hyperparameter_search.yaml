@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: true
+  build: false
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Collision handling changed. Overfit test: Agent and target fixed. Door and wall fixed. 512 hidden units."
+  message: "Collision handling changed. Overfit test. 512 hidden units."
 
 behaviors:
   RollerAgent:

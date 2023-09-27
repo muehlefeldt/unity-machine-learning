@@ -54,17 +54,27 @@ public class RollerAgent : Agent
 
         return directions;
     }
-    
+
     /// <summary>
     /// Reset the position of the agent to a fixed default position.
     /// </summary>
+    public bool varyAgentPosition = true;
     private void ResetAgentPosition()
     {
         m_RBody.angularVelocity = Vector3.zero;
         m_RBody.velocity = Vector3.zero;
-            
-        transform.localPosition = new Vector3( 0, 1f, 3f);
         transform.rotation = Quaternion.identity;
+        
+        if (varyAgentPosition)
+        {
+            var x = Random.Range(-3f, 3f);
+            var z = Random.Range(2f, 4f);
+            transform.localPosition = new Vector3(x, 1f, z);
+        }
+        else
+        {
+            transform.localPosition = new Vector3(0, 1f, 3f);
+        }
     }
     
     /// <summary>
@@ -76,7 +86,7 @@ public class RollerAgent : Agent
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
     }
     
-    private bool m_TargetReached = false;
+    //private bool m_TargetReached = false;
     public override void OnEpisodeBegin()
     {
         floor.Prepare();
@@ -90,7 +100,7 @@ public class RollerAgent : Agent
         {
             //m_CollisionDetected = false;
             m_ImplausiblePosition = false;
-            m_TargetReached = false;
+            //m_TargetReached = false;
             ResetAgentPosition();
         }
 
@@ -261,12 +271,12 @@ public class RollerAgent : Agent
         // Get the distance to the target.
         CalculateDistanceToTarget();
 
-        // Reached target. Success.
+        // Reached target. Success. Terminate episode.
         if (m_DistToTarget < 1.42f)
         {
             RecordData(RecorderCodes.Target);
             SetReward(1f);
-            m_TargetReached = true;
+            //m_TargetReached = true;
             EndEpisode();
         }
         

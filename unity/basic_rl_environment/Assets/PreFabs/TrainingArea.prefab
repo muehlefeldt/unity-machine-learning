@@ -705,6 +705,7 @@ MonoBehaviour:
   floor: {fileID: 5324353083616000953}
   m_MaxDist: 0
   sensorCount: 4
+  varyAgentPosition: 1
   forceMultiplier: 10
   m_DistToTarget: 0
   m_DistToTargetNormal: 0
@@ -914,7 +915,7 @@ MonoBehaviour:
   RandomWallPosition: 1
   RanndomDoorPosition: 1
   targetAlwaysInOtherRoomFromAgent: 1
-  targetFixedPosition: 1
+  targetFixedPosition: 0
 --- !u!65 &7692793173245375662
 BoxCollider:
   m_ObjectHideFlags: 0
