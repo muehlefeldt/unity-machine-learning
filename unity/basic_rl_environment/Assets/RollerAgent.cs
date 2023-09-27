@@ -109,6 +109,7 @@ public class RollerAgent : Agent
         // {
         //     ResetAgentPosition();
         // }
+        m_LastCollision = Vector3.zero;
         ResetAgentPosition();
         floor.ResetTargetPosition();
 
@@ -334,8 +335,10 @@ public class RollerAgent : Agent
     /// <summary>
     /// Initial collision event.
     /// </summary>
+    private Vector3 m_LastCollision = Vector3.zero;
     private void OnCollisionEnter(Collision other)
     {
+        m_LastCollision = transform.position;
         RecordData(RecorderCodes.Wall);
         AddReward(-0.5f);
     }
@@ -504,6 +507,11 @@ public class RollerAgent : Agent
             {
                 Gizmos.DrawCube(coord, new Vector3(0.3f, 0.3f, 0.3f));    
             }
+        }
+
+        if (m_LastCollision != Vector3.zero)
+        {
+            Gizmos.DrawCube(m_LastCollision, new Vector3(0.3f, 0.3f, 0.3f));
         }
     }
 

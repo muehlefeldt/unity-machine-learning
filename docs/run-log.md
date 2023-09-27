@@ -443,3 +443,4 @@ learning rate changes to reward signifcant?
 ## 1073
 * Reset the agent on every ep begin.
 * Previously: Agent reset only under given circumstances but due to change in collision handling problem.
+* Uses build.
