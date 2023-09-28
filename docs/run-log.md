@@ -453,3 +453,6 @@ learning rate changes to reward signifcant?
 * After every episode agent reset to first room.
 * Ep. end after maxStep reached or target found.
 
+## 1075
+* 50e6 ep.
+* Same as 1073 and 1074.
