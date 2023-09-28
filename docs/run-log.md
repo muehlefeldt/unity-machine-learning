@@ -444,3 +444,12 @@ learning rate changes to reward signifcant?
 * Reset the agent on every ep begin.
 * Previously: Agent reset only under given circumstances but due to change in collision handling problem.
 * Uses build.
+
+## 1074
+* 10e6 ep.
+* Same as 1073.
+* Does it converge?
+* Editor run, for visual observation by user.
+* After every episode agent reset to first room.
+* Ep. end after maxStep reached or target found.
+

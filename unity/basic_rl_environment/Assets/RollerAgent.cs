@@ -109,7 +109,10 @@ public class RollerAgent : Agent
         // {
         //     ResetAgentPosition();
         // }
+
         m_LastCollision = Vector3.zero;
+        
+        // Always reset the agent and target position.
         ResetAgentPosition();
         floor.ResetTargetPosition();
 

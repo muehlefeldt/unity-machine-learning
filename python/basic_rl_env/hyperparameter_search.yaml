@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: true
+  build: false
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -25,7 +25,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 5e6
+    max_steps: 10e6
     time_horizon: 1000
     summary_freq: 10000
 
@@ -47,7 +47,7 @@ behaviors:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
       hidden_units: 512
-      num_layers: 0
+      num_layers: 1
       memory:
         memory_size: 128
         sequence_length: 64
