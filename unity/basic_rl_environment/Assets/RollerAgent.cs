@@ -115,6 +115,7 @@ public class RollerAgent : Agent
         // Always reset the agent and target position.
         ResetAgentPosition();
         floor.ResetTargetPosition();
+        floor.ResetDecoyPosition();
 
         m_MaxDist = floor.GetMaxPossibleDist();
         CalculateDistanceToTarget();

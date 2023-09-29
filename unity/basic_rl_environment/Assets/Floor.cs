@@ -28,7 +28,8 @@ public class Floor : MonoBehaviour
     public AllRooms RoomsInEnv;
     public RollerAgent agent;
     public Target target;
-
+    public Decoy decoy;
+    
     //public bool finished = false;
     
     // Store global coords of the floor. Populated during startup.
@@ -272,7 +273,25 @@ public class Floor : MonoBehaviour
             target.ResetPosition(newTargetPos);
         }
     }
-    
+
+    public void ResetDecoyPosition()
+    {
+        var agentPos = agent.transform.position;
+        var targetPos = target.transform.position;
+        
+        var newDecoyPos = RoomsInEnv.GetRandomTargetPosition(agentPos);
+        
+        var dist = Vector3.Distance(newDecoyPos, targetPos);
+        while (dist < 4f)
+        {
+            newDecoyPos = RoomsInEnv.GetRandomTargetPosition(agentPos);
+            dist = Vector3.Distance(newDecoyPos, targetPos);
+        }
+
+        newDecoyPos.y = 0.7f;
+        decoy.ResetPosition(newDecoyPos);
+    }
+
     /// <summary>
     /// Get the global position of the created door in the inner wall.
     /// </summary>
