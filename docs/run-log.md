@@ -456,3 +456,7 @@ learning rate changes to reward signifcant?
 ## 1075
 * 50e6 ep.
 * Same as 1073 and 1074.
+
+## 1076
+* Shorter test with new decoy.
+* Build used.
