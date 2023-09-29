@@ -466,3 +466,7 @@ learning rate changes to reward signifcant?
 ## 1077
 * Rerun of 1076 with more areas.
 * No build.
+* Terminated. One agent too few maxsteps.
+
+## 1078
+* Rerun of 1077.
