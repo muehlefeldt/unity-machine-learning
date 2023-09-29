@@ -460,3 +460,9 @@ learning rate changes to reward signifcant?
 ## 1076
 * Shorter test with new decoy.
 * Build used.
+* Terminated. Very high cumulative rewards initially.
+* Forgot training areas.
+
+## 1077
+* Rerun of 1076 with more areas.
+* No build.
