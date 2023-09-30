@@ -300,7 +300,7 @@ public class RollerAgent : Agent
             FixAgentRotation();
         }
         
-        AddReward(GetReward());
+        AddReward(GetReward(actions));
         AddReward(-1f / MaxStep);
     }
     
@@ -311,8 +311,13 @@ public class RollerAgent : Agent
     /// ToDo: Wenn du die Entfernung zum Ziel nicht verringerst, dann gibt es eine Bestrafung.
     /// </remarks>
     //public float reward = 0f;
-    private float GetReward()
+    private float GetReward(int action)
     {
+        // Do not punish rotation.
+        if (action > 6)
+        {
+            return 0.1f;
+        }
         if (m_LastDistToTarget > m_DistToTarget)
         {
             return 0.1f;

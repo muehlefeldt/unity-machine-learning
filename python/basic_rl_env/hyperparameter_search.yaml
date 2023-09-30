@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? false for editor.
-  build: true
+  build: false
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -22,7 +22,7 @@ userconfig:
 
   # Initialize from existing previous run.
   based_on_previous_nn: true
-  previous_run_id: 1078
+  previous_run_id: 1080
 
 behaviors:
   RollerAgent:
@@ -36,7 +36,7 @@ behaviors:
     hyperparameters:
       # Common Trainer Configurations.
       batch_size: 512
-      buffer_size: 102400
+      buffer_size: 204800
       learning_rate: 1e-3
       learning_rate_schedule: linear
 

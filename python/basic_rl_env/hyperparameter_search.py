@@ -172,13 +172,12 @@ def commence_mlagents_run(run_info: dict) -> dict:
     """Commence a ML-Agents run using the configuration provided in the dict."""
     # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
     run_id = run_info["run_id"]
-    production = run_info["userconfig"]["production"]
 
     # Location of the config file saved to run info.
     run_info["config_file"] = f"{run_info['paths']['configs_dir']}/{run_id}.yaml"
 
     # Save modified config as yaml file.
-    if production:
+    if run_info["userconfig"]["production"]:
         with open(Path(run_info["config_file"]).absolute(), mode="w", encoding="utf8") as new_file:
             yaml.dump(run_info["run_config"], new_file)
 
@@ -188,74 +187,53 @@ def commence_mlagents_run(run_info: dict) -> dict:
         # Start ml-algents training using build version of unity.
         start_time = time.time()
 
-        # Do we use a build environment?
-        if run_info["userconfig"]["build"]:
+        # Construct the ml-agents arguments to be called through subprocess.
+        ml_agents_arguments = []
+        if run_info["userconfig"]["build"]:  # Run ml-agents with pre build unity environemnts.
+            ml_agents_arguments = [
+                "mlagents-learn",
+                f"{Path(run_info['config_file']).absolute()}",
+                f"--env={run_info['paths']['unity_env']}",
+                f"--run-id={run_name}",
+                f"--num-envs={run_info['userconfig']['num_env']}",
+                f"--base-port={run_info['base_port']}",
+                "--no-graphics",
+                "--torch-device",
+                "cpu",
+                "--force",
+            ]
             # Is the run based on the result (nn) of a previous run?
             if run_info["userconfig"]["based_on_previous_nn"]:
-                # Run ml-agents with pre build unity environemnts.
-                try:
-                    subprocess.run(
-                        [
-                            "mlagents-learn",
-                            f"{Path(run_info['config_file']).absolute()}",
-                            f"--env={run_info['paths']['unity_env']}",
-                            f"--run-id={run_name}",
-                            f"--num-envs={run_info['userconfig']['num_env']}",
-                            f"--base-port={run_info['base_port']}",
-                            "--no-graphics",
-                            "--torch-device",
-                            "cpu",
-                            "--force",
-                            f"--initialize-from={run_info['userconfig']['previous_run_id']}"
-                        ],
-                        shell=True,
-                        check=True,
-                    )
-                except subprocess.SubprocessError as err:
-                    run_info["error"] = True
-                    run_info["error_msg"] = str(err)
-            else:
-                # Run ml-agents with pre build unity environemnts.
-                try:
-                    subprocess.run(
-                        [
-                            "mlagents-learn",
-                            f"{Path(run_info['config_file']).absolute()}",
-                            f"--env={run_info['paths']['unity_env']}",
-                            f"--run-id={run_name}",
-                            f"--num-envs={run_info['userconfig']['num_env']}",
-                            f"--base-port={run_info['base_port']}",
-                            "--no-graphics",
-                            "--torch-device",
-                            "cpu",
-                            "--force",
-                        ],
-                        shell=True,
-                        check=True,
-                    )
-                except subprocess.SubprocessError as err:
-                    run_info["error"] = True
-                    run_info["error_msg"] = str(err)
-        
-        # If we do not use a build environment, interaction with the unity editor is needed.
-        else:
-            # Run mlagents with the unity editor.
-            try:
-                subprocess.run(
-                    [
-                        "mlagents-learn",
-                        f"{Path(run_info['config_file']).absolute()}",
-                        f"--run-id={run_name}",
-                        "--torch-device",
-                        "cpu",
-                        "--force",
-                    ],
-                    shell=True,
-                    check=True,
+                ml_agents_arguments.append(
+                    f"--initialize-from={run_info['userconfig']['previous_run_id']}"
                 )
-            except subprocess.SubprocessError as err:
-                run_info["error"] = True
-                run_info["error_msg"] = str(err)
+
+        else:  # Run mlagents with the unity editor.
+            # If we do not use a build environment, interaction with the unity editor is needed.
+            ml_agents_arguments = [
+                "mlagents-learn",
+                f"{Path(run_info['config_file']).absolute()}",
+                f"--run-id={run_name}",
+                "--torch-device",
+                "cpu",
+                "--force",
+            ]
+            # Is the run based on the result (nn) of a previous run?
+            if run_info["userconfig"]["based_on_previous_nn"]:
+                ml_agents_arguments.append(
+                    f"--initialize-from={run_info['userconfig']['previous_run_id']}"
+                )
+
+        # Execute ml-agents.
+        try:
+            subprocess.run(
+                ml_agents_arguments,
+                shell=True,
+                check=True,
+            )
+        except subprocess.SubprocessError as err:
+            run_info["error"] = True
+            run_info["error_msg"] = str(err)
 
         # Update the dict containing run infos.
         # Stores the directory path needed for possible delete of created files.
@@ -284,7 +262,7 @@ def check_userconfig():
         "message",
         "keep_files",
         "based_on_previous_nn",
-        "previous_run_id"
+        "previous_run_id",
     ]
     for key in keys_to_lookup:
         if not key in config["userconfig"]:

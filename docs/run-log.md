@@ -481,3 +481,12 @@ learning rate changes to reward signifcant?
 * Rerun 1079 with code fix.
 * Terminal inidcated correct initial usage of previous results from run 1078.
 * 20e6 steps.
+
+## 1081
+* Buffer size increased. Should help stability. Maybe even help speed?
+* Slight change to reward function. +0.1 in case of rotation to encourage rotation.
+* Run uses the NN from 1079.
+* Terminated. Wrong NN as basis.
+
+## 1082
+* Rerun of 1081 with NN from 1080 as basis.
