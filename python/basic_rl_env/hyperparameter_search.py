@@ -183,35 +183,60 @@ def commence_mlagents_run(run_info: dict) -> dict:
             yaml.dump(run_info["run_config"], new_file)
 
         return_code = 0
-        run_name = f"{run_id}_basicenv_ppo_auto"
+        run_name = f"{run_id}"
 
         # Start ml-algents training using build version of unity.
         start_time = time.time()
 
         # Do we use a build environment?
         if run_info["userconfig"]["build"]:
-            # Run ml-agents with pre build unity environemnts.
-            try:
-                subprocess.run(
-                    [
-                        "mlagents-learn",
-                        f"{Path(run_info['config_file']).absolute()}",
-                        f"--env={run_info['paths']['unity_env']}",
-                        f"--run-id={run_name}",
-                        f"--num-envs={run_info['userconfig']['num_env']}",
-                        f"--base-port={run_info['base_port']}",
-                        "--no-graphics",
-                        "--torch-device",
-                        "cpu",
-                        "--force",
-                    ],
-                    shell=True,
-                    check=True,
-                )
-            except subprocess.SubprocessError as err:
-                run_info["error"] = True
-                run_info["error_msg"] = str(err)
-
+            # Is the run based on the result (nn) of a previous run?
+            if run_info["userconfig"]["based_on_previous_nn"]:
+                # Run ml-agents with pre build unity environemnts.
+                try:
+                    subprocess.run(
+                        [
+                            "mlagents-learn",
+                            f"{Path(run_info['config_file']).absolute()}",
+                            f"--env={run_info['paths']['unity_env']}",
+                            f"--run-id={run_name}",
+                            f"--num-envs={run_info['userconfig']['num_env']}",
+                            f"--base-port={run_info['base_port']}",
+                            "--no-graphics",
+                            "--torch-device",
+                            "cpu",
+                            "--force",
+                            f"--initialize-from={run_info['userconfig']['previous_run_id']}"
+                        ],
+                        shell=True,
+                        check=True,
+                    )
+                except subprocess.SubprocessError as err:
+                    run_info["error"] = True
+                    run_info["error_msg"] = str(err)
+            else:
+                # Run ml-agents with pre build unity environemnts.
+                try:
+                    subprocess.run(
+                        [
+                            "mlagents-learn",
+                            f"{Path(run_info['config_file']).absolute()}",
+                            f"--env={run_info['paths']['unity_env']}",
+                            f"--run-id={run_name}",
+                            f"--num-envs={run_info['userconfig']['num_env']}",
+                            f"--base-port={run_info['base_port']}",
+                            "--no-graphics",
+                            "--torch-device",
+                            "cpu",
+                            "--force",
+                        ],
+                        shell=True,
+                        check=True,
+                    )
+                except subprocess.SubprocessError as err:
+                    run_info["error"] = True
+                    run_info["error_msg"] = str(err)
+        
         # If we do not use a build environment, interaction with the unity editor is needed.
         else:
             # Run mlagents with the unity editor.
@@ -245,9 +270,11 @@ def commence_mlagents_run(run_info: dict) -> dict:
 def check_userconfig():
     """Check userconfig in the configuration yaml file for content and datatypes."""
 
+    # Userconfig contains all custom settings.
     if not "userconfig" in config:
         raise ValueError
 
+    # Check if requiered keys exist.
     keys_to_lookup = [
         "build",
         "production",
@@ -256,21 +283,26 @@ def check_userconfig():
         "num_process",
         "message",
         "keep_files",
+        "based_on_previous_nn",
+        "previous_run_id"
     ]
     for key in keys_to_lookup:
         if not key in config["userconfig"]:
             raise ValueError
 
-    keys_bool_values = ["build", "production", "summary", "keep_files"]
+    # Bool type value checked.
+    keys_bool_values = ["build", "production", "summary", "keep_files", "based_on_previous_nn"]
     for key in keys_bool_values:
         if not isinstance(config["userconfig"][key], bool):
             raise ValueError
 
-    keys_int_values = ["num_env", "num_process"]
+    # Check int types.
+    keys_int_values = ["num_env", "num_process", "previous_run_id"]
     for key in keys_int_values:
         if not isinstance(config["userconfig"][key], int) or config["userconfig"][key] < 1:
             raise ValueError
 
+    # Message needs to have str value.
     if not isinstance(config["userconfig"]["message"], str):
         raise ValueError
 
@@ -412,6 +444,10 @@ if __name__ == "__main__":
 
     # Get the message from the config file to be logged.
     message_for_log = userconfig["message"]
+
+    # Based on previous run?
+    use_previous_nn: bool = userconfig["based_on_previous_nn"]
+    previous_run_id: int = userconfig["previous_run_id"]
 
     # Get the id of the first run. Used for logging and summary.
     ID_FIRST_RUN = get_run_id()

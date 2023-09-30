@@ -470,3 +470,14 @@ learning rate changes to reward signifcant?
 
 ## 1078
 * Rerun of 1077.
+
+## 1079
+* Test --initialize-from=<run-identifier> option of ml-agents.
+* New option introduced to python code.
+* Run ids now shortend.
+* Terminated code error in python. Was not using the result of 1078.
+
+## 1080
+* Rerun 1079 with code fix.
+* Terminal inidcated correct initial usage of previous results from run 1078.
+* 20e6 steps.
