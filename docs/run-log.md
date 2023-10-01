@@ -490,3 +490,10 @@ learning rate changes to reward signifcant?
 
 ## 1082
 * Rerun of 1081 with NN from 1080 as basis.
+* Slight change in reward (+ for rotation) did not improve result.
+  * Question: Completly retraining from ground up for NN requiered to see changes?
+
+## 1083
+* Reward function test.
+* Reward based on Matignon et al.
+* Problem: No idea what the convergence target is.

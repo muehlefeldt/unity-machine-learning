@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using Unity.Mathematics;
 //using DefaultNamespace;
 using UnityEngine;
 
@@ -121,7 +122,7 @@ public class RollerAgent : Agent
         CalculateDistanceToTarget();
     }
     
-    private List<float> m_RayDistances = new List<float>();
+    private readonly List<float> m_RayDistances = new List<float>();
     
     /// <summary>
     /// Prepare observations. Get sensor data to be used.
@@ -303,6 +304,14 @@ public class RollerAgent : Agent
         AddReward(GetReward(actions));
         AddReward(-1f / MaxStep);
     }
+
+    enum RewardFunction
+    {
+        SimpleDist,
+        ComplexDist
+    }
+
+    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.ComplexDist;
     
     /// <summary>
     /// Calculate and return reward based on current distance to target.
@@ -310,19 +319,33 @@ public class RollerAgent : Agent
     /// <remarks>
     /// ToDo: Wenn du die Entfernung zum Ziel nicht verringerst, dann gibt es eine Bestrafung.
     /// </remarks>
-    //public float reward = 0f;
+    public float currentReward = 0f;
     private float GetReward(int action)
     {
-        // Do not punish rotation.
-        if (action > 6)
+        if (m_RewardFunctionSelect == RewardFunction.SimpleDist)
         {
-            return 0.1f;
+            // Do not punish rotation.
+            if (action > 6)
+            {
+                return 0.1f;
+            }
+
+            if (m_LastDistToTarget > m_DistToTarget)
+            {
+                return 0.1f;
+            }
+
+            return -0.15f;
         }
-        if (m_LastDistToTarget > m_DistToTarget)
+
+        if (m_RewardFunctionSelect == RewardFunction.ComplexDist)
         {
-            return 0.1f;
+            var beta = 0.35f;
+            var omega = 0.3f;
+            var x = m_DistToTargetNormal;
+            currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
+            return currentReward;
         }
-        return -0.15f;
         // var beta = 0.35f;
         // var omega = 0.3f;
         // var fGui = Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
@@ -338,7 +361,7 @@ public class RollerAgent : Agent
 
         //var stepPunishment = currentStep / maxSteps;
         //reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
-
+        return 0f;
     }
 
     /// <summary>
@@ -472,7 +495,7 @@ public class RollerAgent : Agent
     /// <summary>
     /// Get the path from the agent to the target.
     /// </summary>
-    private List<Vector3> m_Path = new List<Vector3>();
+    private readonly List<Vector3> m_Path = new List<Vector3>();
     private void GetPath()
     {
         m_Path.Clear();
