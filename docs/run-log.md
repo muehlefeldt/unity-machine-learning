@@ -497,3 +497,9 @@ learning rate changes to reward signifcant?
 * Reward function test.
 * Reward based on Matignon et al.
 * Problem: No idea what the convergence target is.
+* 40e6 steps to get first impression.
+* How is the the reward function handling movements forwards and backwards?
+* Reminder: Buffer size was increased for run 1081.
+
+## 1084
+* Rerun 1083 but with 60e6 steps.
