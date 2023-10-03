@@ -511,8 +511,16 @@ learning rate changes to reward signifcant?
 * First run with 25e6 steps to get feel for config.
 * Using build.
 * Result was strange. Reward for rotation may be too large.
+* Developed strategy was to simply rotate until max limit was reached.
 * Terminated.
 
 ## 1086
 * Reward change. Now +0.05 for rotation.
 * Otherwise rerun of 1085.
+* Remark: Reward for rotation maybe stupid.
+
+## 1087 - 1089
+* Python code tests. Can be ignored.
+
+## 1090
+* Reward function does ignore rotation.

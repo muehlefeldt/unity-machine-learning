@@ -327,19 +327,19 @@ public class RollerAgent : Agent
         {
             var reward = 0f;
             // Do not punish rotation.
-            if (action > 6)
-            {
-                reward = 0.05f;
-            }
+            //if (action > 6)
+            //{
+            //    reward = 0.05f;
+            //}
 
-            else if (m_LastDistToTarget > m_DistToTarget)
+            /*else*/ if (m_LastDistToTarget > m_DistToTarget)
             {
                 reward = 0.1f;
             }
             
             else reward = -0.2f;
 
-            return reward + (-1f / MaxStep);
+            return reward; //+ (-1f / MaxStep);
         }
 
         if (m_RewardFunctionSelect == RewardFunction.ComplexDist)

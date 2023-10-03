@@ -224,23 +224,32 @@ def commence_mlagents_run(run_info: dict) -> dict:
                     f"--initialize-from={run_info['userconfig']['previous_run_id']}"
                 )
 
-        # Execute ml-agents.
+        # Execute ml-agents in a separate process.
         try:
-            subprocess.run(
+            process_result: subprocess.CompletedProcess = subprocess.run(
                 ml_agents_arguments,
                 shell=True,
                 check=True,
             )
-        except subprocess.SubprocessError as err:
+        except subprocess.CalledProcessError as err:
             run_info["error"] = True
             run_info["error_msg"] = str(err)
+        
+        except KeyboardInterrupt:
+            run_info["error"] = True
+            run_info["error_msg"] = "User interrupt."
+    
 
         # Update the dict containing run infos.
         # Stores the directory path needed for possible delete of created files.
         run_info["duration"] = time.time() - start_time
-        run_info["return_code"] = return_code
+        #run_info["return_code"] = process_result.returncode
         run_info["run_name"] = run_name
         run_info["result_dir"] = f"{run_info['paths']['results_dir']}/{run_name}"
+    
+    else: # Not production
+        run_info["error"] = True
+        run_info["error_msg"] = "Not production mode."
 
     return run_info
 
@@ -355,7 +364,9 @@ def check_directories():
 def remove_run_files_log(summary_list: list[dict]):
     """Delete files that have been created. Main purpose is to minimise number of irrelevant run id.
     Especially useful during debug runs. Set appropiate option in config file."""
-
+    if summary_list == [{}]:
+        return
+    
     # Remove files created during mlagents-learn runs. Config file of each run and the directory
     # in the results directory.
     for run_info in summary_list:
@@ -464,7 +475,7 @@ if __name__ == "__main__":
             try:
                 summary = p.map(commence_mlagents_run, combinations)
             except KeyboardInterrupt:
-                print("Done.")
+                print("User interreupt.")
 
     if generate_summary:
         create_summary_file(summary)

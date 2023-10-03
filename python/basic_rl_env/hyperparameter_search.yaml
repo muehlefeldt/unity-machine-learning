@@ -8,7 +8,7 @@ userconfig:
   # Number of parallel processes.
   num_process: 1
 
-  # Production mode? false for test run.
+  # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
 
   # "true" to generate summary file.
@@ -29,7 +29,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 25e6
+    max_steps: 10e6
     time_horizon: 1000
     summary_freq: 10000
 
