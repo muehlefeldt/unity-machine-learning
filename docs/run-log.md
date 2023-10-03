@@ -519,8 +519,8 @@ learning rate changes to reward signifcant?
 * Otherwise rerun of 1085.
 * Remark: Reward for rotation maybe stupid.
 
-## 1087 - 1089
+## 1087 - 1090
 * Python code tests. Can be ignored.
 
-## 1090
+## 1091
 * Reward function does ignore rotation.
