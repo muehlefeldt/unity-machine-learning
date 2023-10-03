@@ -10,7 +10,6 @@ current.yaml
 notebooks/data
 
 *.onnx
-*.onnx.meta
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
