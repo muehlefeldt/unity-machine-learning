@@ -302,7 +302,7 @@ public class RollerAgent : Agent
         }
         
         AddReward(GetReward(actions));
-        AddReward(-1f / MaxStep);
+        //AddReward(-1f / MaxStep);
     }
 
     enum RewardFunction
@@ -310,8 +310,9 @@ public class RollerAgent : Agent
         SimpleDist,
         ComplexDist
     }
-
-    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.ComplexDist;
+    
+    // Select reward function.
+    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.SimpleDist;
     
     /// <summary>
     /// Calculate and return reward based on current distance to target.
@@ -324,18 +325,21 @@ public class RollerAgent : Agent
     {
         if (m_RewardFunctionSelect == RewardFunction.SimpleDist)
         {
+            var reward = 0f;
             // Do not punish rotation.
             if (action > 6)
             {
-                return 0.1f;
+                reward = 0.1f;
             }
 
-            if (m_LastDistToTarget > m_DistToTarget)
+            else if (m_LastDistToTarget > m_DistToTarget)
             {
-                return 0.1f;
+                reward = 0.1f;
             }
+            
+            else reward = -0.2f;
 
-            return -0.15f;
+            return reward + (-1f / MaxStep);
         }
 
         if (m_RewardFunctionSelect == RewardFunction.ComplexDist)
@@ -372,7 +376,7 @@ public class RollerAgent : Agent
     {
         m_LastCollision = transform.position;
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.5f);
+        AddReward(-1f);
     }
     
     /// <summary>
@@ -381,7 +385,7 @@ public class RollerAgent : Agent
     private void OnCollisionStay(Collision other)
     {
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.3f);
+        AddReward(-0.8f);
     }
 
     /// <summary>

@@ -586,32 +586,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
---- !u!1001 &1176813035
+--- !u!1001 &1186846115
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5324353081925522771, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
-      propertyPath: m_Model
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5324353081925522771, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
-      propertyPath: m_BehaviorType
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5324353082665526278, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_Name
-      value: TrainingArea
+      value: TrainingArea (5)
       objectReference: {fileID: 0}
     - target: {fileID: 5324353082665526279, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5324353082665526279, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 5324353082665526279, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -651,7 +643,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
---- !u!1001 &1186846115
+--- !u!1001 &1615124601
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -660,15 +652,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5324353082665526278, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_Name
-      value: TrainingArea (5)
+      value: TrainingArea
       objectReference: {fileID: 0}
     - target: {fileID: 5324353082665526279, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5324353082665526279, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 500
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5324353082665526279, guid: d33cab2793d4e4e44bc21113bcdd582f, type: 3}
       propertyPath: m_LocalPosition.y

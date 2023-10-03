@@ -504,3 +504,9 @@ learning rate changes to reward signifcant?
 ## 1084
 * Rerun 1083 but with 60e6 steps.
 * Result not good. Very unstable learning process.
+
+## 1085
+* Test simple reward function.
+* Negative reward for collisions increased.
+* First run with 25e6 steps to get feel for config.
+* Using build.
