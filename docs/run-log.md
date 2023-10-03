@@ -483,7 +483,7 @@ learning rate changes to reward signifcant?
 * 20e6 steps.
 
 ## 1081
-* Buffer size increased. Should help stability. Maybe even help speed?
+* Buffer size increased. Should help stability. Maybe even help speed if more training areas are used?
 * Slight change to reward function. +0.1 in case of rotation to encourage rotation.
 * Run uses the NN from 1079.
 * Terminated. Wrong NN as basis.
@@ -510,3 +510,9 @@ learning rate changes to reward signifcant?
 * Negative reward for collisions increased.
 * First run with 25e6 steps to get feel for config.
 * Using build.
+* Result was strange. Reward for rotation may be too large.
+* Terminated.
+
+## 1086
+* Reward change. Now +0.05 for rotation.
+* Otherwise rerun of 1085.

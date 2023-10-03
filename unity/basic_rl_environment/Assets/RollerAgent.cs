@@ -329,7 +329,7 @@ public class RollerAgent : Agent
             // Do not punish rotation.
             if (action > 6)
             {
-                reward = 0.1f;
+                reward = 0.05f;
             }
 
             else if (m_LastDistToTarget > m_DistToTarget)
