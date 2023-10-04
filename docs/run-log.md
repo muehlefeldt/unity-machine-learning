@@ -524,3 +524,11 @@ learning rate changes to reward signifcant?
 
 ## 1091
 * Reward function does ignore rotation.
+* Strange result. Was unstable until the end.
+* Ep length did not decrease.
+* Reward function to blame?
+
+## 1092
+* Reward structured very similar to 1073.
+  * -0.5 and -0.3 for collisions.
+* 10e6 again.

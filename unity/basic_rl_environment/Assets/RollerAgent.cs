@@ -87,7 +87,7 @@ public class RollerAgent : Agent
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
     }
     
-    //private bool m_TargetReached = false;
+    private bool m_TargetReached = false;
     public override void OnEpisodeBegin()
     {
         floor.Prepare();
@@ -113,8 +113,15 @@ public class RollerAgent : Agent
 
         m_LastCollision = Vector3.zero;
         
+        // Reset the position of the agent if target was not reached.
+        if (!m_TargetReached)
+        {
+            m_TargetReached = false;
+            ResetAgentPosition();
+        }
+        
         // Always reset the agent and target position.
-        ResetAgentPosition();
+        //ResetAgentPosition();
         floor.ResetTargetPosition();
         floor.ResetDecoyPosition();
 
@@ -283,7 +290,7 @@ public class RollerAgent : Agent
         {
             RecordData(RecorderCodes.Target);
             SetReward(1f);
-            //m_TargetReached = true;
+            m_TargetReached = true;
             EndEpisode();
         }
         
@@ -376,7 +383,7 @@ public class RollerAgent : Agent
     {
         m_LastCollision = transform.position;
         RecordData(RecorderCodes.Wall);
-        AddReward(-1f);
+        AddReward(-0.5f);
     }
     
     /// <summary>
@@ -385,7 +392,7 @@ public class RollerAgent : Agent
     private void OnCollisionStay(Collision other)
     {
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.8f);
+        AddReward(-0.3f);
     }
 
     /// <summary>

@@ -261,37 +261,26 @@ def check_userconfig():
     if not "userconfig" in config:
         raise ValueError
 
-    # Check if requiered keys exist.
+    # Provide here key and type of the provided value in the yaml. 
+    # Given as (key, type of value).
     keys_to_lookup = [
-        "build",
-        "production",
-        "summary",
-        "num_env",
-        "num_process",
-        "message",
-        "keep_files",
-        "based_on_previous_nn",
-        "previous_run_id",
+        ("build", bool),
+        ("production", bool),
+        ("summary", bool),
+        ("num_env", int),
+        ("num_process", int),
+        ("message", str),
+        ("keep_files", bool),
+        ("based_on_previous_nn", bool),
+        ("previous_run_id", int),
     ]
-    for key in keys_to_lookup:
-        if not key in config["userconfig"]:
-            raise ValueError
 
-    # Bool type value checked.
-    keys_bool_values = ["build", "production", "summary", "keep_files", "based_on_previous_nn"]
-    for key in keys_bool_values:
-        if not isinstance(config["userconfig"][key], bool):
+    # Are keys and types of the specified value present?
+    for combo in keys_to_lookup:
+        if not combo[0] in config["userconfig"]:
             raise ValueError
-
-    # Check int types.
-    keys_int_values = ["num_env", "num_process", "previous_run_id"]
-    for key in keys_int_values:
-        if not isinstance(config["userconfig"][key], int) or config["userconfig"][key] < 1:
+        if not isinstance(config["userconfig"][combo[0]], combo[1]):
             raise ValueError
-
-    # Message needs to have str value.
-    if not isinstance(config["userconfig"]["message"], str):
-        raise ValueError
 
     return
 
@@ -465,6 +454,8 @@ if __name__ == "__main__":
     summary = [{}]
     if not userconfig["build"]:
         summary = list(map(commence_mlagents_run, combinations))
+    #elif userconfig["num_process"] == 1:
+    #    # Todo
     else:
         # Perform actual calculations using ml-agents distributed over a number of processes.
         with Pool(
