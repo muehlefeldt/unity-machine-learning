@@ -115,7 +115,7 @@ public class RollerAgent : Agent
         m_LastCollision = Vector3.zero;
         
         // Reset the position of the agent if target was not reached or the position is not plausible.
-        if (m_EndReason is EpEndReasons.None or EpEndReasons.PositionImplausible)
+        if (m_EndReason is EpEndReasons.None or EpEndReasons.PositionImplausible or EpEndReasons.TargetReached)
         {
             ResetAgentPosition();
         }

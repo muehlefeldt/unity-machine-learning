@@ -539,3 +539,6 @@ learning rate changes to reward signifcant?
 * Switch of target (and decoy) to other room enabled.
 * Switch happens if target was reached by the agent.
 * Reward structure same as 1073.
+
+## 1094
+* Change agent pos ...
