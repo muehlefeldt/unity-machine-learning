@@ -66,12 +66,8 @@ public class Target : MonoBehaviour
     
     
     
-    /*void OnDrawGizmos()
+    void OnDrawGizmos()
     {
-        if (floor.globalCornerCoord != null)
-        {
-            Gizmos.DrawWireSphere(floor.globalCornerCoord[1], 2f);
-            //Gizmos.DrawWireSphere(floor.globalCornerCoord[0], 2f);
-        }
-    }*/
+        Gizmos.DrawWireSphere(transform.position, 1.42f);
+    }
 }

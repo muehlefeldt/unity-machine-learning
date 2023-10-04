@@ -532,3 +532,8 @@ learning rate changes to reward signifcant?
 * Reward structured very similar to 1073.
   * -0.5 and -0.3 for collisions.
 * 10e6 again.
+* Possible problem? C# code changes may cause issues with learning process. Ending of the ep was changed. Check this!
+
+##
+* Switch of target (and decoy) to other room enabled.
+* Switch happens if target was reached by the agent.

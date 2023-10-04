@@ -27,11 +27,11 @@ public class RollerAgent : Agent
     public Floor floor;
     public float m_MaxDist;
     
-    // Select sensor count of the agent.
+    // Select sensor count of the agent. Has no influence on sensors along y axis, i.e. height sensors remain constant.
     public int sensorCount = 4;
 
-    // Start is called before the first frame update
-    void Awake () {
+    // Is called before the first frame update
+    public override void Initialize() {
         m_RBody = GetComponent<Rigidbody>();
         ResetAgentPosition();
         m_SensorDirections = GetSensorDirections();
@@ -86,8 +86,8 @@ public class RollerAgent : Agent
         var currentRotationY = transform.eulerAngles.y;
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
     }
-    
-    private bool m_TargetReached = false;
+
+    private EpEndReasons m_EndReason = EpEndReasons.None;
     public override void OnEpisodeBegin()
     {
         floor.Prepare();
@@ -110,15 +110,18 @@ public class RollerAgent : Agent
         // {
         //     ResetAgentPosition();
         // }
-
+        
+        // Gizmo: Reset last collision position. Used for visual reference only when showing Gizmos.
         m_LastCollision = Vector3.zero;
         
-        // Reset the position of the agent if target was not reached.
-        if (!m_TargetReached)
+        // Reset the position of the agent if target was not reached or the position is not plausible.
+        if (m_EndReason is EpEndReasons.None or EpEndReasons.PositionImplausible)
         {
-            m_TargetReached = false;
             ResetAgentPosition();
         }
+        
+        // Reset the end reason of the last episode to default.
+        m_EndReason = EpEndReasons.None;
         
         // Always reset the agent and target position.
         //ResetAgentPosition();
@@ -237,7 +240,6 @@ public class RollerAgent : Agent
     /// <summary>
     /// Called on action input.
     /// </summary>
-    private bool m_ImplausiblePosition = false;
     public float forceMultiplier = 10f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -289,20 +291,19 @@ public class RollerAgent : Agent
         if (m_DistToTarget < 1.42f)
         {
             RecordData(RecorderCodes.Target);
+            m_EndReason = EpEndReasons.TargetReached;
             SetReward(1f);
-            m_TargetReached = true;
             EndEpisode();
         }
         
         // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
         if (!IsAgentPositionPlausible())
         {
-            //RecordData(RecorderCodes.Implausible);
-            m_ImplausiblePosition = true;
+            m_EndReason = EpEndReasons.PositionImplausible;
             EndEpisode();
         }
     
-        // Fix the rotation of the agent. Does not warant the termination of the episode.
+        // Fix the rotation of the agent. Does not require the termination of the episode.
         if (!IsAgentRotationPlausible())
         {
             FixAgentRotation();
@@ -310,6 +311,25 @@ public class RollerAgent : Agent
         
         AddReward(GetReward(actions));
         //AddReward(-1f / MaxStep);
+    }
+
+    /// <summary>
+    /// Reasons to the episode.
+    /// </summary>
+    enum EpEndReasons
+    {   
+        /// <summary>
+        /// Default reason. Reason remains set if the maxstep limit is hit by the agent.
+        /// </summary>
+        None,
+        /// <summary>
+        /// The target was found.
+        /// </summary>
+        TargetReached,
+        /// <summary>
+        /// Position of the agent not plausible. Position outside of the training area.
+        /// </summary>
+        PositionImplausible
     }
 
     enum RewardFunction
