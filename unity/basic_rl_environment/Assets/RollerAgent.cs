@@ -364,9 +364,9 @@ public class RollerAgent : Agent
                 reward = 0.1f;
             }
             
-            else reward = -0.2f;
+            else reward = -0.15f;
 
-            return reward; //+ (-1f / MaxStep);
+            return reward + (-1f / MaxStep);
         }
 
         if (m_RewardFunctionSelect == RewardFunction.ComplexDist)
@@ -484,9 +484,9 @@ public class RollerAgent : Agent
     /// Calculate the distance from the agent to the target. Taking doors into account.
     /// </summary>
     /// <remarks>Distance is basis for reward function.</remarks>
-    public float m_DistToTarget = 0f;
+    public float m_DistToTarget = float.PositiveInfinity;
     public float m_DistToTargetNormal = 0f;
-    private float m_LastDistToTarget = 0f;
+    private float m_LastDistToTarget = float.PositiveInfinity;
     
     /*private float m_LastDistToTarget = 0f;
     private float m_BestDistToTarget = float.PositiveInfinity;
