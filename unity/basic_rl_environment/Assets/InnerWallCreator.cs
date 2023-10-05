@@ -50,7 +50,7 @@ public class InnerWallCreator : MonoBehaviour
 
         var position = doorCoords.Item1 - (between / 2);
         position.y = 1.75f;
-        newCube.transform.localPosition = position;
+        newCube.transform.position = position;
         m_GameObjects.Add(newCube);
     }
 
