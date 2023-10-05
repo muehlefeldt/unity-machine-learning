@@ -31,9 +31,10 @@ public class RollerAgent : Agent
     public int sensorCount = 4;
 
     // Is called before the first frame update
-    public override void Initialize() {
+    //public override void Initialize() {
+    public void Start() {
         m_RBody = GetComponent<Rigidbody>();
-        ResetAgentPosition();
+        //ResetAgentPosition();
         m_SensorDirections = GetSensorDirections();
         
         // Set the observation size to the requested sensor count + 2 sensors up and down.
@@ -56,25 +57,44 @@ public class RollerAgent : Agent
         return directions;
     }
 
+    enum AgentPos
+    {
+        /// <summary>
+        /// Fixed agent position.
+        /// </summary>
+        Fixed,
+        /// <summary>
+        /// Position of the agent is only slightly varied.
+        /// </summary>
+        Varied,
+        /// <summary>
+        /// Fully random pos of the agent. Including in different room.
+        /// </summary>
+        FullyRandom
+    }
     /// <summary>
-    /// Reset the position of the agent to a fixed default position.
+    /// Reset the position of the agent within the trainingarea.
     /// </summary>
-    public bool varyAgentStartPosition = true;
+    private AgentPos m_AgentPosType = AgentPos.FullyRandom;
     private void ResetAgentPosition()
     {
         m_RBody.angularVelocity = Vector3.zero;
         m_RBody.velocity = Vector3.zero;
         transform.rotation = Quaternion.identity;
         
-        if (varyAgentStartPosition)
+        if (m_AgentPosType is AgentPos.Varied)
         {
             var x = Random.Range(-3f, 3f);
             var z = Random.Range(2f, 4f);
             transform.localPosition = new Vector3(x, 1f, z);
         }
-        else
+        else if (m_AgentPosType is AgentPos.Fixed)
         {
             transform.localPosition = new Vector3(0, 1f, 3f);
+        }
+        else if (m_AgentPosType is AgentPos.FullyRandom)
+        {
+            transform.position = floor.GetRandomAgentPosition();
         }
     }
     

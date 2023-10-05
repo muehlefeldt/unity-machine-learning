@@ -267,28 +267,54 @@ public class Floor : MonoBehaviour
         {
             target.transform.localPosition = new Vector3(0f, 0.5f, -12f);
         }
-        else
+        else // Random position of the target requested.
         {
-            var newTargetPos = RoomsInEnv.GetRandomTargetPosition(agent.transform.position);
+            var distToDoor = 0f;
+            var newTargetPos = Vector3.zero;
+            
+            // While distance to door is too short, get new position.
+            while (distToDoor < 4f) 
+            {
+                newTargetPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agent.transform.position);
+                distToDoor = Vector3.Distance(newTargetPos, m_DoorCentreGlobalCoord);
+            }
+            
+            // Set the position of the target.
             target.ResetPosition(newTargetPos);
         }
     }
+    
+    /// <summary>
+    /// Get random position for the agent. Position can be in all rooms.
+    /// </summary>
+    /// <returns>Global position within the training area.</returns>
+    public Vector3 GetRandomAgentPosition()
+    {
+        return RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Agent, agent.transform.position);
+    }
 
+    
+    /// <summary>
+    /// Reset the position of the decoy object. Takes distance to target and door into account.
+    /// </summary>
     public void ResetDecoyPosition()
     {
         var agentPos = agent.transform.position;
         var targetPos = target.transform.position;
         
-        var newDecoyPos = RoomsInEnv.GetRandomTargetPosition(agentPos);
+        var newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
         
-        var dist = Vector3.Distance(newDecoyPos, targetPos);
-        while (dist < 4f)
+        var distToTarget = Vector3.Distance(newDecoyPos, targetPos);
+        var distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
+        while (distToTarget < 4f || distToDoor < 4f)
         {
-            newDecoyPos = RoomsInEnv.GetRandomTargetPosition(agentPos);
-            dist = Vector3.Distance(newDecoyPos, targetPos);
+            newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
+            distToTarget = Vector3.Distance(newDecoyPos, targetPos);
+            distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
         }
-
-        newDecoyPos.y = 0.7f;
+        
+        // Set the correct height of the decoy.
+        newDecoyPos.y = 1f;
         decoy.ResetPosition(newDecoyPos);
     }
 

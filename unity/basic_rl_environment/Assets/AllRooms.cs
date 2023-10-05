@@ -55,48 +55,77 @@ public class AllRooms
             }
         }
     }
+
+    public enum PositionType
+    {
+        /// <summary>
+        /// Position for target requested.
+        /// </summary>
+        Target,
+        /// <summary>
+        /// Agent position requested.
+        /// </summary>
+        Agent
+    }
     
     /// <summary>
     /// Get a random position for the target. Global position is returned.
     /// </summary>
     /// <param name="agentGlobalPosition">Vector3 containing the global position of the agent.</param>
     /// <returns>Vector3 with random position to be used for the target.</returns>
-    public Vector3 GetRandomTargetPosition(Vector3 agentGlobalPosition)
+    public Vector3 GetRandomPosition(PositionType type, Vector3 agentGlobalPosition)
     {
-        // Update the information which room does contain the agent in the current env state.
-        m_CurrentAgentPos = agentGlobalPosition;
-        UpdateAgentLocation();
-        
-        // No wall should mean there is only one room within the env.
-        if (!m_CreateWall)
+        if (type is PositionType.Target)
         {
-            foreach (var singleRoom in m_AllRoomsInEnv)
+            // Update the information which room does contain the agent in the current env state.
+            m_CurrentAgentPos = agentGlobalPosition;
+            UpdateAgentLocation();
+
+            // No wall should mean there is only one room within the env.
+            if (!m_CreateWall)
             {
-                return singleRoom.GetRandomPositionWithin();
-            }
-        }
-        
-        // If the target always shall be in the other room from the agent.
-        if (m_CreateWall && m_TargetAlwaysInOtherRoomFromAgent)
-        {
-            foreach (var singleRoom in m_AllRoomsInEnv)
-            {
-                // Only if the room does not contain the agent the target can be positioned in the room.
-                if (!singleRoom.ContainsAgent())
+                foreach (var singleRoom in m_AllRoomsInEnv)
                 {
                     return singleRoom.GetRandomPositionWithin();
                 }
             }
+
+            // If the target always shall be in the other room from the agent.
+            if (m_CreateWall && m_TargetAlwaysInOtherRoomFromAgent)
+            {
+                foreach (var singleRoom in m_AllRoomsInEnv)
+                {
+                    // Only if the room does not contain the agent the target can be positioned in the room.
+                    if (!singleRoom.ContainsAgent())
+                    {
+                        return singleRoom.GetRandomPositionWithin();
+                    }
+                }
+            }
+
+            // If not a different room is requested a random position is calculated. The position can be in every room. 
+            var possibleRandomPos = new List<Vector3>();
+            foreach (var singleRoom in m_AllRoomsInEnv)
+            {
+                possibleRandomPos.Add(singleRoom.GetRandomPositionWithin());
+            }
+
+            return possibleRandomPos[Random.Range(0, possibleRandomPos.Count)];
         }
-        
-        // If not a different room is requested a random position is calculated. The position can be in every room. 
-        var possibleRandomPos = new List<Vector3>();
-        foreach (var singleRoom in m_AllRoomsInEnv)
+
+        if (type is PositionType.Agent)
         {
-            possibleRandomPos.Add(singleRoom.GetRandomPositionWithin());
+            var possibleRandomPos = new List<Vector3>();
+            foreach (var singleRoom in m_AllRoomsInEnv)
+            {
+                possibleRandomPos.Add(singleRoom.GetRandomPositionWithin());
+            }
+
+            return possibleRandomPos[Random.Range(0, possibleRandomPos.Count)];
         }
-        
-        return possibleRandomPos[Random.Range(0, possibleRandomPos.Count)];
-        
+        else
+        {
+            return Vector3.zero;
+        }
     }
 }

@@ -541,4 +541,8 @@ learning rate changes to reward signifcant?
 * Reward structure same as 1073.
 
 ## 1094
-* Change agent pos ...
+* Change agent pos on every episode begin. 
+* Not really much information from this run.
+
+## 1095
+* Editor run for test.
