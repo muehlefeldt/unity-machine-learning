@@ -236,9 +236,7 @@ def commence_mlagents_run(run_info: dict) -> dict:
             run_info["error_msg"] = str(err)
         
         except KeyboardInterrupt:
-            run_info["error"] = True
-            run_info["error_msg"] = "User interrupt."
-    
+            run_info["keyboard_interrupt"] = True    
 
         # Update the dict containing run infos.
         # Stores the directory path needed for possible delete of created files.

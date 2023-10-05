@@ -551,3 +551,11 @@ learning rate changes to reward signifcant?
 * Agent is randomly in one room positioned.
 * Pos of agent is reset on every ep begin.
   * Maybe a change to this is not requiered?
+* Terminated.
+
+## 1096 and 1097
+* Python tests.
+
+## 1098
+* Continue with 1095 training.
+* Fixes door isses when using multiple training areas.

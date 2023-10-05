@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? Set false for run using the unity editor.
-  build: false
+  build: true
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -18,7 +18,7 @@ userconfig:
   keep_files: true
 
   # Provide message for the log file for better traceability.
-  message: "Decoy further training. 512 hidden units."
+  message: "Continue with decoy training."
 
   # Initialize from existing previous run.
   based_on_previous_nn: false
@@ -29,7 +29,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 30e6
+    max_steps: 100e6
     time_horizon: 1000
     summary_freq: 10000
 
