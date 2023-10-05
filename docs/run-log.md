@@ -546,3 +546,8 @@ learning rate changes to reward signifcant?
 
 ## 1095
 * Editor run for test.
+* Target and decoy now take distance to eachother and distance to door into account.
+  * Aim is to mitigate instance where the docy blocks the door or the target is too close to the door.
+* Agent is randomly in one room positioned.
+* Pos of agent is reset on every ep begin.
+  * Maybe a change to this is not requiered?
