@@ -381,12 +381,13 @@ public class RollerAgent : Agent
 
             /*else*/ if (m_LastDistToTarget > m_DistToTarget)
             {
-                reward = 0.1f;
+                reward = 0.8f;
             }
+            else if (action > 6) reward = 0.01f;
             
-            else reward = -0.15f;
+            else reward = -1f;
 
-            return reward + (-1f / MaxStep);
+            return reward; //+ (-1f / MaxStep);
         }
 
         if (m_RewardFunctionSelect == RewardFunction.ComplexDist)

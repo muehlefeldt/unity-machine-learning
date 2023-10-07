@@ -557,5 +557,16 @@ learning rate changes to reward signifcant?
 * Python tests.
 
 ## 1098
-* Continue with 1095 training.
+* Continue with 1095 training. But longer and complete restart.
+* Build used.
 * Fixes door isses when using multiple training areas.
+* Python produces now summary even if terminated by keyboard interrupt.
+* Ok result.
+
+## 1099
+* Uses 1098 NN as basis.
+* Continued training.
+* Result: NN was meh.
+
+## 1100
+* Revised reward function. Encourage rotation with +0.01.

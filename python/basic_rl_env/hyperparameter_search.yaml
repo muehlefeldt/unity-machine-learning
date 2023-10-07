@@ -22,14 +22,14 @@ userconfig:
 
   # Initialize from existing previous run.
   based_on_previous_nn: false
-  previous_run_id: 1080
+  previous_run_id: 1098
 
 behaviors:
   RollerAgent:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 100e6
+    max_steps: 80e6
     time_horizon: 1000
     summary_freq: 10000
 
