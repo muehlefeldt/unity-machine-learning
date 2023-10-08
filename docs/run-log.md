@@ -570,3 +570,8 @@ learning rate changes to reward signifcant?
 
 ## 1100
 * Revised reward function. Encourage rotation with +0.01.
+* Result was ... interesting. The reward function with reward for rotation is questionable. 
+
+## 1101
+* Drone can take multiple actions per step.
+* Reverted back to basic reward function.
