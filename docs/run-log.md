@@ -575,3 +575,6 @@ learning rate changes to reward signifcant?
 ## 1101
 * Drone can take multiple actions per step.
 * Reverted back to basic reward function.
+
+## 1011
+* Hmmmm 

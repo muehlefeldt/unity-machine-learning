@@ -265,6 +265,7 @@ public class RollerAgent : Agent
     {
         Vector3 controlSignal = Vector3.zero;
         var rotate = 0f;
+        
         if (m_Actions == ActionsPerStep.Single)
         {
             var actions = actionBuffers.DiscreteActions[0];
@@ -305,10 +306,10 @@ public class RollerAgent : Agent
             
             // Check if any movement is requested.
             var all = new List<int>(){rightLeft, upDown, forwardBackwards, r};
-            if (!(all.Contains(2) || all.Contains(3)))
+            /*if (!(all.Contains(2) || all.Contains(3)))
             {
                 return;
-            } 
+            } */
 
             switch (rightLeft)
             {
