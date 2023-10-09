@@ -583,3 +583,9 @@ learning rate changes to reward signifcant?
 ## 1103
 * Basic reward function selected.
 * Build.
+* Terminated: Unity clipping issue needs resolving.
+
+## 1104
+* Editor.
+* Movement of the agent changed to rigidbody.AddForce.
+* Test run.

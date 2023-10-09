@@ -110,6 +110,7 @@ public class RollerAgent : Agent
     private EpEndReasons m_EndReason = EpEndReasons.None;
     public override void OnEpisodeBegin()
     {
+        actionCount = 0;
         floor.Prepare();
         floor.CreateInnerWall();
         
@@ -258,11 +259,13 @@ public class RollerAgent : Agent
     }
     
     /// <summary>
-    /// Called on action input.
+    /// Perform the movement of the agent.
     /// </summary>
+    /// <param name="actionBuffers"></param>
     public float forceMultiplier = 10f;
-    public override void OnActionReceived(ActionBuffers actionBuffers)
+    private void MoveAgent(ActionBuffers actionBuffers)
     {
+        actionCount += 1;
         Vector3 controlSignal = Vector3.zero;
         var rotate = 0f;
         
@@ -313,30 +316,30 @@ public class RollerAgent : Agent
 
             switch (rightLeft)
             {
-                case 2:
+                case 1:
                     controlSignal.x = 1f;
                     break;
-                case 3:
+                case 2:
                     controlSignal.x = -1f;
                     break;
             }
         
             switch (upDown)
             {
-                case 2:
+                case 1:
                     controlSignal.y = 1f;
                     break;
-                case 3:
+                case 2:
                     controlSignal.y = -1f;
                     break;
             }
         
             switch (forwardBackwards)
             {
-                case 2:
+                case 1:
                     controlSignal.z = 1f;
                     break;
-                case 3:
+                case 2:
                     controlSignal.z = -1f;
                     break;
             }
@@ -344,10 +347,10 @@ public class RollerAgent : Agent
             rotate = 0f;
             switch (r)
             {
-                case 2:
+                case 1:
                     rotate = 1f;
                     break;
-                case 3:
+                case 2:
                     rotate = -1f;
                     break;
             }
@@ -357,10 +360,21 @@ public class RollerAgent : Agent
         var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
         transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
-        
+
         // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
-        m_RBody.MovePosition(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
+        //m_RBody.MovePosition(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
+        m_RBody.AddForce(direction * forceMultiplier, ForceMode.Force);
+    }
+    
+    /// <summary>
+    /// Called on action input.
+    /// </summary>
+
+    public int actionCount = 0;
+    public override void OnActionReceived(ActionBuffers actionBuffers)
+    {
+        MoveAgent(actionBuffers);
         
         // Get the distance to the target.
         CalculateDistanceToTarget();
@@ -378,6 +392,7 @@ public class RollerAgent : Agent
         if (!IsAgentPositionPlausible())
         {
             m_EndReason = EpEndReasons.PositionImplausible;
+            m_LastImplausiblePos = transform.position;
             EndEpisode();
         }
     
@@ -390,6 +405,8 @@ public class RollerAgent : Agent
         AddReward(GetReward());
         //AddReward(-1f / MaxStep);
     }
+
+    private Vector3 m_LastImplausiblePos = Vector3.zero;
 
     /// <summary>
     /// Reasons to the episode.
@@ -423,9 +440,6 @@ public class RollerAgent : Agent
     /// <summary>
     /// Calculate and return reward based on current distance to target.
     /// </summary>
-    /// <remarks>
-    /// ToDo: Wenn du die Entfernung zum Ziel nicht verringerst, dann gibt es eine Bestrafung.
-    /// </remarks>
     public float currentReward = 0f;
     private float GetReward()
     {
@@ -436,7 +450,7 @@ public class RollerAgent : Agent
             else reward = -0.15f;
             return reward + (-1f / MaxStep);
         }
-        else if (m_RewardFunctionSelect == RewardFunction.SimpleDist)
+        if (m_RewardFunctionSelect == RewardFunction.SimpleDist)
         {
             var reward = 0f;
             // Do not punish rotation.
@@ -663,23 +677,35 @@ public class RollerAgent : Agent
         {
             Gizmos.DrawCube(m_LastCollision, new Vector3(0.3f, 0.3f, 0.3f));
         }
+        if (m_LastImplausiblePos != Vector3.zero)
+        {
+            //Gizmos.DrawCube(m_LastImplausiblePos, new Vector3(0.3f, 0.3f, 0.3f));
+            Debug.DrawRay(m_LastImplausiblePos, Vector3.up * 100f, Color.red);
+        }
     }
 
     enum ActionsPerStep
     {
+        /// <summary>
+        /// Allow only one type of action per step. Example: During forward motion no rotation is possible.
+        /// </summary>
         Single,
+        /// <summary>
+        /// Allow multiple types of action per step. Example: During forward motion rotation is also possible.
+        /// </summary>
         Multiple
     }
-
+    
+    /// <summary>
+    /// Select how many action types are possible during each step.
+    /// </summary>
     private ActionsPerStep m_Actions = ActionsPerStep.Multiple;
+    
+    /// <summary>
+    /// Heuristic action handling in the editor.
+    /// </summary>
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        //var continuousActionsOut = actionsOut.ContinuousActions;
-        //continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        //continuousActionsOut[1] = Input.GetAxis("Vertical");
-        //continuousActionsOut[2] = Input.GetAxis("Mouse X");
-        // Height
-        //continuousActionsOut[3] = Input.GetAxis("Mouse Y");
         var discreteActionsOut = actionsOut.DiscreteActions;
         if (m_Actions == ActionsPerStep.Multiple)
         {
@@ -691,54 +717,54 @@ public class RollerAgent : Agent
             // X. Right, left and no movement.
             if (Input.GetKey(KeyCode.D))
             {
-                discreteActionsOut[0] = 2;
+                discreteActionsOut[0] = 1;
             }
             else if (Input.GetKey(KeyCode.A))
             {
-                discreteActionsOut[0] = 3;
+                discreteActionsOut[0] = 2;
             }
             else
             {
-                discreteActionsOut[0] = 1;
+                discreteActionsOut[0] = 0;
             }
             // Y. Up, down and no movement.
             if (Input.GetKey(KeyCode.X))
             {
-                discreteActionsOut[1] = 2;
+                discreteActionsOut[1] = 1;
             }
             else if (Input.GetKey(KeyCode.Y))
             {
-                discreteActionsOut[1] = 3;
+                discreteActionsOut[1] = 2;
             }
             else
             {
-                discreteActionsOut[1] = 1;
+                discreteActionsOut[1] = 0;
             }
             // Z. Forward, backwards and no movement.
             if (Input.GetKey(KeyCode.W))
             {
-                discreteActionsOut[2] = 2;
+                discreteActionsOut[2] = 1;
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                discreteActionsOut[2] = 3;
+                discreteActionsOut[2] = 2;
             }
             else
             {
-                discreteActionsOut[2] = 1;
+                discreteActionsOut[2] = 0;
             }
             // Rotation. Right, left and no rotation.
             if (Input.GetKey(KeyCode.E))
             {
-                discreteActionsOut[3] = 2;
+                discreteActionsOut[3] = 1;
             }
             else if (Input.GetKey(KeyCode.Q))
             {
-                discreteActionsOut[3] = 3;
+                discreteActionsOut[3] = 2;
             }
             else
             {
-                discreteActionsOut[3] = 1;
+                discreteActionsOut[3] = 0;
             }
         }
 
