@@ -418,7 +418,7 @@ public class RollerAgent : Agent
     }
     
     // Select reward function.
-    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.SimpleDist;
+    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.Basic;
     
     /// <summary>
     /// Calculate and return reward based on current distance to target.

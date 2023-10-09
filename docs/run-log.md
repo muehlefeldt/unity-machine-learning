@@ -576,5 +576,10 @@ learning rate changes to reward signifcant?
 * Drone can take multiple actions per step.
 * Reverted back to basic reward function.
 
-## 1011
-* Hmmmm 
+## 1102
+* Wrong reward function selected.
+* Process very unstable.
+
+## 1103
+* Basic reward function selected.
+* Build.

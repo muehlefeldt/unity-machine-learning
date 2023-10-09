@@ -1,6 +1,6 @@
 userconfig:
   # Use build env? Set false for run using the unity editor.
-  build: false
+  build: true
 
   # Specify number of parallel env to use.
   num_env: 1
@@ -29,7 +29,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 50e6
+    max_steps: 30e6
     time_horizon: 1000
     summary_freq: 10000
 
