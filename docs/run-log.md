@@ -589,3 +589,8 @@ learning rate changes to reward signifcant?
 * Editor.
 * Movement of the agent changed to rigidbody.AddForce.
 * Test run.
+* AddForce maybe problematic?
+
+## 1105
+* Build.
+* Continues 1104.

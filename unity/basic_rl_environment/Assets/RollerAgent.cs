@@ -363,7 +363,8 @@ public class RollerAgent : Agent
 
         // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
-        //m_RBody.MovePosition(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
+        //m_RBody.Move(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
+        //m_RBody.MovePosition();
         m_RBody.AddForce(direction * forceMultiplier, ForceMode.Force);
     }
     
@@ -426,7 +427,10 @@ public class RollerAgent : Agent
         /// </summary>
         PositionImplausible
     }
-
+    
+    /// <summary>
+    /// Types of reward functi
+    /// </summary>
     enum RewardFunction
     {
         Basic,
