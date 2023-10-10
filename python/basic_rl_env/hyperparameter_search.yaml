@@ -1,12 +1,8 @@
+# Default values for userconfig. All bool values set to true.
+
 userconfig:
   # Use build env? Set false for run using the unity editor.
-  build: true
-
-  # Specify number of parallel env to use.
-  num_env: 1
-
-  # Number of parallel processes.
-  num_process: 1
+  build: false
 
   # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
@@ -17,19 +13,28 @@ userconfig:
   # Set to false to delete all files after the programm finishes.
   keep_files: true
 
+  # Initialize from existing previous run.
+  not_based_on_previous_nn: true
+
+  # Provide run id of previous NN to be used for new run.
+  previous_run_id: 1104
+
+  # Specify number of parallel env to use.
+  num_env: 1
+
+  # Number of parallel processes.
+  num_process: 1
+
   # Provide message for the log file for better traceability.
   message: "Continue with decoy training."
 
-  # Initialize from existing previous run.
-  based_on_previous_nn: true
-  previous_run_id: 1104
-
+# ML-Agents configuration.
 behaviors:
   RollerAgent:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 100e6
+    max_steps: 30e6
     time_horizon: 1000
     summary_freq: 10000
 

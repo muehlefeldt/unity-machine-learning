@@ -203,7 +203,7 @@ def commence_mlagents_run(run_info: dict) -> dict:
                 "--force",
             ]
             # Is the run based on the result (nn) of a previous run?
-            if run_info["userconfig"]["based_on_previous_nn"]:
+            if not run_info["userconfig"]["not_based_on_previous_nn"]:
                 ml_agents_arguments.append(
                     f"--initialize-from={run_info['userconfig']['previous_run_id']}"
                 )
@@ -219,7 +219,7 @@ def commence_mlagents_run(run_info: dict) -> dict:
                 "--force",
             ]
             # Is the run based on the result (nn) of a previous run?
-            if run_info["userconfig"]["based_on_previous_nn"]:
+            if not run_info["userconfig"]["not_based_on_previous_nn"]:
                 ml_agents_arguments.append(
                     f"--initialize-from={run_info['userconfig']['previous_run_id']}"
                 )
@@ -234,18 +234,18 @@ def commence_mlagents_run(run_info: dict) -> dict:
         except subprocess.CalledProcessError as err:
             run_info["error"] = True
             run_info["error_msg"] = str(err)
-        
+
         except KeyboardInterrupt:
-            run_info["keyboard_interrupt"] = True    
+            run_info["keyboard_interrupt"] = True
 
         # Update the dict containing run infos.
         # Stores the directory path needed for possible delete of created files.
         run_info["duration"] = time.time() - start_time
-        #run_info["return_code"] = process_result.returncode
+        # run_info["return_code"] = process_result.returncode
         run_info["run_name"] = run_name
         run_info["result_dir"] = f"{run_info['paths']['results_dir']}/{run_name}"
-    
-    else: # Not production
+
+    else:  # Not production
         run_info["error"] = True
         run_info["error_msg"] = "Not production mode."
 
@@ -259,7 +259,7 @@ def check_userconfig():
     if not "userconfig" in config:
         raise ValueError
 
-    # Provide here key and type of the provided value in the yaml. 
+    # Provide here key and type of the provided value in the yaml.
     # Given as (key, type of value).
     keys_to_lookup = [
         ("build", bool),
@@ -269,7 +269,7 @@ def check_userconfig():
         ("num_process", int),
         ("message", str),
         ("keep_files", bool),
-        ("based_on_previous_nn", bool),
+        ("not_based_on_previous_nn", bool),
         ("previous_run_id", int),
     ]
 
@@ -353,7 +353,7 @@ def remove_run_files_log(summary_list: list[dict]):
     Especially useful during debug runs. Set appropiate option in config file."""
     if summary_list == [{}]:
         return
-    
+
     # Remove files created during mlagents-learn runs. Config file of each run and the directory
     # in the results directory.
     for run_info in summary_list:
@@ -421,10 +421,6 @@ if __name__ == "__main__":
     # Get the message from the config file to be logged.
     message_for_log = userconfig["message"]
 
-    # Based on previous run?
-    use_previous_nn: bool = userconfig["based_on_previous_nn"]
-    previous_run_id: int = userconfig["previous_run_id"]
-
     # Get the id of the first run. Used for logging and summary.
     ID_FIRST_RUN = get_run_id()
 
@@ -452,7 +448,7 @@ if __name__ == "__main__":
     summary = [{}]
     if not userconfig["build"]:
         summary = list(map(commence_mlagents_run, combinations))
-    #elif userconfig["num_process"] == 1:
+    # elif userconfig["num_process"] == 1:
     #    # Todo
     else:
         # Perform actual calculations using ml-agents distributed over a number of processes.

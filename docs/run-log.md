@@ -594,3 +594,13 @@ learning rate changes to reward signifcant?
 ## 1105
 * Build.
 * Continues 1104.
+* Again terminated. More work on the movement needed. Rotation makes problems. 
+
+## 1106
+* Rigidbody rotation introduced.
+* ComplexDist reward function.
+* Run in the editor for visual supervision.
+* Terminated because run was based on previous nn.
+
+## 1107
+* Rerun of 1106.
