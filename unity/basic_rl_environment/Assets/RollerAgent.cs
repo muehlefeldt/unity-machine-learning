@@ -359,7 +359,10 @@ public class RollerAgent : Agent
         // Rotate the agent.
         var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
-        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+        //transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+        var eulerAngleVelocity = new Vector3(0, 100 * rotate, 0);
+        Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.fixedDeltaTime);
+        m_RBody.MoveRotation(m_RBody.rotation * deltaRotation);
 
         // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
@@ -429,17 +432,27 @@ public class RollerAgent : Agent
     }
     
     /// <summary>
-    /// Types of reward functi
+    /// Types of reward function available.
     /// </summary>
     enum RewardFunction
     {
+        /// <summary>
+        /// Most basic reward function.
+        /// </summary>
         Basic,
+        /// <summary>
+        /// Based on the basic reward function. But with changed values.
+        /// </summary>
         SimpleDist,
+        /// <summary>
+        /// Complex reward function based on distance. Based on the Matignon et al. paper.
+        /// </summary>
         ComplexDist
     }
-    
-    // Select reward function.
-    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.Basic;
+    /// <summary>
+    /// Select reward function. 
+    /// </summary>
+    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.ComplexDist;
     
     /// <summary>
     /// Calculate and return reward based on current distance to target.
@@ -476,16 +489,13 @@ public class RollerAgent : Agent
 
         if (m_RewardFunctionSelect == RewardFunction.ComplexDist)
         {
-            var beta = 0.35f;
+            var beta = 1f;
             var omega = 0.3f;
             var x = m_DistToTargetNormal;
             currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
             return currentReward;
         }
-        // var beta = 0.35f;
-        // var omega = 0.3f;
-        // var fGui = Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
-        //
+        
         // GetPath();
         //
         // var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
@@ -685,6 +695,12 @@ public class RollerAgent : Agent
         {
             //Gizmos.DrawCube(m_LastImplausiblePos, new Vector3(0.3f, 0.3f, 0.3f));
             Debug.DrawRay(m_LastImplausiblePos, Vector3.up * 100f, Color.red);
+        }
+
+        if (m_RewardFunctionSelect == RewardFunction.ComplexDist)
+        {
+            Gizmos.color = Color.black;
+            //Gizmos.DrawIcon();
         }
     }
 
