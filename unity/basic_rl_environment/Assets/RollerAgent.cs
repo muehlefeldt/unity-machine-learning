@@ -475,7 +475,7 @@ public class RollerAgent : Agent
         if (rewardFunctionSelect == RewardFunction.Basic)
         {
             var reward = 0f;
-            if (Mathf.Abs(m_DistToTarget - m_LastDistToTarget) > 0.001)
+            if (m_LastDistToTarget > m_DistToTarget)
             {
                 reward = 0.1f;
             }
