@@ -604,3 +604,10 @@ learning rate changes to reward signifcant?
 
 ## 1107
 * Rerun of 1106.
+* Shit.
+
+## 1108
+* One action per step. Validate new movement functions.
+* Basic reward. Was correctly set?
+* Make commit in the morning.
+* Terminated: Reward structure not as expected.

@@ -452,7 +452,7 @@ public class RollerAgent : Agent
     /// <summary>
     /// Select reward function. 
     /// </summary>
-    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.ComplexDist;
+    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.Basic;
     
     /// <summary>
     /// Calculate and return reward based on current distance to target.
@@ -719,7 +719,7 @@ public class RollerAgent : Agent
     /// <summary>
     /// Select how many action types are possible during each step.
     /// </summary>
-    private ActionsPerStep m_Actions = ActionsPerStep.Multiple;
+    private ActionsPerStep m_Actions = ActionsPerStep.Single;
     
     /// <summary>
     /// Heuristic action handling in the editor.
