@@ -27,14 +27,28 @@ public class RollerAgent : Agent
     public Floor floor;
     public float m_MaxDist;
     
+    // Distances.
+    public float m_DistToTarget;
+    public float m_DistToTargetNormal;
+    private float m_LastDistToTarget;
+    
+    // Set how much force is applied to the rigidbody.
+    public float forceMultiplier = 10f;
+    
     // Select sensor count of the agent. Has no influence on sensors along y axis, i.e. height sensors remain constant.
     public int sensorCount = 4;
+    
+    /// <summary>
+    /// Select reward function. 
+    /// </summary>
+    public RewardFunction rewardFunctionSelect = RewardFunction.Basic;
+    
+    private Vector3 m_LastCollision = Vector3.zero;
 
     // Is called before the first frame update
     //public override void Initialize() {
     public void Start() {
         m_RBody = GetComponent<Rigidbody>();
-        //ResetAgentPosition();
         m_SensorDirections = GetSensorDirections();
         
         // Set the observation size to the requested sensor count + 2 sensors up and down.
@@ -114,8 +128,6 @@ public class RollerAgent : Agent
         floor.Prepare();
         floor.CreateInnerWall();
         
-        ResetDist();
-
         // If the Agent fell, zero its momentum
         // if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
         // if (transform.localPosition.y < 0 || m_ImplausiblePosition)
@@ -144,12 +156,17 @@ public class RollerAgent : Agent
         // Reset the end reason of the last episode to default.
         m_EndReason = EpEndReasons.None;
         
-        // Always reset the agent and target position.
-        //ResetAgentPosition();
+        // Reset target and decoy position.
         floor.ResetTargetPosition();
         floor.ResetDecoyPosition();
-
+        
+        // Get the max possible distance in the training area.
         m_MaxDist = floor.GetMaxPossibleDist();
+        
+        // Reset the distances at the begin of each episode.
+        ResetDist();
+        
+        // Calculate the distance to the target.
         CalculateDistanceToTarget();
     }
     
@@ -262,7 +279,6 @@ public class RollerAgent : Agent
     /// Perform the movement of the agent.
     /// </summary>
     /// <param name="actionBuffers"></param>
-    public float forceMultiplier = 10f;
     private void MoveAgent(ActionBuffers actionBuffers)
     {
         actionCount += 1;
@@ -434,7 +450,7 @@ public class RollerAgent : Agent
     /// <summary>
     /// Types of reward function available.
     /// </summary>
-    enum RewardFunction
+    public enum RewardFunction
     {
         /// <summary>
         /// Most basic reward function.
@@ -449,25 +465,26 @@ public class RollerAgent : Agent
         /// </summary>
         ComplexDist
     }
-    /// <summary>
-    /// Select reward function. 
-    /// </summary>
-    private readonly RewardFunction m_RewardFunctionSelect = RewardFunction.Basic;
-    
+
     /// <summary>
     /// Calculate and return reward based on current distance to target.
     /// </summary>
     public float currentReward = 0f;
     private float GetReward()
     {
-        if (m_RewardFunctionSelect == RewardFunction.Basic)
+        if (rewardFunctionSelect == RewardFunction.Basic)
         {
             var reward = 0f;
-            if (m_LastDistToTarget > m_DistToTarget) reward = 0.1f;
+            if (Mathf.Abs(m_DistToTarget - m_LastDistToTarget) > 0.001)
+            {
+                reward = 0.1f;
+            }
+            //if (m_LastDistToTarget > m_DistToTarget) reward = 0.1f;
             else reward = -0.15f;
-            return reward + (-1f / MaxStep);
+            currentReward = reward + (-1f / MaxStep);
+            return currentReward;
         }
-        if (m_RewardFunctionSelect == RewardFunction.SimpleDist)
+        if (rewardFunctionSelect == RewardFunction.SimpleDist)
         {
             var reward = 0f;
             // Do not punish rotation.
@@ -487,7 +504,7 @@ public class RollerAgent : Agent
             return reward; //+ (-1f / MaxStep);
         }
 
-        if (m_RewardFunctionSelect == RewardFunction.ComplexDist)
+        if (rewardFunctionSelect == RewardFunction.ComplexDist)
         {
             var beta = 1f;
             var omega = 0.3f;
@@ -513,12 +530,11 @@ public class RollerAgent : Agent
     /// <summary>
     /// Initial collision event.
     /// </summary>
-    private Vector3 m_LastCollision = Vector3.zero;
     private void OnCollisionEnter(Collision other)
     {
         m_LastCollision = transform.position;
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.5f);
+        AddReward(-0.8f);
     }
     
     /// <summary>
@@ -527,7 +543,7 @@ public class RollerAgent : Agent
     private void OnCollisionStay(Collision other)
     {
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.3f);
+        AddReward(-0.5f);
     }
 
     /// <summary>
@@ -594,27 +610,20 @@ public class RollerAgent : Agent
                 break;
         }
     }
-    
+
     /// <summary>
     /// Calculate the distance from the agent to the target. Taking doors into account.
     /// </summary>
     /// <remarks>Distance is basis for reward function.</remarks>
-    public float m_DistToTarget = float.PositiveInfinity;
-    public float m_DistToTargetNormal = 0f;
-    private float m_LastDistToTarget = float.PositiveInfinity;
-    
-    /*private float m_LastDistToTarget = 0f;
-    private float m_BestDistToTarget = float.PositiveInfinity;
-    private bool m_DistImproved = false;*/
     private void CalculateDistanceToTarget()
     {
         m_LastDistToTarget = m_DistToTarget;
-        ResetDist();
-        
+
         // Get the path from agent to target.
         GetPath();
         
         // Calculate the distance of the path.
+        m_DistToTarget = 0f;
         for (int i = 1; i < m_Path.Count; i++)
         {
             m_DistToTarget += Vector3.Distance(m_Path[i - 1], m_Path[i]);
@@ -623,19 +632,20 @@ public class RollerAgent : Agent
         // Calculate normalised distance to target.
         m_DistToTargetNormal = m_DistToTarget / m_MaxDist;
         
-        /*if (m_DistToTarget < m_BestDistToTarget)
+        // If first call during episode. Set the last and current distance to target equal.
+        if (float.IsPositiveInfinity(m_LastDistToTarget))
         {
-            m_BestDistToTarget = m_DistToTarget;
-            m_DistImproved = true;
-        }*/
+            m_LastDistToTarget = m_DistToTarget;
+        }
     }
-
+    
+    /// <summary>
+    /// Reset the distances to default values. Called at the beginning of the episode.
+    /// </summary>
     private void ResetDist()
     {
-        /*m_LastDistToTarget = m_DistToTarget;
-        m_DistToTarget = 0f;
-        m_DistImproved = false;*/
-        m_DistToTarget = 0f;
+        m_LastDistToTarget = float.PositiveInfinity;
+        m_DistToTarget = float.PositiveInfinity;
     }
     
     /// <summary>
@@ -697,7 +707,7 @@ public class RollerAgent : Agent
             Debug.DrawRay(m_LastImplausiblePos, Vector3.up * 100f, Color.red);
         }
 
-        if (m_RewardFunctionSelect == RewardFunction.ComplexDist)
+        if (rewardFunctionSelect == RewardFunction.ComplexDist)
         {
             Gizmos.color = Color.black;
             //Gizmos.DrawIcon();

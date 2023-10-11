@@ -611,3 +611,6 @@ learning rate changes to reward signifcant?
 * Basic reward. Was correctly set?
 * Make commit in the morning.
 * Terminated: Reward structure not as expected.
+
+## 1109
+* Short run in the editor.
