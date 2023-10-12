@@ -477,7 +477,7 @@ MonoBehaviour:
   m_DistToTargetNormal: 0
   forceMultiplier: 10
   sensorCount: 4
-  rewardFunctionSelect: 3
+  rewardFunctionSelect: 0
   actionCount: 0
   currentReward: 0
 --- !u!114 &5324353081925522769

@@ -550,7 +550,7 @@ public class RollerAgent : Agent
                 AddReward(-0.1f);
             }
 
-            if (other.gameObject.CompareTag("outerWall"))
+            if (other.gameObject.CompareTag("outerWalls"))
             {
                 AddReward(-0.5f);
             }
