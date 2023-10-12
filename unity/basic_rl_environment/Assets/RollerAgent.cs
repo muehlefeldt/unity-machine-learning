@@ -463,7 +463,12 @@ public class RollerAgent : Agent
         /// <summary>
         /// Complex reward function based on distance. Based on the Matignon et al. paper.
         /// </summary>
-        ComplexDist
+        ComplexDist,
+        /// <summary>
+        /// Reward contact with correct target.
+        /// </summary>
+        OnlyCollision
+        
     }
 
     /// <summary>
@@ -512,6 +517,11 @@ public class RollerAgent : Agent
             currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
             return currentReward;
         }
+
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        {
+            return -1f / MaxStep;
+        }
         
         // GetPath();
         //
@@ -533,8 +543,30 @@ public class RollerAgent : Agent
     private void OnCollisionEnter(Collision other)
     {
         m_LastCollision = transform.position;
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        {
+            if (other.gameObject.CompareTag("innerWall"))
+            {
+                AddReward(-0.1f);
+            }
+
+            if (other.gameObject.CompareTag("outerWall"))
+            {
+                AddReward(-0.5f);
+            }
+
+            if (other.gameObject.CompareTag("decoys"))
+            {
+                AddReward(-1f);
+            }
+            
+        }
+        else
+        {
+            AddReward(-0.8f);
+        }
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.8f);
+        
     }
     
     /// <summary>
@@ -542,8 +574,29 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        {
+            if (other.gameObject.CompareTag("innerWall"))
+            {
+                AddReward(-0.05f);
+            }
+
+            if (other.gameObject.CompareTag("outerWall"))
+            {
+                AddReward(-0.2f);
+            }
+
+            if (other.gameObject.CompareTag("decoys"))
+            {
+                AddReward(-0.8f);
+            }
+            
+        }
+        else
+        {
+            AddReward(-0.5f);
+        }
         RecordData(RecorderCodes.Wall);
-        AddReward(-0.5f);
     }
 
     /// <summary>

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2004757797358302621}
   m_Layer: 0
   m_Name: Wall (2)
-  m_TagString: Untagged
+  m_TagString: outerWalls
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
   m_StaticEditorFlags: 0
@@ -209,7 +209,7 @@ GameObject:
   - component: {fileID: 1515308257171817040}
   m_Layer: 0
   m_Name: Target
-  m_TagString: Untagged
+  m_TagString: targets
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -473,12 +473,13 @@ MonoBehaviour:
   MaxStep: 5000
   floor: {fileID: 5324353083616000953}
   m_MaxDist: 0
-  sensorCount: 4
-  forceMultiplier: 10
-  actionCount: 0
-  currentReward: 0
   m_DistToTarget: 0
   m_DistToTargetNormal: 0
+  forceMultiplier: 10
+  sensorCount: 4
+  rewardFunctionSelect: 3
+  actionCount: 0
+  currentReward: 0
 --- !u!114 &5324353081925522769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -778,7 +779,7 @@ GameObject:
   - component: {fileID: 217358307942907929}
   m_Layer: 0
   m_Name: Wall (1)
-  m_TagString: Untagged
+  m_TagString: outerWalls
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
   m_StaticEditorFlags: 0
@@ -875,7 +876,7 @@ GameObject:
   - component: {fileID: 4437222288998932769}
   m_Layer: 0
   m_Name: Wall (3)
-  m_TagString: Untagged
+  m_TagString: outerWalls
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
   m_StaticEditorFlags: 0
@@ -973,7 +974,7 @@ GameObject:
   - component: {fileID: 2430554503087227571}
   m_Layer: 0
   m_Name: Decoy
-  m_TagString: Untagged
+  m_TagString: decoys
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1083,7 +1084,7 @@ GameObject:
   - component: {fileID: 4720134683742976643}
   m_Layer: 0
   m_Name: Wall
-  m_TagString: Untagged
+  m_TagString: outerWalls
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
   m_StaticEditorFlags: 0

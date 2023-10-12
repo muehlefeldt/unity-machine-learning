@@ -623,3 +623,5 @@ learning rate changes to reward signifcant?
 
 ## 1112
 * Rerun of 1109.
+* Öhm, reward was previously too high? Why is the difference so high between 1110 and 1112? What changed?
+  * The penalties for the collisions?

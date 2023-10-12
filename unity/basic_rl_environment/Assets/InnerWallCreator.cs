@@ -62,6 +62,7 @@ public class InnerWallCreator : MonoBehaviour
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         newCube.transform.parent = transform;
+        newCube.tag = "innerWall";
         SetMaterial(newCube);
         SetCollider(newCube);
         return newCube;
