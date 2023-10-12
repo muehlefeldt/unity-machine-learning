@@ -635,3 +635,6 @@ learning rate changes to reward signifcant?
 
 ## 1115
 * Test again with basic reward.
+
+## 1116
+* Fix problem with tag.
