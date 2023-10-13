@@ -124,6 +124,7 @@ public class RollerAgent : Agent
     private EpEndReasons m_EndReason = EpEndReasons.None;
     public override void OnEpisodeBegin()
     {
+        doorreached = false;
         actionCount = 0;
         floor.Prepare();
         floor.CreateInnerWall();
@@ -201,15 +202,16 @@ public class RollerAgent : Agent
         var currentRay = new Ray(transform.position, dirTransform);
         RaycastHit currentHit;
         Physics.Raycast(currentRay, out currentHit, maxDistance: floor.GetMaxPossibleDist());
+        var len = currentHit.distance;
         
         // Draw gizmo lines to help with debugging.
         if (dir == Vector3.forward)
         {
-            Debug.DrawRay(transform.position, dirTransform * floor.GetMaxPossibleDist(), Color.red);
+            Debug.DrawRay(transform.position, dirTransform * len, Color.red);
         }
         else
         {
-            Debug.DrawRay(transform.position, dirTransform * floor.GetMaxPossibleDist(), Color.gray);
+            Debug.DrawRay(transform.position, dirTransform * len, Color.gray);
         }
         
 
@@ -537,6 +539,22 @@ public class RollerAgent : Agent
         return 0f;
     }
 
+    private bool doorreached;
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!doorreached)
+        {
+            AddReward(1f);
+            doorreached = true;
+            Debug.Log("Door +1");
+        }
+        else
+        {
+            AddReward(-0.2f);
+            Debug.Log("Door -0.2");
+        }
+    }
+
     /// <summary>
     /// Initial collision event.
     /// </summary>
@@ -558,6 +576,7 @@ public class RollerAgent : Agent
             else if (other.gameObject.CompareTag("decoys"))
             {
                 AddReward(-1f);
+                Debug.Log("Decoy -1");
             }
             
         }

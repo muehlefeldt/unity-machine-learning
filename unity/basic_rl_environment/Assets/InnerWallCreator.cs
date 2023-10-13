@@ -52,6 +52,12 @@ public class InnerWallCreator : MonoBehaviour
         position.y = 1.75f;
         newCube.transform.position = position;
         m_GameObjects.Add(newCube);
+
+        var checkpoint = CreateNewCheckpoint();
+        checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameHeight, 0.1f);
+        position.y = 0.75f;
+        checkpoint.transform.position = position;
+        m_GameObjects.Add(checkpoint);
     }
 
     /// <summary>
@@ -65,6 +71,15 @@ public class InnerWallCreator : MonoBehaviour
         newCube.tag = "innerWall";
         SetMaterial(newCube);
         SetCollider(newCube);
+        return newCube;
+    }
+    
+    private GameObject CreateNewCheckpoint()
+    {
+        var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        newCube.transform.parent = transform;
+        newCube.GetComponent<Collider>().isTrigger = true;
+        newCube.layer = 2;
         return newCube;
     }
     
