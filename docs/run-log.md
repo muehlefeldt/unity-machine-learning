@@ -636,5 +636,13 @@ learning rate changes to reward signifcant?
 ## 1115
 * Test again with basic reward.
 
-## 1116
+## 1116 until 1118
+* Done sleepy.
 * Fix problem with tag.
+* Checkpoint in the door introduced with +1 on first trigger and -0.2 on subsequent triggers.
+* Reward only based on collisions and contacts with objects.
+
+## 1119
+* Layer fixed of the checkpoint.
+* Test run.
+
