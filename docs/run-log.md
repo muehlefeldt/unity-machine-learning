@@ -646,3 +646,7 @@ learning rate changes to reward signifcant?
 * Layer fixed of the checkpoint.
 * Test run.
 
+## 1120
+* Based on the NN of 1119.
+* 100e6 steps but basd on 1119.
+* Idea: Lets see how we are doing with this reward function incl. checkpoint at the door.
