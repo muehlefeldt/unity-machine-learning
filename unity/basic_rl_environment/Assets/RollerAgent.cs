@@ -469,7 +469,8 @@ public class RollerAgent : Agent
         /// <summary>
         /// Reward contact with correct target.
         /// </summary>
-        OnlyCollision
+        OnlyCollision,
+        Sparse
         
     }
 
@@ -525,6 +526,11 @@ public class RollerAgent : Agent
             return -1f / MaxStep;
         }
         
+        if (rewardFunctionSelect == RewardFunction.Sparse)
+        {
+            return -1f / MaxStep;
+        }
+        
         // GetPath();
         //
         // var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
@@ -542,16 +548,20 @@ public class RollerAgent : Agent
     private bool doorreached;
     private void OnTriggerEnter(Collider other)
     {
-        if (!doorreached)
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
         {
-            AddReward(1f);
-            doorreached = true;
-            Debug.Log("Door +1");
-        }
-        else
-        {
-            AddReward(-0.2f);
-            Debug.Log("Door -0.2");
+
+            if (!doorreached)
+            {
+                AddReward(1f);
+                doorreached = true;
+                Debug.Log("Door +1");
+            }
+            else
+            {
+                AddReward(-0.2f);
+                Debug.Log("Door -0.2");
+            }
         }
     }
 

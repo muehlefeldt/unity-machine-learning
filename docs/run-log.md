@@ -650,3 +650,13 @@ learning rate changes to reward signifcant?
 * Based on the NN of 1119.
 * 100e6 steps but basd on 1119.
 * Idea: Lets see how we are doing with this reward function incl. checkpoint at the door.
+* Result was disappointing. Is the switch between the rooms too difficult?
+
+## 1121
+* Curiosity test.
+* Build. 
+* Strength of curiosity.
+* Interrupted. Wrong reward.
+
+## 1122
+* Reward set to sparse.
