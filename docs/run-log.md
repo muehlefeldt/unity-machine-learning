@@ -663,10 +663,17 @@ learning rate changes to reward signifcant?
 * Again curiosty test, same as 1121.
 * Result: Shit. Not stable learning.
 
-## Next
-* Reward without distance. Only collision. Punish each step.
+## 1123
+* Reward without distance. Only collision punished. Punish each step. +1 For target reached.
 * Staged process. 
   * First: Train only with the target and no decoy.
-  * Next: Introduce the decoy.
+* No curiosty.
+* First part in editor. Check for problems with changed decoy deployment.
+* Terminated. Heuristic was still set in area 1.
+
+## 1124
+* Run of 1123 but mode fixed.
+
+* Next: Introduce the decoy.
 * Think about the staged process again!
 

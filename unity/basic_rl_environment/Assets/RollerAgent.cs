@@ -425,7 +425,6 @@ public class RollerAgent : Agent
         }
         
         AddReward(GetReward());
-        //AddReward(-1f / MaxStep);
     }
 
     private Vector3 m_LastImplausiblePos = Vector3.zero;
@@ -469,7 +468,10 @@ public class RollerAgent : Agent
         /// <summary>
         /// Reward contact with correct target.
         /// </summary>
-        OnlyCollision,
+        CollisionCheckpoint,
+        /// <summary>
+        /// Sparse reward. Punish each step and reward target found. Punish all other contacts.
+        /// </summary>
         Sparse
         
     }
@@ -521,7 +523,7 @@ public class RollerAgent : Agent
             return currentReward;
         }
 
-        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
         {
             return -1f / MaxStep;
         }
@@ -531,24 +533,18 @@ public class RollerAgent : Agent
             return -1f / MaxStep;
         }
         
-        // GetPath();
-        //
-        // var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
-        // print(angleToTarget);
-        // var fAng = Mathf.Exp(-1f * Mathf.Pow(angleToTarget, 2f)/ (2 * Mathf.Pow(omega, 2) ));
-
-        //var dirTransform = transform.TransformDirection(transform.forward);
-        //var currentRay = new Ray(transform.position, dirTransform);
-
-        //var stepPunishment = currentStep / maxSteps;
-        //reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
         return 0f;
     }
-
+    
+    
     private bool doorreached;
+    /// <summary>
+    /// Trigger is given by contact of the agent with the door.
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
         {
 
             if (!doorreached)
@@ -570,8 +566,9 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionEnter(Collision other)
     {
-        m_LastCollision = transform.position;
-        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        m_LastCollision = transform.position; // Used for Gizmos.
+        
+        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
         {
             if (other.gameObject.CompareTag("innerWall"))
             {
@@ -590,6 +587,10 @@ public class RollerAgent : Agent
             }
             
         }
+        else if (rewardFunctionSelect == RewardFunction.Sparse)
+        {
+            AddReward(-0.5f);
+        }
         else
         {
             AddReward(-0.8f);
@@ -603,7 +604,7 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
         {
             if (other.gameObject.CompareTag("innerWall"))
             {
@@ -620,6 +621,10 @@ public class RollerAgent : Agent
                 AddReward(-0.8f);
             }
             
+        }
+        else if (rewardFunctionSelect == RewardFunction.Sparse)
+        {
+            AddReward(-0.1f);
         }
         else
         {

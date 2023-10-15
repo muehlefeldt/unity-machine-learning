@@ -28,7 +28,10 @@ public class Floor : MonoBehaviour
     public AllRooms RoomsInEnv;
     public RollerAgent agent;
     public Target target;
-    public Decoy decoy;
+    
+    // Select if a decoy object is requested.
+    public bool useDecoy = false;
+    private Decoy m_Decoy;
     
     //public bool finished = false;
     
@@ -64,21 +67,7 @@ public class Floor : MonoBehaviour
         {
             // Get the shared mesh of the floor
             Mesh floorMesh = floorMeshFilter.sharedMesh;
-            
-            // Get the corner coordinates in world space
-            // Retrieve the vertices of the floor mesh and transform them to world space
-            //m_GlobalVertices = floorMesh.vertices;
 
-            /*var globalVertices = new List<Vector3>();
-            foreach (var vert in floorMesh.vertices)
-            {
-                globalVertices.Add(transform.TransformPoint(vert));
-            }*/
-
-            /*globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[0]));
-            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[10]));
-            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[110]));
-            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[120]));*/
             var corners = new List<Vector3>();
             m_CornersGlobalCoords = corners;
             
@@ -101,6 +90,11 @@ public class Floor : MonoBehaviour
             //finished = true;
             
             CalculateMaxDist();
+
+            if (useDecoy)
+            {
+                m_Decoy = new Decoy(this.transform);
+            }
         }
     }
     
@@ -299,23 +293,26 @@ public class Floor : MonoBehaviour
     /// </summary>
     public void ResetDecoyPosition()
     {
-        var agentPos = agent.transform.position;
-        var targetPos = target.transform.position;
-        
-        var newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
-        
-        var distToTarget = Vector3.Distance(newDecoyPos, targetPos);
-        var distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
-        while (distToTarget < 4f || distToDoor < 4f)
+        if (useDecoy)
         {
-            newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
-            distToTarget = Vector3.Distance(newDecoyPos, targetPos);
-            distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
+            var agentPos = agent.transform.position;
+            var targetPos = target.transform.position;
+
+            var newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
+
+            var distToTarget = Vector3.Distance(newDecoyPos, targetPos);
+            var distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
+            while (distToTarget < 4f || distToDoor < 4f)
+            {
+                newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
+                distToTarget = Vector3.Distance(newDecoyPos, targetPos);
+                distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
+            }
+
+            // Set the correct height of the decoy.
+            newDecoyPos.y = 1f;
+            m_Decoy.ResetPosition(newDecoyPos);
         }
-        
-        // Set the correct height of the decoy.
-        newDecoyPos.y = 1f;
-        decoy.ResetPosition(newDecoyPos);
     }
 
     /// <summary>

@@ -65,12 +65,12 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-      curiosity:
-        strength: 1.0
-        gamma: 0.99
-        learning_rate: 3e-4
-        network_settings: 
-          hidden_units: 128
+      #curiosity:
+      #  strength: 1.0
+      #  gamma: 0.99
+      #  learning_rate: 3e-4
+      #  network_settings: 
+      #   hidden_units: 128
       
     
 
