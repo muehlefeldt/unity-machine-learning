@@ -655,8 +655,18 @@ learning rate changes to reward signifcant?
 ## 1121
 * Curiosity test.
 * Build. 
-* Strength of curiosity.
+* Strength of curiosity?
 * Interrupted. Wrong reward.
 
 ## 1122
 * Reward set to sparse.
+* Again curiosty test, same as 1121.
+* Result: Shit. Not stable learning.
+
+## Next
+* Reward without distance. Only collision. Punish each step.
+* Staged process. 
+  * First: Train only with the target and no decoy.
+  * Next: Introduce the decoy.
+* Think about the staged process again!
+
