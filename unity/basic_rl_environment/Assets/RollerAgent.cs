@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using Unity.Mathematics;
 //using DefaultNamespace;
 using UnityEngine;
 
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
+using Unity.VisualScripting;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
@@ -18,26 +21,95 @@ using Vector3 = UnityEngine.Vector3;
 public class RollerAgent : Agent
 {
     private Rigidbody m_RBody;
-    public Target target;
+
+    private List<Vector3> m_SensorDirections;
+    //public Target target;
     public Floor floor;
     public float m_MaxDist;
-
-    // Start is called before the first frame update
-    void Start () {
-        m_RBody = GetComponent<Rigidbody>();
-        ResetAgentPosition();
-    }
+    
+    // Distances.
+    public float m_DistToTarget;
+    public float m_DistToTargetNormal;
+    private float m_LastDistToTarget;
+    
+    // Set how much force is applied to the rigidbody.
+    public float forceMultiplier = 10f;
+    
+    // Select sensor count of the agent. Has no influence on sensors along y axis, i.e. height sensors remain constant.
+    public int sensorCount = 4;
     
     /// <summary>
-    /// Reset the position of the agent to a default position.
+    /// Select reward function. 
     /// </summary>
+    public RewardFunction rewardFunctionSelect = RewardFunction.Basic;
+    
+    private Vector3 m_LastCollision = Vector3.zero;
+
+    // Is called before the first frame update
+    //public override void Initialize() {
+    public void Start() {
+        m_RBody = GetComponent<Rigidbody>();
+        m_SensorDirections = GetSensorDirections();
+        
+        // Set the observation size to the requested sensor count + 2 sensors up and down.
+        GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount + 4;
+    }
+
+    private List<Vector3> GetSensorDirections()
+    {
+        var directions = new List<Vector3>();
+        directions.Add(Vector3.forward);
+
+        var angle = 360f / sensorCount;
+        
+        for (int i = 1; i < sensorCount; i++)
+        {
+            var vector = Quaternion.Euler(0, - angle * i, 0) * Vector3.forward;
+            directions.Add(vector);
+        }
+
+        return directions;
+    }
+
+    enum AgentPos
+    {
+        /// <summary>
+        /// Fixed agent position.
+        /// </summary>
+        Fixed,
+        /// <summary>
+        /// Position of the agent is only slightly varied.
+        /// </summary>
+        Varied,
+        /// <summary>
+        /// Fully random pos of the agent. Including in different room.
+        /// </summary>
+        FullyRandom
+    }
+    /// <summary>
+    /// Reset the position of the agent within the trainingarea.
+    /// </summary>
+    private AgentPos m_AgentPosType = AgentPos.FullyRandom;
     private void ResetAgentPosition()
     {
         m_RBody.angularVelocity = Vector3.zero;
         m_RBody.velocity = Vector3.zero;
-            
-        transform.localPosition = new Vector3( 0, 1f, 3f);
         transform.rotation = Quaternion.identity;
+        
+        if (m_AgentPosType is AgentPos.Varied)
+        {
+            var x = Random.Range(-3f, 3f);
+            var z = Random.Range(2f, 4f);
+            transform.localPosition = new Vector3(x, 1f, z);
+        }
+        else if (m_AgentPosType is AgentPos.Fixed)
+        {
+            transform.localPosition = new Vector3(0, 1f, 3f);
+        }
+        else if (m_AgentPosType is AgentPos.FullyRandom)
+        {
+            transform.position = floor.GetRandomAgentPosition();
+        }
     }
     
     /// <summary>
@@ -48,62 +120,75 @@ public class RollerAgent : Agent
         var currentRotationY = transform.eulerAngles.y;
         transform.eulerAngles = new Vector3(0f, currentRotationY, 0f);
     }
-    
-    private bool m_TargetReached = false;
+
+    private EpEndReasons m_EndReason = EpEndReasons.None;
     public override void OnEpisodeBegin()
     {
+        doorreached = false;
+        actionCount = 0;
         floor.Prepare();
         floor.CreateInnerWall();
         
-        // ToDo: Why reset here distances?
-        ResetDist();
-
         // If the Agent fell, zero its momentum
-        if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
-        {
-            m_CollisionDetected = false;
-            m_ImplausiblePosition = false;
-            m_TargetReached = false;
-            ResetAgentPosition();
-        }
+        // if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
+        // if (transform.localPosition.y < 0 || m_ImplausiblePosition)
+        // {
+        //     //m_CollisionDetected = false;
+        //     m_ImplausiblePosition = false;
+        //     //m_TargetReached = false;
+        //     ResetAgentPosition();
+        // }
 
         // Move the target to a new spot
-        target.ResetPosition();
-
+        // if (floor.targetFixedPosition)
+        // {
+        //     ResetAgentPosition();
+        // }
+        
+        // Gizmo: Reset last collision position. Used for visual reference only when showing Gizmos.
+        m_LastCollision = Vector3.zero;
+        
+        // Reset the position of the agent if target was not reached or the position is not plausible.
+        if (m_EndReason is EpEndReasons.None or EpEndReasons.PositionImplausible or EpEndReasons.TargetReached)
+        {
+            ResetAgentPosition();
+        }
+        
+        // Reset the end reason of the last episode to default.
+        m_EndReason = EpEndReasons.None;
+        
+        // Reset target and decoy position.
+        floor.ResetTargetPosition();
+        floor.ResetDecoyPosition();
+        
+        // Get the max possible distance in the training area.
         m_MaxDist = floor.GetMaxPossibleDist();
+        
+        // Reset the distances at the begin of each episode.
+        ResetDist();
+        
+        // Calculate the distance to the target.
         CalculateDistanceToTarget();
     }
-
-    private float m_RayForwardDist;
-    private float m_RayBackDist;
-    private float m_RayLeftDist;
-    private float m_RayRightDist;
-    private float m_RayUpDist;
-    private float m_RayDownDist;
-    //public int CurrentStep = 0;
-    void FixedUpdate()
-    {
-        //CurrentStep = StepCount;
-        /*var currentRay = new Ray(transform.localPosition, transform.TransformDirection(Vector3.forward));
-        RaycastHit currentHit;
-        Physics.Raycast(currentRay, out currentHit, maxDistance: Mathf.Infinity);*/
-        /*m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
-        m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
-        m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
-        m_RayRightDist = PerformRaycastGetDistance(Vector3.right);
-        m_RayUpDist = PerformRaycastGetDistance(Vector3.up);
-        m_RayDownDist = PerformRaycastGetDistance(Vector3.down);*/
-        
-    }
     
+    private readonly List<float> m_RayDistances = new List<float>();
+    
+    /// <summary>
+    /// Prepare observations. Get sensor data to be used.
+    /// </summary>
     private void PrepareObservations()
     {
-        m_RayForwardDist = PerformRaycastGetDistance(Vector3.forward);
-        m_RayBackDist = PerformRaycastGetDistance(Vector3.back);
-        m_RayLeftDist = PerformRaycastGetDistance(Vector3.left);
-        m_RayRightDist = PerformRaycastGetDistance(Vector3.right);
-        m_RayUpDist = PerformRaycastGetDistance(Vector3.up);
-        m_RayDownDist = PerformRaycastGetDistance(Vector3.down);
+        m_RayDistances.Clear(); // Removed old measurements.
+        
+        // Get up and down distance data.
+        m_RayDistances.Add(PerformRaycastGetDistance(Vector3.up));
+        m_RayDistances.Add(PerformRaycastGetDistance(Vector3.down));
+        
+        // Get the remaining distance measurements as requested through the editor.
+        foreach (var dir in m_SensorDirections)
+        {
+            m_RayDistances.Add(PerformRaycastGetDistance(dir));
+        }
     }
     
     /// <summary>
@@ -117,10 +202,18 @@ public class RollerAgent : Agent
         var currentRay = new Ray(transform.position, dirTransform);
         RaycastHit currentHit;
         Physics.Raycast(currentRay, out currentHit, maxDistance: floor.GetMaxPossibleDist());
+        var len = currentHit.distance;
+        
+        // Draw gizmo lines to help with debugging.
         if (dir == Vector3.forward)
         {
-            Debug.DrawRay(transform.position, dirTransform * floor.GetMaxPossibleDist(), Color.red);
+            Debug.DrawRay(transform.position, dirTransform * len, Color.red);
         }
+        else
+        {
+            Debug.DrawRay(transform.position, dirTransform * len, Color.gray);
+        }
+        
 
         return currentHit.distance / floor.GetMaxPossibleDist();
     }
@@ -129,14 +222,12 @@ public class RollerAgent : Agent
     {
         // Idea: Ensure updated sensor data when setting observations. 
         PrepareObservations();
-        
-        sensor.AddObservation(m_RayForwardDist);
-        sensor.AddObservation(m_RayBackDist);
-        sensor.AddObservation(m_RayLeftDist);
-        sensor.AddObservation(m_RayRightDist);
-        sensor.AddObservation(m_RayUpDist);
-        sensor.AddObservation(m_RayDownDist);
 
+        foreach (var dist in m_RayDistances)
+        {
+            sensor.AddObservation(dist);
+        }
+        
         // Agent velocity.
         sensor.AddObservation(m_RBody.velocity);
 
@@ -154,6 +245,12 @@ public class RollerAgent : Agent
         // Fell off platform or is beyond roof.
         var y = transform.localPosition.y;
         if (y is < 0f or > 2f)
+        {
+            RecordData(RecorderCodes.OutOfBounds);
+            return false;
+        }
+
+        if (floor.IsOutsideFloor(transform.position))
         {
             RecordData(RecorderCodes.OutOfBounds);
             return false;
@@ -180,189 +277,357 @@ public class RollerAgent : Agent
         return true;
     }
     
-    private bool m_ImplausiblePosition = false;
-    public float forceMultiplier = 10f;
-    public override void OnActionReceived(ActionBuffers actionBuffers)
+    /// <summary>
+    /// Perform the movement of the agent.
+    /// </summary>
+    /// <param name="actionBuffers"></param>
+    private void MoveAgent(ActionBuffers actionBuffers)
     {
-        /*Vector3 controlSignal = Vector3.zero;
-        
-        var rightLeft = actionBuffers.DiscreteActions[0];
-        var upDown = actionBuffers.DiscreteActions[1];
-        var forwardBackwards = actionBuffers.DiscreteActions[2];
-        //var r = actionBuffers.DiscreteActions[3];
-
-        // Check if any movement is requested.
-        var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
-        if (!(all.Contains(2) || all.Contains(3)))
-        {
-            return;
-        } 
-        
-        switch (rightLeft)
-        {
-            case 2:
-                controlSignal.x = 1f;
-                break;
-            case 3:
-                controlSignal.x = -1f;
-                break;
-        }
-        
-        switch (upDown)
-        {
-            case 2:
-                controlSignal.y = 1f;
-                break;
-            case 3:
-                controlSignal.y = -1f;
-                break;
-        }
-        
-        switch (forwardBackwards)
-        {
-            case 2:
-                controlSignal.z = 1f;
-                break;
-            case 3:
-                controlSignal.z = -1f;
-                break;
-        }*/
-        
+        actionCount += 1;
         Vector3 controlSignal = Vector3.zero;
-        
-        var actions = actionBuffers.DiscreteActions[0];
-        
-        //var r = actionBuffers.DiscreteActions[3];
-
-        // Check if any movement is requested.
-        /*var all = new List<int>(){rightLeft, upDown, forwardBackwards/*, r#1#};
-        if (!(all.Contains(2) || all.Contains(3)))
-        {
-            return;
-        } */
         var rotate = 0f;
-        switch (actions)
+        
+        if (m_Actions == ActionsPerStep.Single)
         {
-            case 1:
-                controlSignal.x = 1f;
-                break;
-            case 2:
-                controlSignal.x = -1f;
-                break;
-            case 3:
-                controlSignal.y = 1f;
-                break;
-            case 4:
-                controlSignal.y = -1f;
-                break;
-            case 5:
-                controlSignal.z = 1f;
-                break;
-            case 6:
-                controlSignal.z = -1f;
-                break;
-            case 7:
-                rotate = 1f;
-                break;
-            case 8:
-                rotate = -1f;
-                break;
+            var actions = actionBuffers.DiscreteActions[0];
+            switch (actions)
+            {
+                case 1:
+                    controlSignal.x = 1f;
+                    break;
+                case 2:
+                    controlSignal.x = -1f;
+                    break;
+                case 3:
+                    controlSignal.y = 1f;
+                    break;
+                case 4:
+                    controlSignal.y = -1f;
+                    break;
+                case 5:
+                    controlSignal.z = 1f;
+                    break;
+                case 6:
+                    controlSignal.z = -1f;
+                    break;
+                case 7:
+                    rotate = 1f;
+                    break;
+                case 8:
+                    rotate = -1f;
+                    break;
+            }
+        }
+        else if (m_Actions == ActionsPerStep.Multiple)
+        {
+            var rightLeft = actionBuffers.DiscreteActions[0];
+            var upDown = actionBuffers.DiscreteActions[1];
+            var forwardBackwards = actionBuffers.DiscreteActions[2];
+            var r = actionBuffers.DiscreteActions[3];
+            
+            // Check if any movement is requested.
+            var all = new List<int>(){rightLeft, upDown, forwardBackwards, r};
+            /*if (!(all.Contains(2) || all.Contains(3)))
+            {
+                return;
+            } */
+
+            switch (rightLeft)
+            {
+                case 1:
+                    controlSignal.x = 1f;
+                    break;
+                case 2:
+                    controlSignal.x = -1f;
+                    break;
+            }
+        
+            switch (upDown)
+            {
+                case 1:
+                    controlSignal.y = 1f;
+                    break;
+                case 2:
+                    controlSignal.y = -1f;
+                    break;
+            }
+        
+            switch (forwardBackwards)
+            {
+                case 1:
+                    controlSignal.z = 1f;
+                    break;
+                case 2:
+                    controlSignal.z = -1f;
+                    break;
+            }
+
+            rotate = 0f;
+            switch (r)
+            {
+                case 1:
+                    rotate = 1f;
+                    break;
+                case 2:
+                    rotate = -1f;
+                    break;
+            }
         }
 
         // Rotate the agent.
         var turnSpeed = 200;
         var rotateDir = transform.up * rotate;
-        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
-        
+        //transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+        var eulerAngleVelocity = new Vector3(0, 100 * rotate, 0);
+        Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.fixedDeltaTime);
+        m_RBody.MoveRotation(m_RBody.rotation * deltaRotation);
+
         // Move the agent.
         var direction = m_RBody.rotation * controlSignal;
-        m_RBody.MovePosition(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
+        //m_RBody.Move(m_RBody.position + direction * (Time.deltaTime * forceMultiplier));
+        //m_RBody.MovePosition();
+        m_RBody.AddForce(direction * forceMultiplier, ForceMode.Force);
+    }
+    
+    /// <summary>
+    /// Called on action input.
+    /// </summary>
+
+    public int actionCount = 0;
+    public override void OnActionReceived(ActionBuffers actionBuffers)
+    {
+        MoveAgent(actionBuffers);
         
         // Get the distance to the target.
         CalculateDistanceToTarget();
-        
-        // On collision with wall terminate the episode.
-        if (m_CollisionDetected)
-        {
-            RecordData(RecorderCodes.Wall);
-            SetReward(-1f);
-            //Debug.Log("Collision");
-            EndEpisode();
-        }
-        
-        // Reached target. Success.
+
+        // Reached target. Success. Terminate episode.
         if (m_DistToTarget < 1.42f)
         {
             RecordData(RecorderCodes.Target);
+            m_EndReason = EpEndReasons.TargetReached;
             SetReward(1f);
-            m_TargetReached = true;
             EndEpisode();
         }
         
         // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
         if (!IsAgentPositionPlausible())
         {
-            m_ImplausiblePosition = true;
+            m_EndReason = EpEndReasons.PositionImplausible;
+            m_LastImplausiblePos = transform.position;
             EndEpisode();
         }
     
-        // Fix the rotation of the agent. Does not warant the termination of the episode.
+        // Fix the rotation of the agent. Does not require the termination of the episode.
         if (!IsAgentRotationPlausible())
         {
-            //m_ImplausiblePosition = true;
             FixAgentRotation();
-            //EndEpisode();
         }
-
-        //if (currentStep > maxSteps)
-        //{
-        //    RecordData(RecorderCodes.MaxSteps);
-        //    SetReward(-1f);
-        //    EndEpisode();
-        //}
         
-        //CalculateReward();
-        SetReward(-1f / MaxStep);
+        AddReward(GetReward());
+        //AddReward(-1f / MaxStep);
+    }
+
+    private Vector3 m_LastImplausiblePos = Vector3.zero;
+
+    /// <summary>
+    /// Reasons to the episode.
+    /// </summary>
+    enum EpEndReasons
+    {   
+        /// <summary>
+        /// Default reason. Reason remains set if the maxstep limit is hit by the agent.
+        /// </summary>
+        None,
+        /// <summary>
+        /// The target was found.
+        /// </summary>
+        TargetReached,
+        /// <summary>
+        /// Position of the agent not plausible. Position outside of the training area.
+        /// </summary>
+        PositionImplausible
     }
     
     /// <summary>
+    /// Types of reward function available.
+    /// </summary>
+    public enum RewardFunction
+    {
+        /// <summary>
+        /// Most basic reward function.
+        /// </summary>
+        Basic,
+        /// <summary>
+        /// Based on the basic reward function. But with changed values.
+        /// </summary>
+        SimpleDist,
+        /// <summary>
+        /// Complex reward function based on distance. Based on the Matignon et al. paper.
+        /// </summary>
+        ComplexDist,
+        /// <summary>
+        /// Reward contact with correct target.
+        /// </summary>
+        OnlyCollision,
+        Sparse
+        
+    }
+
+    /// <summary>
     /// Calculate and return reward based on current distance to target.
     /// </summary>
-    /// <remarks>
-    /// ToDo: Wenn du die Entfernung zum Ziel nicht verringerst, dann gibt es eine Bestrafung.
-    /// </remarks>
-    public float reward = 0f;
-    private void CalculateReward()
+    public float currentReward = 0f;
+    private float GetReward()
     {
+        if (rewardFunctionSelect == RewardFunction.Basic)
+        {
+            var reward = 0f;
+            if (m_LastDistToTarget > m_DistToTarget)
+            {
+                reward = 0.1f;
+            }
+            //if (m_LastDistToTarget > m_DistToTarget) reward = 0.1f;
+            else reward = -0.15f;
+            currentReward = reward + (-1f / MaxStep);
+            return currentReward;
+        }
+        if (rewardFunctionSelect == RewardFunction.SimpleDist)
+        {
+            var reward = 0f;
+            // Do not punish rotation.
+            //if (action > 6)
+            //{
+            //    reward = 0.05f;
+            //}
+
+            /*else*/ if (m_LastDistToTarget > m_DistToTarget)
+            {
+                reward = 0.8f;
+            }
+            //else if (action > 6) reward = 0.01f;
+            
+            else reward = -1f;
+
+            return reward; //+ (-1f / MaxStep);
+        }
+
+        if (rewardFunctionSelect == RewardFunction.ComplexDist)
+        {
+            var beta = 1f;
+            var omega = 0.3f;
+            var x = m_DistToTargetNormal;
+            currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
+            return currentReward;
+        }
+
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        {
+            return -1f / MaxStep;
+        }
         
-        var beta = 0.35f;
-        var omega = 0.3f;
-        var fGui = Mathf.Exp(-1f * Mathf.Pow(m_DistToTargetNormal, 2f) / (2 * Mathf.Pow(omega, 2) ));
+        if (rewardFunctionSelect == RewardFunction.Sparse)
+        {
+            return -1f / MaxStep;
+        }
         
-        GetPath();
-        
-        var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
-        print(angleToTarget);
-        var fAng = Mathf.Exp(-1f * Mathf.Pow(angleToTarget, 2f)/ (2 * Mathf.Pow(omega, 2) ));
-        
+        // GetPath();
+        //
+        // var angleToTarget = Vector3.Angle(transform.forward, m_Path[1]-transform.position) / 180f;
+        // print(angleToTarget);
+        // var fAng = Mathf.Exp(-1f * Mathf.Pow(angleToTarget, 2f)/ (2 * Mathf.Pow(omega, 2) ));
+
         //var dirTransform = transform.TransformDirection(transform.forward);
         //var currentRay = new Ray(transform.position, dirTransform);
 
         //var stepPunishment = currentStep / maxSteps;
         //reward = ((1f - beta) * fGui + beta * fAng) * (1f - stepPunishment);
+        return 0f;
+    }
 
+    private bool doorreached;
+    private void OnTriggerEnter(Collider other)
+    {
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        {
+
+            if (!doorreached)
+            {
+                AddReward(1f);
+                doorreached = true;
+                Debug.Log("Door +1");
+            }
+            else
+            {
+                AddReward(-0.2f);
+                Debug.Log("Door -0.2");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Initial collision event.
+    /// </summary>
+    private void OnCollisionEnter(Collision other)
+    {
+        m_LastCollision = transform.position;
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        {
+            if (other.gameObject.CompareTag("innerWall"))
+            {
+                AddReward(-0.1f);
+            }
+
+            else if (other.gameObject.CompareTag("outerWalls"))
+            {
+                AddReward(-0.5f);
+            }
+
+            else if (other.gameObject.CompareTag("decoys"))
+            {
+                AddReward(-1f);
+                Debug.Log("Decoy -1");
+            }
+            
+        }
+        else
+        {
+            AddReward(-0.8f);
+        }
+        RecordData(RecorderCodes.Wall);
+        
     }
     
     /// <summary>
-    /// Collision handling. Reset of the agent position if agent collides with other game objects.
+    /// If the collision continues after the initial event reduced punishment.
     /// </summary>
-    /// <param name="other"></param>
-    private bool m_CollisionDetected = false;
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionStay(Collision other)
     {
-        m_CollisionDetected = true;
+        if (rewardFunctionSelect == RewardFunction.OnlyCollision)
+        {
+            if (other.gameObject.CompareTag("innerWall"))
+            {
+                AddReward(-0.05f);
+            }
+
+            if (other.gameObject.CompareTag("outerWalls"))
+            {
+                AddReward(-0.2f);
+            }
+
+            if (other.gameObject.CompareTag("decoys"))
+            {
+                AddReward(-0.8f);
+            }
+            
+        }
+        else
+        {
+            AddReward(-0.5f);
+        }
+        RecordData(RecorderCodes.Wall);
     }
-    
+
     /// <summary>
     /// Codes used for tensorboard stats recorder.
     /// </summary>
@@ -402,7 +667,7 @@ public class RollerAgent : Agent
                 statsRecorder.Add("Out of bounds", 0f);
                 break;
 
-            case  RecorderCodes.Target:
+            case RecorderCodes.Target:
                 statsRecorder.Add("Wall hit", 0f);
                 statsRecorder.Add("Max Steps reached", 0f);
                 statsRecorder.Add("Target Reached", 1f);
@@ -411,11 +676,11 @@ public class RollerAgent : Agent
                 break;
             
             case RecorderCodes.RotationError:
-                //statsRecorder.Add("Wall hit", 0f);
-                //statsRecorder.Add("Max Steps reached", 0f);
-                //statsRecorder.Add("Target Reached", 0f);
+                statsRecorder.Add("Wall hit", 0f);
+                statsRecorder.Add("Max Steps reached", 0f);
+                statsRecorder.Add("Target Reached", 0f);
                 statsRecorder.Add("Rotation Error", 1f);
-                //statsRecorder.Add("Out of bounds", 0f);
+                statsRecorder.Add("Out of bounds", 0f);
                 break;
             
             case RecorderCodes.OutOfBounds:
@@ -427,25 +692,20 @@ public class RollerAgent : Agent
                 break;
         }
     }
-    
+
     /// <summary>
     /// Calculate the distance from the agent to the target. Taking doors into account.
     /// </summary>
     /// <remarks>Distance is basis for reward function.</remarks>
-    public float m_DistToTarget = 0f;
-    public float m_DistToTargetNormal = 0f;
-    
-    private float m_LastDistToTarget = 0f;
-    private float m_BestDistToTarget = float.PositiveInfinity;
-    private bool m_DistImproved = false;
     private void CalculateDistanceToTarget()
     {
-        ResetDist();
-        
+        m_LastDistToTarget = m_DistToTarget;
+
         // Get the path from agent to target.
         GetPath();
         
         // Calculate the distance of the path.
+        m_DistToTarget = 0f;
         for (int i = 1; i < m_Path.Count; i++)
         {
             m_DistToTarget += Vector3.Distance(m_Path[i - 1], m_Path[i]);
@@ -454,53 +714,49 @@ public class RollerAgent : Agent
         // Calculate normalised distance to target.
         m_DistToTargetNormal = m_DistToTarget / m_MaxDist;
         
-        if (m_DistToTarget < m_BestDistToTarget)
+        // If first call during episode. Set the last and current distance to target equal.
+        if (float.IsPositiveInfinity(m_LastDistToTarget))
         {
-            m_BestDistToTarget = m_DistToTarget;
-            m_DistImproved = true;
+            m_LastDistToTarget = m_DistToTarget;
         }
     }
-
+    
+    /// <summary>
+    /// Reset the distances to default values. Called at the beginning of the episode.
+    /// </summary>
     private void ResetDist()
     {
-        m_LastDistToTarget = m_DistToTarget;
-        m_DistToTarget = 0f;
-        m_DistImproved = false;
+        m_LastDistToTarget = float.PositiveInfinity;
+        m_DistToTarget = float.PositiveInfinity;
     }
     
     /// <summary>
     /// Get the path from the agent to the target.
     /// </summary>
-    /// <remarks>
-    /// ToDo
-    /// </remarks>
-    private List<Vector3> m_Path = new List<Vector3>();
+    private readonly List<Vector3> m_Path = new List<Vector3>();
     private void GetPath()
     {
         m_Path.Clear();
         
         var agentPosition = transform.position;
-        var doorPositions = floor.CreatedDoorsCoord;
-        var targetPosition = target.transform.position;
+        var doorPositions = floor.GetDoorPosition();
+        var targetPosition = floor.target.transform.position;
         
         // First point of the path is the agent position.
         m_Path.Add(agentPosition);
-
-        foreach (var coord in doorPositions)
+        
+        if (agentPosition.z > targetPosition.z)
         {
-            if (agentPosition.z > targetPosition.z)
+            if ((agentPosition.z > doorPositions.z) && (doorPositions.z > targetPosition.z))
             {
-                if ((agentPosition.z > coord.z) && (coord.z > targetPosition.z))
-                {
-                    m_Path.Add(coord);
-                }
+                m_Path.Add(doorPositions);
             }
-            else
+        }
+        else
+        {
+            if ((agentPosition.z < doorPositions.z) && (doorPositions.z < targetPosition.z))
             {
-                if ((agentPosition.z < coord.z) && (coord.z < targetPosition.z))
-                {
-                    m_Path.Add(coord);
-                }
+                m_Path.Add(doorPositions);
             }
         }
         
@@ -522,114 +778,151 @@ public class RollerAgent : Agent
                 Gizmos.DrawCube(coord, new Vector3(0.3f, 0.3f, 0.3f));    
             }
         }
+
+        if (m_LastCollision != Vector3.zero)
+        {
+            Gizmos.DrawCube(m_LastCollision, new Vector3(0.3f, 0.3f, 0.3f));
+        }
+        if (m_LastImplausiblePos != Vector3.zero)
+        {
+            //Gizmos.DrawCube(m_LastImplausiblePos, new Vector3(0.3f, 0.3f, 0.3f));
+            Debug.DrawRay(m_LastImplausiblePos, Vector3.up * 100f, Color.red);
+        }
+
+        if (rewardFunctionSelect == RewardFunction.ComplexDist)
+        {
+            Gizmos.color = Color.black;
+            //Gizmos.DrawIcon();
+        }
     }
 
+    enum ActionsPerStep
+    {
+        /// <summary>
+        /// Allow only one type of action per step. Example: During forward motion no rotation is possible.
+        /// </summary>
+        Single,
+        /// <summary>
+        /// Allow multiple types of action per step. Example: During forward motion rotation is also possible.
+        /// </summary>
+        Multiple
+    }
+    
+    /// <summary>
+    /// Select how many action types are possible during each step.
+    /// </summary>
+    private ActionsPerStep m_Actions = ActionsPerStep.Single;
+    
+    /// <summary>
+    /// Heuristic action handling in the editor.
+    /// </summary>
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        //var continuousActionsOut = actionsOut.ContinuousActions;
-        //continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        //continuousActionsOut[1] = Input.GetAxis("Vertical");
-        //continuousActionsOut[2] = Input.GetAxis("Mouse X");
-        // Height
-        //continuousActionsOut[3] = Input.GetAxis("Mouse Y");
         var discreteActionsOut = actionsOut.DiscreteActions;
-        //var x = discreteActionsOut[0];
-        //var y = discreteActionsOut[1];
-        //var z = discreteActionsOut[2];
-        //var rotation = discreteActionsOut[3];
-        
-        // X. Right, left and no movement.
-        /*if (Input.GetKey(KeyCode.D))
+        if (m_Actions == ActionsPerStep.Multiple)
         {
-            discreteActionsOut[0] = 2;
+            var x = discreteActionsOut[0];
+            var y = discreteActionsOut[1];
+            var z = discreteActionsOut[2];
+            var rotation = discreteActionsOut[3];
+
+            // X. Right, left and no movement.
+            if (Input.GetKey(KeyCode.D))
+            {
+                discreteActionsOut[0] = 1;
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                discreteActionsOut[0] = 2;
+            }
+            else
+            {
+                discreteActionsOut[0] = 0;
+            }
+            // Y. Up, down and no movement.
+            if (Input.GetKey(KeyCode.X))
+            {
+                discreteActionsOut[1] = 1;
+            }
+            else if (Input.GetKey(KeyCode.Y))
+            {
+                discreteActionsOut[1] = 2;
+            }
+            else
+            {
+                discreteActionsOut[1] = 0;
+            }
+            // Z. Forward, backwards and no movement.
+            if (Input.GetKey(KeyCode.W))
+            {
+                discreteActionsOut[2] = 1;
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                discreteActionsOut[2] = 2;
+            }
+            else
+            {
+                discreteActionsOut[2] = 0;
+            }
+            // Rotation. Right, left and no rotation.
+            if (Input.GetKey(KeyCode.E))
+            {
+                discreteActionsOut[3] = 1;
+            }
+            else if (Input.GetKey(KeyCode.Q))
+            {
+                discreteActionsOut[3] = 2;
+            }
+            else
+            {
+                discreteActionsOut[3] = 0;
+            }
         }
-        else if (Input.GetKey(KeyCode.A))
+
+        else if (m_Actions == ActionsPerStep.Single)
         {
-            discreteActionsOut[0] = 3;
-        }
-        else
-        {
-            discreteActionsOut[0] = 1;
-        }
-        // Y. Up, down and no movement.
-        if (Input.GetKey(KeyCode.X))
-        {
-            discreteActionsOut[1] = 2;
-        }
-        else if (Input.GetKey(KeyCode.Y))
-        {
-            discreteActionsOut[1] = 3;
-        }
-        else
-        {
-            discreteActionsOut[1] = 1;
-        }
-        // Z. Forward, backwards and no movement.
-        if (Input.GetKey(KeyCode.W))
-        {
-            discreteActionsOut[2] = 2;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            discreteActionsOut[2] = 3;
-        }
-        else
-        {
-            discreteActionsOut[2] = 1;
-        }
-        // Rotation. Right, left and no rotation.
-        if (Input.GetKey(KeyCode.E))
-        {
-            discreteActionsOut[3] = 2;
-        }
-        else if (Input.GetKey(KeyCode.Q))
-        {
-            discreteActionsOut[3] = 3;
-        }
-        else
-        {
-            discreteActionsOut[3] = 1;
-        }*/
-        if (Input.GetKey(KeyCode.D))
-        {
-            discreteActionsOut[0] = 1;
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            discreteActionsOut[0] = 2;
-        }
-        
-        // Y. Up, down and no movement.
-        else if (Input.GetKey(KeyCode.X))
-        {
-            discreteActionsOut[0] = 3;
-        }
-        else if (Input.GetKey(KeyCode.Y))
-        {
-            discreteActionsOut[0] = 4;
-        }
-        // Z. Forward, backwards and no movement.
-        else if (Input.GetKey(KeyCode.W))
-        {
-            discreteActionsOut[0] = 5;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            discreteActionsOut[0] = 6;
-        }
-        
-        // Rotation. Right, left and no rotation.
-        else if (Input.GetKey(KeyCode.E))
-        {
-            discreteActionsOut[0] = 7;
-        }
-        else if (Input.GetKey(KeyCode.Q))
-        {
-            discreteActionsOut[0] = 8;
-        }
-        else
-        {
-            discreteActionsOut[0] = 0;
+            if (Input.GetKey(KeyCode.D))
+            {
+                discreteActionsOut[0] = 1;
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                discreteActionsOut[0] = 2;
+            }
+
+            // Y. Up, down and no movement.
+            else if (Input.GetKey(KeyCode.X))
+            {
+                discreteActionsOut[0] = 3;
+            }
+            else if (Input.GetKey(KeyCode.Y))
+            {
+                discreteActionsOut[0] = 4;
+            }
+            // Z. Forward, backwards and no movement.
+            else if (Input.GetKey(KeyCode.W))
+            {
+                discreteActionsOut[0] = 5;
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                discreteActionsOut[0] = 6;
+            }
+
+            // Rotation. Right, left and no rotation.
+            else if (Input.GetKey(KeyCode.E))
+            {
+                discreteActionsOut[0] = 7;
+            }
+            else if (Input.GetKey(KeyCode.Q))
+            {
+                discreteActionsOut[0] = 8;
+            }
+            else
+            {
+                discreteActionsOut[0] = 0;
+            }
         }
     }
 }

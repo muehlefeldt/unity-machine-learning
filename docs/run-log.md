@@ -1,0 +1,672 @@
+# Log
+Notes to the ML-Agents runs.
+
+## 00BasicEnvPpo
+* Basic run to confirm tutorial.
+* Base run used as verification for future runs.
+
+## 01BasicEnvPpo
+* Angular drag set 0. Sphere must not roll.
+* RollerAgent now as cube and not as a sphere.
+* Result was comparabale to the base run 00BasicEnvPpo.
+* Added Ray Perception Sensor 3D.
+
+## 02BasicEnvPpo
+* Removed sensor input: No longer position of target and agent.
+* Uses Ray Perception Sensor 3D. 
+* Currently the agent can not rotate!
+* Is the Ray Sensor working as expected? 
+
+## 03BasicEnvPpo
+* Replace the Ray Sensor Component with simple rays.
+  * Background: The ray sensor adds to many information.
+  * The drone receives only limited sensor data. 
+* Rays introduced in 4 directions.
+
+## 04BasicEnvPpo
+* Normalised ray distance values.
+* Code clean up needed.
+* Still no change in PPO config.
+* Compare against run 03: Check convergence speed. Better?
+  * Limited comparison but speed seems better.
+
+## 05BasicEnvPpo
+* Introduce memory.
+* Result was not very promissing.
+
+## 06BasicEnvPpo
+* More steps also with memory.
+* Now running for 2e6 steps.
+* Compare against run 04. Rerun 04 with more steps.
+* Reward was very unstable.
+
+## 07BasicEnvPpo
+* Rerun of 04: No memory but more steps. 2e6 steps again used as in 05.
+* How does the reward compare to 06 and 04?
+* Unstable rewards.
+
+## 08BasicEnvPpo
+* Rerun of 04. No LSTM.
+* Set step count to 1e6.
+* Due to more steps behavior of beta, epsilon and/or
+learning rate changes to reward signifcant?
+* Step: 1000000. Time Elapsed: 7281.410 s.
+
+## 09BasicEnvPpo
+* Increase number of training areas. Now using 8 areas in total.
+* Rerun a constant to config to verfiy result against 08BasicEnvPpo.
+* Result: Rewards indicate a problem with code and the use of multiple areas.
+
+## 10BasicEnvPpo
+* Same as 10 but again run with 500k steps.
+* Should be the same aus run 04 but with more training areas.
+
+## 11BasicEnvPpo
+* Only one training area. Area 0.
+
+## 12BasicEnvPpo
+* Only one training area. Area 7 to test local coordinate system.
+* Shows same result as 10.
+* Indicates code error.
+
+## 13BasicEnvPpo
+* Only one training area. Area 7 to test local coordinate system.
+* Fixed: Ray measurements.
+  * Rays were always cast based on the local coordinates. But in this cas global is correct.
+
+## 14BasicEnvPpo
+* Test again with multiple training areas.
+* Expected: Improved result compared to 09 and 10.
+* Result still not as during run 04.
+* Work needed.
+
+## 15BasicEnvPpo
+* Increased distance between the training areas.
+* Result: Again not the same rewards shown as during run 04.
+
+## 16BasicEnvPpo
+* Problem with ray length fixed.
+* Increased distance between the training areas remains.
+* Result: Reward plot as expected. Ray sensors fixed.
+
+## 17BasicEnvPpo
+* Rotation of the agent added.
+* Control signal and sensor data 
+* Forward indicator: If gizmos on, render only forward ray.
+
+## 18BasicEnvPpo
+* More hidden units.
+* Previously not very much reward. Maybe longer training needed?
+
+## 19BasicEnvPpo
+* Sensor data change to rigidbody.
+* Result: Good.
+
+## 20BasicEnvPpo
+* Increased training step count to 2e6 from 500k.
+* Everything else remains steady.
+
+## 21BasicEnvPpo
+* Set beta: 1.0e-4. Was 5.0e-5.
+* Look for: More stable learning since early in the run.
+* Step count still set to 2e6.
+* Reward drops during initial phase!
+* Reward growth faster compared to 20. But still pretty unstable.
+
+## 22BasicEnvPpo
+* batch_size: 1000
+* buffer_size: 10240
+
+## 23BasicEnvPpo
+* beta: 1.0e-2.
+* Entropy should drop more slowly?
+
+## 25BasicEnvPpo to 48BasicEnvPpo
+* First use of a structured hyperparameter search.
+* Still very simple.
+* Uses hyperparameter_search.py to start search.
+
+## 49
+* Walls in area introduced.
+
+## 50
+* ?
+
+## 51
+* Test without build. Only in Unity editor.
+* Observation: Runs using build executable are way faster.
+
+## 52
+* Fix: Training wareas wrong positions.
+* Rerun of 51 with same config.
+* Uses build env of unity.
+* Result: Looks better comp. to 51.
+* Error: Run was terminated due to waiting state of worker.
+
+## 53
+* Rerun of 52 due to earlier error.
+
+## 54 till 73
+* Parameter search using script.
+* Best results from runs 60 and 66.
+
+## 96
+* More training areas.
+* Uses best parameters from auto runs 76 to 95. Uses same config as run 78.
+* Made error: Wrong beta value used.
+
+## 97
+* Slight change of reward handling in case of collision.
+  * Add -1 and not set to -1.
+* Still uses the wrong beta value!
+
+## 98
+* Rerun of 97 with correct beta value.
+* Target: Compare to run 78.
+* Comparison to run 78: Results differ. This run does not follow 78 after 800k steps in terms of reward.
+* Speculation on the reason: Reward function changed?
+* Need to compare configs between 78 and this run.
+* Interesting observation: episode length between the the runs is comparable.
+
+## 99
+* Increased step number.
+* Terminated with error.
+
+## 100
+* Rerun of 99 after rebuild.
+
+## 103
+* Discrete action test run.
+* Uses parameter as 102 but changes to buffer size.
+  * Docs recommend reduction in buffer size.
+* Beta value to high? Or good? Is now 1e-2. Was way smaller before.
+  * More tests needed with beta value.
+
+## 108
+* Test of script.
+
+## 109
+* Very first LSTM run.
+* Aborted run. 
+
+## 111
+* Aborted.
+
+## 115
+* Not stable. memory_size = 32. sequence_length = 128.
+
+## 119
+* Not stable. memory_size = 64. sequence_length = 128.
+
+## 122
+* Looks good.
+
+## 127
+* Test random location of target.
+* Uses build.
+* Bad result clean run.
+
+## 128
+* Standard run w/o build.
+* Manual run.
+* Looks good at least.
+* Result still no good but used same config as 127.
+
+## 129 and 130
+* Test of rewritten script.
+
+## 131 and following
+* Automated runs.
+* Reward function may need tweaking.
+* Use 154 as base config.
+
+## 161
+* Fix: Target position set to world.
+
+## 162
+* First try of run in editor using navmesh.
+* Performance evaluation:
+  * Performance severly compromised.
+
+## 163
+* Switched the wall navmesh components to navmesh obsticale.
+* Walls were static navmesh set.
+* Performance better but still restricted.
+
+## 164, 165
+* Same as 163 but using build.
+* Question: Performance comparison with previous runs.
+* Navmesh maybe to complex.
+
+## 167
+* Test of rewritten pathfinding.
+* Again check in the editor first.
+* Performance seems better -> Check again with compiled build.
+
+## 168
+* Same as 167 but compiled build.
+* Performance: First 10k steps take 300 secs. Afterwards significant speedup.
+* Terminated.
+
+## 169
+* Reward function introduced.
+* Test run in the editor.
+
+## 170
+* Again run in editor.
+* Learning progress not stable.
+* Fix: One AddReward() changed to SetReward().
+* Question remains: How does a good reward function look here?
+
+## 171
+* Run with revised reward function.
+  * Reward 0f if distance to target increases.
+
+## 172
+* Not nice result.
+* Target only found once.
+
+## 173
+* Reward recuced. beta = 0.5f.
+
+## 174
+* Editor was not started in time.
+* Disregard.
+
+## 175
+* Check more tensorboard data charts.
+
+## 176
+* Further change to tensorboard recording.
+
+## 177 and more
+* Auto run.
+* Check in the morning.
+
+## 201
+* Revised reward:
+  * Closer to target: +0.1
+  * Farther away from target: -0.1
+* Run in editor.
+* Not good results.
+
+## 202 following
+* Script test
+* Disregard
+ 
+## 210 and following
+* Script test again
+
+## 212 and following
+* Test with reward function revised.
+  * -0.2 is worse distance.
+  * +0.1 if better
+
+## 220
+* Test python env.
+* Repeat of run 215.
+
+## 221 and following
+* Large number of runs.
+* Build used.
+* Performance not sufficient.
+* 221 shows ok result.
+
+## 247
+* Test of fixed Collider and step counter.
+
+## before 340
+* Test runs to evaluate the script. Summary was introduced.
+* Config file restructure.
+
+## 340 and following
+* Large number of runs.
+* 2 build env started during training.
+* Check first run and evaluate.
+* 500k steps in each run.
+* 34992 runs ... too manny?
+* Terminated: ETA was in 2025.
+
+## 342 ff.
+*  Terminated: Config not correct.
+
+## 946
+* 16 sensors.
+* No wall.
+
+## 1016
+* Part of overfit test.
+* 5e6 ep.
+* Fixed inner wall and door.
+* Bad result.
+
+## 1016
+* Part of overfit test.
+* Very long run with 30e6 episodes.
+* Fixed inner wall and door.
+* Shocking result with -1 convergence.
+* Problem with code?
+* Maxstep to 15k. 
+
+## 1017
+* Overfit test.
+* No inner wall. No door.
+* 5e6 ep.
+* Reduced sensor number back to default with 4 sensors.
+* Fast convergence in comparison to 946 (16 sensors) and 8 ...
+* Maxstep reduced back to default 5000.
+* Ok result at 1.5e6 ep.
+
+## 1018
+* Overfit test.
+* Inner wall and door. 
+* Increased ep to 50e6.
+* Rest comparable to 1017. 
+* Terminated after 20e6 ep.
+
+## 1019
+* More steps per ep allowed. 25000 instead of 5000.
+* Overfit test.
+* Same as 1018 otherwise.
+
+## 1020
+* Same as 1019 but fewer steps.
+* Overfit test.
+* When does the run converge to 1?
+
+## 1021
+* Overfit test.
+* Beta increased.
+* Steps per ep. reduced back to 5k.
+
+## 1022 and more
+* Overfit tests.
+* Learning rate and schedule
+* beta and schedule 
+* Only for 1e6 steps
+* Env: Fixed door, agent and target.
+
+## 1060
+* Terminated. Error in Unity.
+
+## 1061
+* Collision handling changed. Collision between agent and other object does not end ep.
+* Simple run with basic config.
+* Overfit test.
+* Converged towards -1. Hit always the ep. max step limit.
+
+## 1062
+* Change to reward function. Not every step punished.
+
+## 1063
+* Increased maxstep per ep to 25k.
+* Every step punished.
+* Problem with position check? Implausible position may be plausible ...
+
+## 1064
+* Position check of the agent removed. 
+* In theory the agent should not be able to leave the training area. 
+* Terminated.
+
+## 1065
+* Collision problems. The agent clips through contact points of the walls.
+* Still part of overfit test.
+
+## 1066
+* Reward function: + for better distance, otherwise -.
+* 5k max steps per ep.
+
+## 1067
+* Reward function: Punish more distance -0.15 and reward less dist to target with 0.1.
+* Looks good.
+
+## 1068
+* Random door. Rest same as 1067.
+* Reward based on distance.
+* Looks good.
+
+## 1069
+* Door and wall random.
+* Agent and target position fixed.
+
+## 1070
+* Build.
+* Slight change in collision punishment. Stay collision more punished.
+
+## 1071
+* Slightly varied agent position.
+
+## 1072
+* Target pos not fixed.
+* Code error with pos handling of agent.
+
+## 1073
+* Reset the agent on every ep begin.
+* Previously: Agent reset only under given circumstances but due to change in collision handling problem.
+* Uses build.
+
+## 1074
+* 10e6 ep.
+* Same as 1073.
+* Does it converge?
+* Editor run, for visual observation by user.
+* After every episode agent reset to first room.
+* Ep. end after maxStep reached or target found.
+
+## 1075
+* 50e6 ep.
+* Same as 1073 and 1074.
+
+## 1076
+* Shorter test with new decoy.
+* Build used.
+* Terminated. Very high cumulative rewards initially.
+* Forgot training areas.
+
+## 1077
+* Rerun of 1076 with more areas.
+* No build.
+* Terminated. One agent too few maxsteps.
+
+## 1078
+* Rerun of 1077.
+
+## 1079
+* Test --initialize-from=<run-identifier> option of ml-agents.
+* New option introduced to python code.
+* Run ids now shortend.
+* Terminated code error in python. Was not using the result of 1078.
+
+## 1080
+* Rerun 1079 with code fix.
+* Terminal inidcated correct initial usage of previous results from run 1078.
+* 20e6 steps.
+
+## 1081
+* Buffer size increased. Should help stability. Maybe even help speed if more training areas are used?
+* Slight change to reward function. +0.1 in case of rotation to encourage rotation.
+* Run uses the NN from 1079.
+* Terminated. Wrong NN as basis.
+
+## 1082
+* Rerun of 1081 with NN from 1080 as basis.
+* Slight change in reward (+ for rotation) did not improve result.
+  * Question: Completly retraining from ground up for NN requiered to see changes?
+
+## 1083
+* Reward function test.
+* Reward based on Matignon et al.
+* Problem: No idea what the convergence target is.
+* 40e6 steps to get first impression.
+* How is the the reward function handling movements forwards and backwards?
+* Reminder: Buffer size was increased for run 1081.
+
+## 1084
+* Rerun 1083 but with 60e6 steps.
+* Result not good. Very unstable learning process.
+
+## 1085
+* Test simple reward function.
+* Negative reward for collisions increased.
+* First run with 25e6 steps to get feel for config.
+* Using build.
+* Result was strange. Reward for rotation may be too large.
+* Developed strategy was to simply rotate until max limit was reached.
+* Terminated.
+
+## 1086
+* Reward change. Now +0.05 for rotation.
+* Otherwise rerun of 1085.
+* Remark: Reward for rotation maybe stupid.
+
+## 1087 - 1090
+* Python code tests. Can be ignored.
+
+## 1091
+* Reward function does ignore rotation.
+* Strange result. Was unstable until the end.
+* Ep length did not decrease.
+* Reward function to blame?
+
+## 1092
+* Reward structured very similar to 1073.
+  * -0.5 and -0.3 for collisions.
+  * But more punishment for step back. Dist to target increased result in more punischment. Too much?
+* 10e6 again.
+* Possible problem? C# code changes may cause issues with learning process. Ending of the ep was changed. Check this!
+
+## 1093
+* Switch of target (and decoy) to other room enabled.
+* Switch happens if target was reached by the agent.
+* Reward structure same as 1073.
+
+## 1094
+* Change agent pos on every episode begin. 
+* Not really much information from this run.
+
+## 1095
+* Editor run for test.
+* Target and decoy now take distance to eachother and distance to door into account.
+  * Aim is to mitigate instance where the docy blocks the door or the target is too close to the door.
+* Agent is randomly in one room positioned.
+* Pos of agent is reset on every ep begin.
+  * Maybe a change to this is not requiered?
+* Terminated.
+
+## 1096 and 1097
+* Python tests.
+
+## 1098
+* Continue with 1095 training. But longer and complete restart.
+* Build used.
+* Fixes door isses when using multiple training areas.
+* Python produces now summary even if terminated by keyboard interrupt.
+* Ok result.
+
+## 1099
+* Uses 1098 NN as basis.
+* Continued training.
+* Result: NN was meh.
+
+## 1100
+* Revised reward function. Encourage rotation with +0.01.
+* Result was ... interesting. The reward function with reward for rotation is questionable. 
+
+## 1101
+* Drone can take multiple actions per step.
+* Reverted back to basic reward function.
+
+## 1102
+* Wrong reward function selected.
+* Process very unstable.
+
+## 1103
+* Basic reward function selected.
+* Build.
+* Terminated: Unity clipping issue needs resolving.
+
+## 1104
+* Editor.
+* Movement of the agent changed to rigidbody.AddForce.
+* Test run.
+* AddForce maybe problematic?
+
+## 1105
+* Build.
+* Continues 1104.
+* Again terminated. More work on the movement needed. Rotation makes problems. 
+
+## 1106
+* Rigidbody rotation introduced.
+* ComplexDist reward function.
+* Run in the editor for visual supervision.
+* Terminated because run was based on previous nn.
+
+## 1107
+* Rerun of 1106.
+* Shit.
+
+## 1108
+* One action per step. Validate new movement functions.
+* Basic reward. Was correctly set?
+* Make commit in the morning.
+* Terminated: Reward structure not as expected.
+
+## 1109
+* Short run in the editor.
+
+## 1110
+* Ml-agents error.
+
+## 1111
+* Error. Nor clear.
+
+## 1112
+* Rerun of 1109.
+* Öhm, reward was previously too high? Why is the difference so high between 1110 and 1112? What changed?
+  * The penalties for the collisions?
+
+## 1113
+* Reward function set to only take the collisions in to account.
+* No movement of the agent?
+
+## ...
+* No agent movement. Issue.
+
+## 1115
+* Test again with basic reward.
+
+## 1116 until 1118
+* Done sleepy.
+* Fix problem with tag.
+* Checkpoint in the door introduced with +1 on first trigger and -0.2 on subsequent triggers.
+* Reward only based on collisions and contacts with objects.
+
+## 1119
+* Layer fixed of the checkpoint.
+* Test run.
+
+## 1120
+* Based on the NN of 1119.
+* 100e6 steps but basd on 1119.
+* Idea: Lets see how we are doing with this reward function incl. checkpoint at the door.
+* Result was disappointing. Is the switch between the rooms too difficult?
+
+## 1121
+* Curiosity test.
+* Build. 
+* Strength of curiosity?
+* Interrupted. Wrong reward.
+
+## 1122
+* Reward set to sparse.
+* Again curiosty test, same as 1121.
+* Result: Shit. Not stable learning.
+
+## Next
+* Reward without distance. Only collision. Punish each step.
+* Staged process. 
+  * First: Train only with the target and no decoy.
+  * Next: Introduce the decoy.
+* Think about the staged process again!
+

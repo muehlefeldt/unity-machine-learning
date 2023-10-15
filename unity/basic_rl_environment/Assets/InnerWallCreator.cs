@@ -1,28 +1,22 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 public class InnerWallCreator : MonoBehaviour
 {
     public Floor floor;
     private List<GameObject> m_GameObjects = new List<GameObject>();
-    public GameObject wallParent;
     private Material m_WallMaterial;
-
+    
     private void Start()
     {
-        wallParent = new GameObject();
-        wallParent.transform.SetParent(floor.transform);
-        wallParent.transform.localPosition = Vector3.zero;
-        //newCube.transform.parent = emptyGameObject.transform;
         m_WallMaterial = Resources.Load<Material>("WallMaterial");
     }
-
+    
+    /// <summary>
+    /// Create part of the wall. Creates one single cube.
+    /// </summary>
+    /// <param name="coordStartWall"></param>
+    /// <param name="coordEndWall"></param>
     private void CreateWall(Vector3 coordStartWall, Vector3 coordEndWall)
     {
         var between = coordEndWall - coordStartWall;
@@ -33,33 +27,37 @@ public class InnerWallCreator : MonoBehaviour
         newCube.transform.localScale = new Vector3(dist, 2f, 0.1f);
         var position = coordStartWall + (between / 2);
         position.y = 1f;
-        newCube.transform.localPosition = position;
+        newCube.transform.position = position;
         //SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
 
-    public float m_DoorWidth = 1.5f;
+    //public float m_DoorWidth = 3.0f;
     private float m_DoorFrameHeight = 0.5f;
 
-    private Vector3 CreateDoor(Vector3 coordDoor)
+    private void CreateDoor((Vector3, Vector3) doorCoords)
     {
-        var coordStart = coordDoor;
+        /*var coordStart = coordDoor;
         var coordEnd = coordDoor;
-        coordEnd.x -= m_DoorWidth;
+        coordEnd.x -= m_DoorWidth;*/
 
-        var between = coordEnd - coordStart;
-        var dist = Vector3.Distance(coordStart, coordEnd);
+        var between = doorCoords.Item1 - doorCoords.Item2;
+        var dist = Vector3.Distance(doorCoords.Item1, doorCoords.Item2);
 
         var newCube = CreateNewCube();
 
         newCube.transform.localScale = new Vector3(dist, m_DoorFrameHeight, 0.1f);
 
-        var position = coordStart + (between / 2);
+        var position = doorCoords.Item1 - (between / 2);
         position.y = 1.75f;
-        newCube.transform.localPosition = position;
+        newCube.transform.position = position;
         m_GameObjects.Add(newCube);
 
-        return coordEnd;
+        var checkpoint = CreateNewCheckpoint();
+        checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameHeight, 0.1f);
+        position.y = 0.75f;
+        checkpoint.transform.position = position;
+        m_GameObjects.Add(checkpoint);
     }
 
     /// <summary>
@@ -69,22 +67,35 @@ public class InnerWallCreator : MonoBehaviour
     private GameObject CreateNewCube()
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newCube.transform.parent = wallParent.transform;
+        newCube.transform.parent = transform;
+        newCube.tag = "innerWall";
         SetMaterial(newCube);
         SetCollider(newCube);
         return newCube;
     }
-
-    public void CreateWallWithDoor(Vector3 coordDoor, Vector3 coordStart, Vector3 coordEnd)
+    
+    private GameObject CreateNewCheckpoint()
+    {
+        var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        newCube.transform.parent = transform;
+        newCube.GetComponent<Collider>().isTrigger = true;
+        newCube.layer = 2;
+        return newCube;
+    }
+    
+    public void CreateWallWithDoor((Vector3, Vector3) wallCoords, (Vector3, Vector3) doorCoords)
     {
         //wallParent.transform.InverseTransformPoint()
-        coordDoor = wallParent.transform.InverseTransformPoint(coordDoor);
-        coordStart = wallParent.transform.InverseTransformPoint(coordStart);
-        coordEnd = wallParent.transform.InverseTransformPoint(coordEnd);
-
-        CreateWall(coordStart, coordDoor);
-        var coordEndDoor = CreateDoor(coordDoor);
-        CreateWall(coordEndDoor, coordEnd);
+        // coordDoor = wallParent.transform.InverseTransformPoint(coordDoor);
+        // coordStart = wallParent.transform.InverseTransformPoint(coordStart);
+        // coordEnd = wallParent.transform.InverseTransformPoint(coordEnd);
+        
+        //var coordEndDoor = CreateDoor(doorCoords);
+        
+        CreateWall(wallCoords.Item1, doorCoords.Item1);
+        CreateDoor(doorCoords);
+        CreateWall(doorCoords.Item2, wallCoords.Item2);
+        //CreateWall(doorCoords.Item2, wallCoords.Item2);
     }
 
     /// <summary>
@@ -115,6 +126,6 @@ public class InnerWallCreator : MonoBehaviour
     private void SetCollider(GameObject obj)
     {
         //obj.transform.parent = wallParent.transform;
-        obj.GetComponent<Collider>().isTrigger = true;
+        //obj.GetComponent<Collider>().isTrigger = true;
     }
 }

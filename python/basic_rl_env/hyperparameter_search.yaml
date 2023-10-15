@@ -1,14 +1,10 @@
+# Default values for userconfig. All bool values set to true.
+
 userconfig:
-  # Use build env? false for editor.
-  build: true
+  # Use build env? Set false for run using the unity editor.
+  build: false
 
-  # Specify number of parallel env to use.
-  num_env: 1
-
-  # Number of parallel processes.
-  num_process: 1
-
-  # Production mode? false for test run.
+  # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
 
   # "true" to generate summary file.
@@ -17,26 +13,40 @@ userconfig:
   # Set to false to delete all files after the programm finishes.
   keep_files: true
 
-  # Provide message for the log file for better traceability.
-  message: "Num layer and curiosity. Plus more steps."
+  # Initialize from existing previous run.
+  not_based_on_previous_nn: true
 
+  # Provide run id of previous NN to be used for new run.
+  previous_run_id: 1119
+
+  # Specify number of parallel env to use.
+  num_env: 1
+
+  # Number of parallel processes.
+  num_process: 1
+
+  # Provide message for the log file for better traceability.
+  message: "Continue with decoy training."
+
+# ML-Agents configuration.
 behaviors:
   RollerAgent:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 10e6
+    max_steps: 30e6
     time_horizon: 1000
     summary_freq: 10000
 
     hyperparameters:
       # Common Trainer Configurations.
       batch_size: 512
-      buffer_size: 102400
+      buffer_size: 204800
       learning_rate: 1e-3
       learning_rate_schedule: linear
 
       # PPO-specific Configurations.
+      #beta: 0.0025
       beta: 0.0025
       epsilon: 0.2
       lambd: 0.95
@@ -45,8 +55,8 @@ behaviors:
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
-      hidden_units: 1024
-      num_layers: 2
+      hidden_units: 512
+      num_layers: 1
       memory:
         memory_size: 128
         sequence_length: 64
@@ -56,9 +66,13 @@ behaviors:
         gamma: 0.99
         strength: 1.0
       curiosity:
-        strength: 0.5
+        strength: 1.0
         gamma: 0.99
         learning_rate: 3e-4
         network_settings: 
-          hidden_units: 512
+          hidden_units: 128
+      
+    
+
+
     

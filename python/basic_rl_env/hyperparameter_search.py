@@ -172,72 +172,82 @@ def commence_mlagents_run(run_info: dict) -> dict:
     """Commence a ML-Agents run using the configuration provided in the dict."""
     # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
     run_id = run_info["run_id"]
-    production = run_info["userconfig"]["production"]
 
     # Location of the config file saved to run info.
     run_info["config_file"] = f"{run_info['paths']['configs_dir']}/{run_id}.yaml"
 
     # Save modified config as yaml file.
-    if production:
+    if run_info["userconfig"]["production"]:
         with open(Path(run_info["config_file"]).absolute(), mode="w", encoding="utf8") as new_file:
             yaml.dump(run_info["run_config"], new_file)
 
         return_code = 0
-        run_name = f"{run_id}_basicenv_ppo_auto"
+        run_name = f"{run_id}"
 
         # Start ml-algents training using build version of unity.
         start_time = time.time()
 
-        # Do we use a build environment?
-        if run_info["userconfig"]["build"]:
-            # Run ml-agents with pre build unity environemnts.
-            try:
-                subprocess.run(
-                    [
-                        "mlagents-learn",
-                        f"{Path(run_info['config_file']).absolute()}",
-                        f"--env={run_info['paths']['unity_env']}",
-                        f"--run-id={run_name}",
-                        f"--num-envs={run_info['userconfig']['num_env']}",
-                        f"--base-port={run_info['base_port']}",
-                        "--no-graphics",
-                        "--torch-device",
-                        "cpu",
-                        "--force",
-                    ],
-                    shell=True,
-                    check=True,
+        # Construct the ml-agents arguments to be called through subprocess.
+        ml_agents_arguments = []
+        if run_info["userconfig"]["build"]:  # Run ml-agents with pre build unity environemnts.
+            ml_agents_arguments = [
+                "mlagents-learn",
+                f"{Path(run_info['config_file']).absolute()}",
+                f"--env={run_info['paths']['unity_env']}",
+                f"--run-id={run_name}",
+                f"--num-envs={run_info['userconfig']['num_env']}",
+                f"--base-port={run_info['base_port']}",
+                "--no-graphics",
+                "--torch-device",
+                "cpu",
+                "--force",
+            ]
+            # Is the run based on the result (nn) of a previous run?
+            if not run_info["userconfig"]["not_based_on_previous_nn"]:
+                ml_agents_arguments.append(
+                    f"--initialize-from={run_info['userconfig']['previous_run_id']}"
                 )
-            except subprocess.SubprocessError as err:
-                run_info["error"] = True
-                run_info["error_msg"] = str(err)
 
-        # If we do not use a build environment, interaction with the unity editor is needed.
-        else:
-            # Run mlagents with the unity editor.
-            try:
-                subprocess.run(
-                    [
-                        "mlagents-learn",
-                        f"{Path(run_info['config_file']).absolute()}",
-                        f"--run-id={run_name}",
-                        "--torch-device",
-                        "cpu",
-                        "--force",
-                    ],
-                    shell=True,
-                    check=True,
+        else:  # Run mlagents with the unity editor.
+            # If we do not use a build environment, interaction with the unity editor is needed.
+            ml_agents_arguments = [
+                "mlagents-learn",
+                f"{Path(run_info['config_file']).absolute()}",
+                f"--run-id={run_name}",
+                "--torch-device",
+                "cpu",
+                "--force",
+            ]
+            # Is the run based on the result (nn) of a previous run?
+            if not run_info["userconfig"]["not_based_on_previous_nn"]:
+                ml_agents_arguments.append(
+                    f"--initialize-from={run_info['userconfig']['previous_run_id']}"
                 )
-            except subprocess.SubprocessError as err:
-                run_info["error"] = True
-                run_info["error_msg"] = str(err)
+
+        # Execute ml-agents in a separate process.
+        try:
+            process_result: subprocess.CompletedProcess = subprocess.run(
+                ml_agents_arguments,
+                shell=True,
+                check=True,
+            )
+        except subprocess.CalledProcessError as err:
+            run_info["error"] = True
+            run_info["error_msg"] = str(err)
+
+        except KeyboardInterrupt:
+            run_info["keyboard_interrupt"] = True
 
         # Update the dict containing run infos.
         # Stores the directory path needed for possible delete of created files.
         run_info["duration"] = time.time() - start_time
-        run_info["return_code"] = return_code
+        # run_info["return_code"] = process_result.returncode
         run_info["run_name"] = run_name
         run_info["result_dir"] = f"{run_info['paths']['results_dir']}/{run_name}"
+
+    else:  # Not production
+        run_info["error"] = True
+        run_info["error_msg"] = "Not production mode."
 
     return run_info
 
@@ -245,34 +255,30 @@ def commence_mlagents_run(run_info: dict) -> dict:
 def check_userconfig():
     """Check userconfig in the configuration yaml file for content and datatypes."""
 
+    # Userconfig contains all custom settings.
     if not "userconfig" in config:
         raise ValueError
 
+    # Provide here key and type of the provided value in the yaml.
+    # Given as (key, type of value).
     keys_to_lookup = [
-        "build",
-        "production",
-        "summary",
-        "num_env",
-        "num_process",
-        "message",
-        "keep_files",
+        ("build", bool),
+        ("production", bool),
+        ("summary", bool),
+        ("num_env", int),
+        ("num_process", int),
+        ("message", str),
+        ("keep_files", bool),
+        ("not_based_on_previous_nn", bool),
+        ("previous_run_id", int),
     ]
-    for key in keys_to_lookup:
-        if not key in config["userconfig"]:
-            raise ValueError
 
-    keys_bool_values = ["build", "production", "summary", "keep_files"]
-    for key in keys_bool_values:
-        if not isinstance(config["userconfig"][key], bool):
+    # Are keys and types of the specified value present?
+    for combo in keys_to_lookup:
+        if not combo[0] in config["userconfig"]:
             raise ValueError
-
-    keys_int_values = ["num_env", "num_process"]
-    for key in keys_int_values:
-        if not isinstance(config["userconfig"][key], int) or config["userconfig"][key] < 1:
+        if not isinstance(config["userconfig"][combo[0]], combo[1]):
             raise ValueError
-
-    if not isinstance(config["userconfig"]["message"], str):
-        raise ValueError
 
     return
 
@@ -345,6 +351,8 @@ def check_directories():
 def remove_run_files_log(summary_list: list[dict]):
     """Delete files that have been created. Main purpose is to minimise number of irrelevant run id.
     Especially useful during debug runs. Set appropiate option in config file."""
+    if summary_list == [{}]:
+        return
 
     # Remove files created during mlagents-learn runs. Config file of each run and the directory
     # in the results directory.
@@ -440,6 +448,8 @@ if __name__ == "__main__":
     summary = [{}]
     if not userconfig["build"]:
         summary = list(map(commence_mlagents_run, combinations))
+    # elif userconfig["num_process"] == 1:
+    #    # Todo
     else:
         # Perform actual calculations using ml-agents distributed over a number of processes.
         with Pool(
@@ -450,7 +460,7 @@ if __name__ == "__main__":
             try:
                 summary = p.map(commence_mlagents_run, combinations)
             except KeyboardInterrupt:
-                print("Done.")
+                print("User interreupt.")
 
     if generate_summary:
         create_summary_file(summary)

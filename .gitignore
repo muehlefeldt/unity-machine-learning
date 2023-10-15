@@ -2,14 +2,16 @@ results/
 logs/
 configs/
 summaries/
+demonstrations/
 *_build/
 *.zip
 *.pdf
 current.yaml
 notebooks/data
 
-*.onnx
 *.onnx.meta
+*.onnx
+*.mp4
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -140,5 +142,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-*.mp4
