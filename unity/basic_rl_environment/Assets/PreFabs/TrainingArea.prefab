@@ -470,14 +470,14 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 1000
   floor: {fileID: 5324353083616000953}
   m_MaxDist: 0
   m_DistToTarget: 0
   m_DistToTargetNormal: 0
   forceMultiplier: 10
   sensorCount: 4
-  rewardFunctionSelect: 4
+  rewardFunctionSelect: 5
   actionCount: 0
   currentReward: 0
 --- !u!114 &5324353081925522769

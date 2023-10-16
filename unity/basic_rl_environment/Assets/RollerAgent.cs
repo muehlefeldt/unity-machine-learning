@@ -472,7 +472,8 @@ public class RollerAgent : Agent
         /// <summary>
         /// Sparse reward. Punish each step and reward target found. Punish all other contacts.
         /// </summary>
-        Sparse
+        Sparse,
+        Experiment
         
     }
 
@@ -526,6 +527,15 @@ public class RollerAgent : Agent
         {
             return -1f / MaxStep;
         }
+
+        if (rewardFunctionSelect == RewardFunction.Experiment)
+        {
+            var beta = 0.5f;
+            var omega = 0.3f;
+            var x = m_DistToTargetNormal;
+            currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
+            return currentReward;
+        }
         
         return 0f;
     }
@@ -538,7 +548,7 @@ public class RollerAgent : Agent
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint || rewardFunctionSelect == RewardFunction.Sparse)
+        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint || rewardFunctionSelect == RewardFunction.Sparse  || rewardFunctionSelect == RewardFunction.Experiment)
         {
             if (m_DoorPassages < 10)
             {
@@ -589,7 +599,7 @@ public class RollerAgent : Agent
             }
             
         }
-        else if (rewardFunctionSelect == RewardFunction.Sparse)
+        else if (rewardFunctionSelect == RewardFunction.Sparse || rewardFunctionSelect == RewardFunction.Experiment)
         {
             if (other.gameObject.CompareTag("door"))
             {
@@ -635,7 +645,7 @@ public class RollerAgent : Agent
             }
             
         }
-        else if (rewardFunctionSelect == RewardFunction.Sparse)
+        else if (rewardFunctionSelect == RewardFunction.Sparse || rewardFunctionSelect == RewardFunction.Experiment)
         {
             if (other.gameObject.CompareTag("door"))
             {
