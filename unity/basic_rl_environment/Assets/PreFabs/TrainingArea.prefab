@@ -665,7 +665,7 @@ MonoBehaviour:
   agent: {fileID: 5324353081925522770}
   target: {fileID: 1515308257171817040}
   useDecoy: 0
-  doorWidth: 2
+  doorWidth: 4
   CreateWall: 1
   RandomWallPosition: 1
   RanndomDoorPosition: 1

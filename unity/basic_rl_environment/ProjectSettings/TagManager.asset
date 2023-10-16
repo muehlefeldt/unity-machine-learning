@@ -8,6 +8,7 @@ TagManager:
   - targets
   - decoys
   - innerWall
+  - door
   layers:
   - Default
   - TransparentFX

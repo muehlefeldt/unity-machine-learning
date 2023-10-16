@@ -6,10 +6,14 @@ public class InnerWallCreator : MonoBehaviour
     public Floor floor;
     private List<GameObject> m_GameObjects = new List<GameObject>();
     private Material m_WallMaterial;
+    private Material m_FrameMaterial;
+    private Material m_CheckpointMaterial;
     
     private void Start()
     {
         m_WallMaterial = Resources.Load<Material>("WallMaterial");
+        m_FrameMaterial = Resources.Load<Material>("FrameMaterial");
+        m_CheckpointMaterial = Resources.Load<Material>("CheckpointMaterial");
     }
     
     /// <summary>
@@ -19,6 +23,8 @@ public class InnerWallCreator : MonoBehaviour
     /// <param name="coordEndWall"></param>
     private void CreateWall(Vector3 coordStartWall, Vector3 coordEndWall)
     {
+        //coordStartWall.x -= m_DoorFrameWidth;
+        //coordEndWall.x -= m_DoorFrameWidth;
         var between = coordEndWall - coordStartWall;
         var dist = Vector3.Distance(coordStartWall, coordEndWall);
 
@@ -33,7 +39,7 @@ public class InnerWallCreator : MonoBehaviour
     }
 
     //public float m_DoorWidth = 3.0f;
-    private float m_DoorFrameHeight = 0.5f;
+    private float m_DoorFrameWidth = 0.5f;
 
     private void CreateDoor((Vector3, Vector3) doorCoords)
     {
@@ -44,19 +50,40 @@ public class InnerWallCreator : MonoBehaviour
         var between = doorCoords.Item1 - doorCoords.Item2;
         var dist = Vector3.Distance(doorCoords.Item1, doorCoords.Item2);
 
-        var newCube = CreateNewCube();
+        var pos = doorCoords.Item1;
+        pos.x = pos.x + (m_DoorFrameWidth / 2);
+        pos.y = 1f;
+        //pos.x += 1f;
+        var locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
+        CreateFrameObject(this.transform, pos, locScale);
+        
+        pos = doorCoords.Item2;
+        pos.x = pos.x - (m_DoorFrameWidth / 2);
+        pos.y = 1f;
+        //pos.x += 1f;
+        locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
+        CreateFrameObject(this.transform, pos, locScale);
 
-        newCube.transform.localScale = new Vector3(dist, m_DoorFrameHeight, 0.1f);
 
-        var position = doorCoords.Item1 - (between / 2);
-        position.y = 1.75f;
-        newCube.transform.position = position;
-        m_GameObjects.Add(newCube);
+        var passageCoordStart = doorCoords.Item1;
+        passageCoordStart.x += m_DoorFrameWidth;
+        var passageCoordEnd = doorCoords.Item2;
+        passageCoordEnd.x -= m_DoorFrameWidth;
+
+        dist = Vector3.Distance(passageCoordStart, passageCoordEnd);
+        
+        //var newCube = CreateNewCube();
+        locScale = new Vector3(dist, m_DoorFrameWidth, 0.1f);
+        pos = doorCoords.Item1 - (between / 2);
+        pos.y = 1.75f;
+        //newCube.transform.position = position;
+        //m_GameObjects.Add(newCube);
+        CreateFrameObject(this.transform, pos, locScale);
 
         var checkpoint = CreateNewCheckpoint();
-        checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameHeight, 0.1f);
-        position.y = 0.75f;
-        checkpoint.transform.position = position;
+        checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameWidth, 0.1f);
+        pos.y = 0.75f;
+        checkpoint.transform.position = pos;
         m_GameObjects.Add(checkpoint);
     }
 
@@ -74,12 +101,26 @@ public class InnerWallCreator : MonoBehaviour
         return newCube;
     }
     
+    private void CreateFrameObject(UnityEngine.Transform parent, Vector3 position, Vector3 localScale)
+    {
+        var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        newCube.transform.position = position;
+        newCube.transform.localScale = localScale;
+        newCube.transform.parent = parent;
+        newCube.tag = "door";
+        newCube.name = "Frame";
+        newCube.GetComponent<Renderer>().material = m_FrameMaterial;
+        //SetCollider(newCube);
+        m_GameObjects.Add(newCube);
+    }
+    
     private GameObject CreateNewCheckpoint()
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         newCube.transform.parent = transform;
         newCube.GetComponent<Collider>().isTrigger = true;
         newCube.layer = 2;
+        newCube.GetComponent<Renderer>().material = m_CheckpointMaterial;
         return newCube;
     }
     

@@ -124,7 +124,7 @@ public class RollerAgent : Agent
     private EpEndReasons m_EndReason = EpEndReasons.None;
     public override void OnEpisodeBegin()
     {
-        doorreached = false;
+        m_DoorPassages = 0;
         actionCount = 0;
         floor.Prepare();
         floor.CreateInnerWall();
@@ -497,19 +497,13 @@ public class RollerAgent : Agent
         if (rewardFunctionSelect == RewardFunction.SimpleDist)
         {
             var reward = 0f;
-            // Do not punish rotation.
-            //if (action > 6)
-            //{
-            //    reward = 0.05f;
-            //}
-
-            /*else*/ if (m_LastDistToTarget > m_DistToTarget)
+            if (m_LastDistToTarget > m_DistToTarget)
             {
-                reward = 0.8f;
+                reward = 0.01f;
             }
             //else if (action > 6) reward = 0.01f;
             
-            else reward = -1f;
+            else reward = -0.02f;
 
             return reward; //+ (-1f / MaxStep);
         }
@@ -537,26 +531,34 @@ public class RollerAgent : Agent
     }
     
     
-    private bool doorreached;
+    private int m_DoorPassages;
     /// <summary>
     /// Trigger is given by contact of the agent with the door.
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
+        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint || rewardFunctionSelect == RewardFunction.Sparse)
         {
-
-            if (!doorreached)
+            if (m_DoorPassages < 10)
             {
-                AddReward(1f);
-                doorreached = true;
-                Debug.Log("Door +1");
+                if (m_DoorPassages % 2 == 0)
+                {
+                    AddReward(0.5f);
+                    Debug.Log("Door passed +0.5f");
+                    m_DoorPassages++;
+                }
+                else
+                {
+                    AddReward(-0.5f);
+                    Debug.Log("Door passed -0.5f");
+                    m_DoorPassages++;
+                }
             }
             else
             {
-                AddReward(-0.2f);
-                Debug.Log("Door -0.2");
+                AddReward(-1f);
+                Debug.Log("Door passed -1f");
             }
         }
     }
@@ -588,6 +590,17 @@ public class RollerAgent : Agent
             
         }
         else if (rewardFunctionSelect == RewardFunction.Sparse)
+        {
+            if (other.gameObject.CompareTag("door"))
+            {
+                AddReward(-0.2f);
+            }
+            else
+            {
+                AddReward(-0.5f);
+            }
+        }
+        else if (rewardFunctionSelect == RewardFunction.SimpleDist)
         {
             AddReward(-0.5f);
         }
@@ -623,6 +636,17 @@ public class RollerAgent : Agent
             
         }
         else if (rewardFunctionSelect == RewardFunction.Sparse)
+        {
+            if (other.gameObject.CompareTag("door"))
+            {
+                AddReward(-0.05f);
+            }
+            else
+            {
+                AddReward(-0.1f);
+            }
+        }
+        else if (rewardFunctionSelect == RewardFunction.SimpleDist)
         {
             AddReward(-0.1f);
         }

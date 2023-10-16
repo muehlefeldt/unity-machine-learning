@@ -664,15 +664,28 @@ learning rate changes to reward signifcant?
 * Result: Shit. Not stable learning.
 
 ## 1123
-* Reward without distance. Only collision punished. Punish each step. +1 For target reached.
+* Reward without distance. Only collision punished. Punish each step. +1 For target reached. Sparse reward function.
 * Staged process. 
   * First: Train only with the target and no decoy.
 * No curiosty.
 * First part in editor. Check for problems with changed decoy deployment.
-* Terminated. Heuristic was still set in area 1.
+* Heuristic was still set in area 1.
+* Disappointing result.
 
 ## 1124
-* Run of 1123 but mode fixed.
+* Short run.
+* Test 
+
+## 1125 and 1126
+* Test in editor. Only to check door and frame placement.
+* Door frame introduced.
+  * Allows granular reward giving through different tags on the objects.
+
+## 1127
+* Sparse reward function gives reward for door passage. 0.5 for correct direction and -0.5 for incorrect direction of passage.
+  * After 10 passages -1 given to discourage multiple passages.
+* Test with build.
+
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
