@@ -473,6 +473,11 @@ public class RollerAgent : Agent
         /// Sparse reward. Punish each step and reward target found. Punish all other contacts.
         /// </summary>
         Sparse,
+        /// <summary>
+        /// Experiment reward function. Used to test different approaches.
+        /// Combines now: Collision penalty. Reduced penalty for door collisions.
+        /// Every step receives distance based reward based on Matignon et al.
+        /// </summary>
         Experiment
         
     }
@@ -530,7 +535,7 @@ public class RollerAgent : Agent
 
         if (rewardFunctionSelect == RewardFunction.Experiment)
         {
-            var beta = 0.2f;
+            var beta = 0.4f;
             var omega = 0.3f;
             var x = m_DistToTargetNormal;
             currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
@@ -548,7 +553,7 @@ public class RollerAgent : Agent
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint || rewardFunctionSelect == RewardFunction.Sparse  || rewardFunctionSelect == RewardFunction.Experiment)
+        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse or RewardFunction.Experiment)
         {
             if (m_DoorPassages < 10)
             {
@@ -556,14 +561,13 @@ public class RollerAgent : Agent
                 {
                     AddReward(0.5f);
                     Debug.Log("Door passed +0.5f");
-                    m_DoorPassages++;
                 }
                 else
                 {
                     AddReward(-0.5f);
                     Debug.Log("Door passed -0.5f");
-                    m_DoorPassages++;
                 }
+                m_DoorPassages++;
             }
             else
             {
@@ -580,7 +584,7 @@ public class RollerAgent : Agent
     {
         m_LastCollision = transform.position; // Used for Gizmos.
         
-        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
+        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint)
         {
             if (other.gameObject.CompareTag("innerWall"))
             {
@@ -599,12 +603,14 @@ public class RollerAgent : Agent
             }
             
         }
-        else if (rewardFunctionSelect == RewardFunction.Sparse || rewardFunctionSelect == RewardFunction.Experiment)
+        else if (rewardFunctionSelect is RewardFunction.Sparse or RewardFunction.Experiment)
         {
+            // On collision with door give separate reward.
             if (other.gameObject.CompareTag("door"))
             {
                 AddReward(-0.2f);
             }
+            // All other collisions: Ceiling, floor, walls.
             else
             {
                 AddReward(-0.5f);
@@ -645,7 +651,7 @@ public class RollerAgent : Agent
             }
             
         }
-        else if (rewardFunctionSelect == RewardFunction.Sparse || rewardFunctionSelect == RewardFunction.Experiment)
+        else if (rewardFunctionSelect is RewardFunction.Sparse or RewardFunction.Experiment)
         {
             if (other.gameObject.CompareTag("door"))
             {

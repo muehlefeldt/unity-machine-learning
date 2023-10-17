@@ -686,6 +686,16 @@ learning rate changes to reward signifcant?
   * After 10 passages -1 given to discourage multiple passages.
 * Test with build.
 
+## 1130
+* 
+
+## 1131
+* Beta set to 0.2.
+* Experiment reward function. Combine sparse collision rewards with feedback for every step.
+
+## 1132
+* Beta set to 0.4.
+* Build run with 30e6 steps.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
