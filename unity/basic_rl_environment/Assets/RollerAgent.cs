@@ -536,7 +536,7 @@ public class RollerAgent : Agent
         if (rewardFunctionSelect == RewardFunction.Experiment)
         {
             var beta = 0.4f;
-            var omega = 0.3f;
+            var omega = 0.4f;
             var x = m_DistToTargetNormal;
             currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
             return currentReward;

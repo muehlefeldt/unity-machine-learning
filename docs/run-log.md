@@ -686,6 +686,9 @@ learning rate changes to reward signifcant?
   * After 10 passages -1 given to discourage multiple passages.
 * Test with build.
 
+## 1128 - 1129
+* No clue.
+
 ## 1130
 * Experiment reward function introduced to separate new tests from existing reward functions.
   * Uses sparse reward through collisions and being close enough to the target.
@@ -701,6 +704,13 @@ learning rate changes to reward signifcant?
 ## 1132
 * Beta set to 0.4.
 * Build run with 30e6 steps.
+
+## 1133
+* Omega = 0.4 and beta = 0.4 remains.
+* Reduced number of steps. 10e6.
+* Take a detailed look at the episode length.
+* And maybe a further reduction in steps to 5e6 reasonable.
+
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
