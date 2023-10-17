@@ -687,7 +687,12 @@ learning rate changes to reward signifcant?
 * Test with build.
 
 ## 1130
-* 
+* Experiment reward function introduced to separate new tests from existing reward functions.
+  * Uses sparse reward through collisions and being close enough to the target.
+  * Also uses distance based function following Matignon et al. 
+* Short run. In editor.
+* Beta = 0.5.
+  * Question regarding beta is the interaction with sparse rewards given through collisions.
 
 ## 1131
 * Beta set to 0.2.
