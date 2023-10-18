@@ -711,6 +711,12 @@ learning rate changes to reward signifcant?
 * Take a detailed look at the episode length.
 * And maybe a further reduction in steps to 5e6 reasonable.
 
+## 1134
+* Rerun of 1133 but in editor to check more training areas.
+* Will be terminated early if behaviour of the new areas is good.
+
+## 1135
+* Rerun of 1133 in build.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
