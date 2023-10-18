@@ -719,7 +719,12 @@ learning rate changes to reward signifcant?
 
 ## 1135
 * Rerun of 1133 in build. Compare runtime against 1134.
+* Runtime was better. Comparable reward.
+* Ep length reduction still problem but there was no change to improve this.
 
+## 1136
+* Build rerun of 1133 again. Now 40 areas with prefab.
+* Check runtime and reward.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
