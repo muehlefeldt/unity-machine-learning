@@ -2,7 +2,7 @@
 
 userconfig:
   # Use build env? Set false for run using the unity editor.
-  build: false
+  build: true
 
   # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
@@ -26,7 +26,7 @@ userconfig:
   num_process: 1
 
   # Provide message for the log file for better traceability.
-  message: "Sparse reward. See log file."
+  message: "Experiment reward. See log file."
 
 # ML-Agents configuration.
 behaviors:

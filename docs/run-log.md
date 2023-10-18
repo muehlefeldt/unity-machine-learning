@@ -708,15 +708,18 @@ learning rate changes to reward signifcant?
 ## 1133
 * Omega = 0.4 and beta = 0.4 remains.
 * Reduced number of steps. 10e6.
+  * Should be sufficient to get an overview.
 * Take a detailed look at the episode length.
 * And maybe a further reduction in steps to 5e6 reasonable.
 
 ## 1134
 * Rerun of 1133 but in editor to check more training areas.
 * Will be terminated early if behaviour of the new areas is good.
+* CPU usage low?
 
 ## 1135
-* Rerun of 1133 in build.
+* Rerun of 1133 in build. Compare runtime against 1134.
+
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
