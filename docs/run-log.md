@@ -726,10 +726,15 @@ learning rate changes to reward signifcant?
 * Build rerun of 1133 again. Now 40 areas with prefab.
 * Check runtime and reward.
 * 1000 sec less needed.
+* Maybe mainly an issue of RAM usage? Who knows.
 
 ## 1137
 * Now 60 areas. Rest unchanged.
+* We now seem to hit the CPU limit.
 * Check runtime and reward.
+
+## 1138
+* Rerun but without tensorboard.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
