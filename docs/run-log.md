@@ -726,7 +726,7 @@ learning rate changes to reward signifcant?
 * Build rerun of 1133 again. Now 40 areas with prefab.
 * Check runtime and reward.
 * 1000 sec less needed.
-* Maybe mainly an issue of RAM usage? Who knows.
+* Maybe mainly an issue of RAM usage? Who knows. No, tensorboard uses a lot RAM.
 
 ## 1137
 * Now 60 areas. Rest unchanged.
@@ -734,7 +734,10 @@ learning rate changes to reward signifcant?
 * Check runtime and reward.
 
 ## 1138
-* Rerun but without tensorboard.
+* Rerun but without tensorboard running in the background.
+
+## 1139 and more
+* Number of configurations of hyperparameters.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
