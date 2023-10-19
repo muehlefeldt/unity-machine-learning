@@ -725,6 +725,11 @@ learning rate changes to reward signifcant?
 ## 1136
 * Build rerun of 1133 again. Now 40 areas with prefab.
 * Check runtime and reward.
+* 1000 sec less needed.
+
+## 1137
+* Now 60 areas. Rest unchanged.
+* Check runtime and reward.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
