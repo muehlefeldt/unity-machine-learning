@@ -736,8 +736,16 @@ learning rate changes to reward signifcant?
 ## 1138
 * Rerun but without tensorboard running in the background.
 
-## 1139 and more
+## 1139 to 1156
 * Number of configurations of hyperparameters.
+* 1149 looked nice in the summary.
+
+## 1157 and more.
+* Compare runtime against 1149. Uses the same config but more areas. Baseline config has mem size 128 and seq len 64.
+  * Now up to 100 areas. Was 60, I believe.
+  * No tensorboard running.
+* Some LSTM parameter search.
+
 
 * Next: Introduce the decoy.
 * Think about the staged process again!

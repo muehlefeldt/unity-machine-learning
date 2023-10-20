@@ -40,14 +40,14 @@ behaviors:
 
     hyperparameters:
       # Common Trainer Configurations.
-      batch_size: [256, 512]
+      batch_size: 512
       buffer_size: 204800
-      learning_rate: [1e-3, 1e-4, 1e-5]
+      learning_rate: 1e-3
       learning_rate_schedule: linear
 
       # PPO-specific Configurations.
       #beta: 0.0025
-      beta: [0.0025, 5e-3, 1e-4]
+      beta: 5e-3
       epsilon: 0.2
       lambd: 0.95
       num_epoch: 2
@@ -58,8 +58,8 @@ behaviors:
       hidden_units: 512
       num_layers: 1
       memory:
-        memory_size: 128
-        sequence_length: 64
+        memory_size: [64, 128, 256]
+        sequence_length: [32, 64, 96, 128]
       #vis_encode_type: simple
     reward_signals:
       extrinsic:
