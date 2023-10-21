@@ -746,6 +746,10 @@ learning rate changes to reward signifcant?
   * No tensorboard running.
 * Some LSTM parameter search.
 
+## 1169
+* Based on best result from 1157 ff. 
+* Similiar to 1149 but 100e6 steps.
+* Lets take a look at sunday.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
