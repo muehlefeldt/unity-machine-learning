@@ -757,6 +757,9 @@ learning rate changes to reward signifcant?
 * We should be seeing a somewhat useable result. Or not?
 ...
 
+## 1171
+* No door. Changed the reward function. But it is shit, isnt it?
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 
