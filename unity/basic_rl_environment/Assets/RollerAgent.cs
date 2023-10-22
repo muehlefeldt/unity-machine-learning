@@ -763,27 +763,31 @@ public class RollerAgent : Agent
         m_Path.Clear();
         
         var agentPosition = transform.position;
-        var doorPositions = floor.GetDoorPosition();
+        
         var targetPosition = floor.target.transform.position;
         
         // First point of the path is the agent position.
         m_Path.Add(agentPosition);
-        
-        if (agentPosition.z > targetPosition.z)
+
+        if (floor.CreateWall)
         {
-            if ((agentPosition.z > doorPositions.z) && (doorPositions.z > targetPosition.z))
+            var doorPositions = floor.GetDoorPosition();
+            if (agentPosition.z > targetPosition.z)
             {
-                m_Path.Add(doorPositions);
+                if ((agentPosition.z > doorPositions.z) && (doorPositions.z > targetPosition.z))
+                {
+                    m_Path.Add(doorPositions);
+                }
+            }
+            else
+            {
+                if ((agentPosition.z < doorPositions.z) && (doorPositions.z < targetPosition.z))
+                {
+                    m_Path.Add(doorPositions);
+                }
             }
         }
-        else
-        {
-            if ((agentPosition.z < doorPositions.z) && (doorPositions.z < targetPosition.z))
-            {
-                m_Path.Add(doorPositions);
-            }
-        }
-        
+
         // Last point of the path is the target position.
         m_Path.Add(targetPosition);
     }

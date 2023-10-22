@@ -666,7 +666,7 @@ MonoBehaviour:
   target: {fileID: 1515308257171817040}
   useDecoy: 0
   doorWidth: 4
-  CreateWall: 1
+  CreateWall: 0
   RandomWallPosition: 1
   RanndomDoorPosition: 1
   targetAlwaysInOtherRoomFromAgent: 1

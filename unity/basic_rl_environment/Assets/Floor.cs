@@ -144,17 +144,21 @@ public class Floor : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        foreach (var coord in new List<Vector3>(){m_WallStartGlobalCoord, m_WallEndGlobalCoord})
+        if (CreateWall)
         {
-            Gizmos.DrawSphere(coord, 0.3f);
-            //Handles.Label(coord, "Wall");
+            foreach (var coord in new List<Vector3>() { m_WallStartGlobalCoord, m_WallEndGlobalCoord })
+            {
+                Gizmos.DrawSphere(coord, 0.3f);
+                //Handles.Label(coord, "Wall");
+            }
+
+            foreach (var coord in new List<Vector3>()
+                         { m_DoorStartGlobalCoord, m_DoorCentreGlobalCoord, m_DoorEndGlobalCoord })
+            {
+                Gizmos.DrawWireSphere(coord, 0.3f);
+                //Handles.Label(coord, "Door");
+            }
         }
-        foreach (var coord in new List<Vector3>(){m_DoorStartGlobalCoord, m_DoorCentreGlobalCoord, m_DoorEndGlobalCoord})
-        {
-            Gizmos.DrawWireSphere(coord, 0.3f);
-            //Handles.Label(coord, "Door");
-        }
-        
     }
 
     public float GetMaxPossibleDist()
