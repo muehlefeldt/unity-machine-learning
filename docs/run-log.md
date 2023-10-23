@@ -773,6 +773,13 @@ learning rate changes to reward signifcant?
 ## 1175
 * Target no longer fixed. Otherwise same as 1173.
 
+## 1176
+* Longer run based on 1174. Terminated.
+  * Wrong previous run selected.
+
+## 1177
+* Longer run. Based on 1175.
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 
