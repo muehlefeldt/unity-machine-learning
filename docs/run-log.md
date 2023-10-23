@@ -765,6 +765,13 @@ learning rate changes to reward signifcant?
 
 ## 1173
 * We need to take one or more steps back.
+* No door and target fixed.
+
+## 1174
+* Terminated.
+
+## 1175
+* Target no longer fixed. Otherwise same as 1173.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
