@@ -2,7 +2,7 @@
 
 userconfig:
   # Use build env? Set false for run using the unity editor.
-  build: true
+  build: false
 
   # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
@@ -34,7 +34,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 5e6
+    max_steps: 2e6
     time_horizon: 1000
     summary_freq: 10000
 

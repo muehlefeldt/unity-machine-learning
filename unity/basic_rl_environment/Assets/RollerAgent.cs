@@ -541,7 +541,7 @@ public class RollerAgent : Agent
             currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
             return currentReward;*/
             //return 0.4f * m_DistToTargetNormal;
-            return 0f;
+            return -1f / MaxStep;
         }
         
         return 0f;

@@ -763,6 +763,9 @@ learning rate changes to reward signifcant?
 ## 1172
 * Do not use distance to target as reward part.
 
+## 1173
+* We need to take one or more steps back.
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 
