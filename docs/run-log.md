@@ -780,6 +780,10 @@ learning rate changes to reward signifcant?
 ## 1177
 * Longer run. Based on 1175.
 
+## 1178
+* Test run. 32 sensors.
+* Uses build. 
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 
