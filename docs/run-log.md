@@ -785,10 +785,18 @@ learning rate changes to reward signifcant?
 * Uses build. 
 
 ## 1179
+* Again a lot sensors. Same as 1178.
 * Experiment reward function: Fixed missing collision penalties.
 * Short run with build.
 * Add one single area to be used as heuristic test area.
 
+## 1180
+* Increased collision penalty.
+
+## 1181
+* End ep on collision.
+* Why is the ep length not reducing as predicted?
+* Problem with the observation size? Move the setting of the size to awake()?
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
