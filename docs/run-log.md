@@ -798,6 +798,17 @@ learning rate changes to reward signifcant?
 * Why is the ep length not reducing as predicted?
 * Problem with the observation size? Move the setting of the size to awake()?
 
+## 1182
+* Same as 1181 but with build and longer.
+
+## 1183
+* Same as 1182. With user monitoring. No build.
+* Terminated with error. Awake() and sensor input size?
+
+## 1184
+* Awake() with sensor size setting introduced.
+* Otherwise as 1183. User monitoring.
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 

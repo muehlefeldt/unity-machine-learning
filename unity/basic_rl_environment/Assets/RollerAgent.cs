@@ -45,14 +45,19 @@ public class RollerAgent : Agent
     
     private Vector3 m_LastCollision = Vector3.zero;
 
+    void Awake()
+    {
+        // Set the observation size to the requested sensor count + 2 sensors up and down.
+        GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount + 4;
+    }
+    
     // Is called before the first frame update
     //public override void Initialize() {
     public void Start() {
         m_RBody = GetComponent<Rigidbody>();
         m_SensorDirections = GetSensorDirections();
         
-        // Set the observation size to the requested sensor count + 2 sensors up and down.
-        GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount + 4;
+        
     }
 
     private List<Vector3> GetSensorDirections()
