@@ -784,6 +784,12 @@ learning rate changes to reward signifcant?
 * Test run. 32 sensors.
 * Uses build. 
 
+## 1179
+* Experiment reward function: Fixed missing collision penalties.
+* Short run with build.
+* Add one single area to be used as heuristic test area.
+
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 

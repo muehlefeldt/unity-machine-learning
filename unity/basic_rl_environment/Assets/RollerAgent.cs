@@ -608,7 +608,7 @@ public class RollerAgent : Agent
         else if (rewardFunctionSelect is RewardFunction.Sparse or RewardFunction.Experiment)
         {
             // On collision with door give separate reward.
-            /*if (other.gameObject.CompareTag("door"))
+            if (other.gameObject.CompareTag("door"))
             {
                 AddReward(-0.2f);
             }
@@ -616,7 +616,7 @@ public class RollerAgent : Agent
             else
             {
                 AddReward(-0.5f);
-            }*/
+            }
         }
         else if (rewardFunctionSelect == RewardFunction.SimpleDist)
         {
@@ -670,7 +670,8 @@ public class RollerAgent : Agent
         }
         else if (rewardFunctionSelect is RewardFunction.Experiment)
         {
-            Debug.Log("Experiment.");     
+            //Debug.Log("Experiment.");
+            AddReward(-0.2f);
         }
         else
         {
