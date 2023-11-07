@@ -809,6 +809,21 @@ learning rate changes to reward signifcant?
 * Awake() with sensor size setting introduced.
 * Otherwise as 1183. User monitoring.
 
+## 1185
+... No clue.
+* Very short run.
+
+## 1186
+* Reduced size of nn to 256.
+* Compare against waht result?
+
+## 1187
+* Continue with the nn of 1186.
+* Train for another 15e6 steps.
+* Expected runtime is 2h.
+* Again with build.
+* Question: Do we converge against 1? Does the convergence stop?
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 

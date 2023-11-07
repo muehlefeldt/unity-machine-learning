@@ -642,6 +642,7 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
+        RecordData(RecorderCodes.Wall);
         if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
         {
             if (other.gameObject.CompareTag("innerWall"))
@@ -660,7 +661,7 @@ public class RollerAgent : Agent
             }
             
         }
-        else if (rewardFunctionSelect is RewardFunction.Sparse /*or RewardFunction.Experiment*/)
+        else if (rewardFunctionSelect is RewardFunction.Sparse)
         {
             if (other.gameObject.CompareTag("door"))
             {
@@ -678,13 +679,15 @@ public class RollerAgent : Agent
         else if (rewardFunctionSelect is RewardFunction.Experiment)
         {
             //Debug.Log("Experiment.");
-            AddReward(-0.5f);
+            //AddReward(-0.5f);
+            SetReward(-1f);
+            EndEpisode();
         }
         else
         {
             AddReward(-0.5f);
         }
-        RecordData(RecorderCodes.Wall);
+        
     }
 
     /// <summary>
