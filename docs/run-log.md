@@ -824,6 +824,18 @@ learning rate changes to reward signifcant?
 * Again with build.
 * Question: Do we converge against 1? Does the convergence stop?
 
+## 1188
+* Still continued learning based in 1187 and 1186.
+* Long run overnight with 50e6.
+* Converges against somewhat 1.0.
+
+## 1189
+* Shit show with wall.
+
+## 1190
+* Door 0.5 and -0.8.
+* Short run with build.
+
 * Next: Introduce the decoy.
 * Think about the staged process again!
 

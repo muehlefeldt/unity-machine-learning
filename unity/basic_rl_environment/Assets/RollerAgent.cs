@@ -562,8 +562,8 @@ public class RollerAgent : Agent
     {
         if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse /*or RewardFunction.Experiment*/)
         {
-            if (m_DoorPassages < 10)
-            {
+            //if (m_DoorPassages < 10)
+            //{
                 if (m_DoorPassages % 2 == 0)
                 {
                     AddReward(0.5f);
@@ -571,16 +571,16 @@ public class RollerAgent : Agent
                 }
                 else
                 {
-                    AddReward(-0.5f);
+                    AddReward(-0.8f);
                     Debug.Log("Door passed -0.5f");
                 }
                 m_DoorPassages++;
-            }
+            /*}
             else
             {
                 AddReward(-1f);
                 Debug.Log("Door passed -1f");
-            }
+            }*/
         }
     }
 
