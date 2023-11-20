@@ -841,6 +841,10 @@ learning rate changes to reward signifcant?
 * Door passage was handled badly. Way too simple approach?
 * Door rewards were not used. Fix.
 * Rerun of 1190. 
+* Next run: Without terminating episodes on collision. Just add -1 on collision?
+
+## 1192
+* Do not terminate ep. on collision.
 
 
 * Next: Introduce the decoy.

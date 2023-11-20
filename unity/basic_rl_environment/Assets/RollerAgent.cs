@@ -622,8 +622,8 @@ public class RollerAgent : Agent
             {
                 AddReward(-0.5f);
             }*/
-            SetReward(-1f);
-            EndEpisode();
+            AddReward(-1f);
+            //EndEpisode();
         }
         else if (rewardFunctionSelect == RewardFunction.SimpleDist)
         {
@@ -642,8 +642,8 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        RecordData(RecorderCodes.Wall);
-        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
+        
+        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint)
         {
             if (other.gameObject.CompareTag("innerWall"))
             {
@@ -672,7 +672,7 @@ public class RollerAgent : Agent
                 AddReward(-0.1f);
             }
         }
-        else if (rewardFunctionSelect == RewardFunction.SimpleDist)
+        else if (rewardFunctionSelect is RewardFunction.SimpleDist)
         {
             AddReward(-0.1f);
         }
@@ -680,13 +680,14 @@ public class RollerAgent : Agent
         {
             //Debug.Log("Experiment.");
             //AddReward(-0.5f);
-            SetReward(-1f);
-            EndEpisode();
+            AddReward(-1f);
+            //EndEpisode();
         }
         else
         {
             AddReward(-0.5f);
         }
+        RecordData(RecorderCodes.Wall);
         
     }
 
