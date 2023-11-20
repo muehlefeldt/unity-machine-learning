@@ -553,28 +553,28 @@ public class RollerAgent : Agent
     }
     
     
-    private int m_DoorPassages;
+    public int m_DoorPassages;
     /// <summary>
     /// Trigger is given by contact of the agent with the door.
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse /*or RewardFunction.Experiment*/)
+        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse or RewardFunction.Experiment)
         {
             //if (m_DoorPassages < 10)
             //{
-                if (m_DoorPassages % 2 == 0)
-                {
-                    AddReward(0.5f);
-                    Debug.Log("Door passed +0.5f");
-                }
-                else
-                {
-                    AddReward(-0.8f);
-                    Debug.Log("Door passed -0.5f");
-                }
-                m_DoorPassages++;
+            if (m_DoorPassages % 2 == 0)
+            {
+                AddReward(0.5f);
+                Debug.Log("Door passed +0.5f");
+            }
+            else
+            {
+                AddReward(-0.8f);
+                Debug.Log("Door passed -0.8f");
+            }
+            m_DoorPassages++;
             /*}
             else
             {

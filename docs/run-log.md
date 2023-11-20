@@ -835,6 +835,13 @@ learning rate changes to reward signifcant?
 ## 1190
 * Door 0.5 and -0.8.
 * Short run with build.
+* Had problem, see 1191.
+
+## 1191
+* Door passage was handled badly. Way too simple approach?
+* Door rewards were not used. Fix.
+* Rerun of 1190. 
+
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
