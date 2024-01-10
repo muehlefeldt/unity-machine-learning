@@ -9,7 +9,7 @@
     
     "editor.formatOnPaste": false,
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true
+        "source.organizeImports": "explicit"
     },
     "files.autoSave": "afterDelay",
     "[python]": {

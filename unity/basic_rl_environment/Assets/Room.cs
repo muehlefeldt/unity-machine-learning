@@ -56,7 +56,7 @@ public class Room
     }
     
     /// <summary>
-    /// Does this contain the agent?
+    /// Does this room contain the agent?
     /// </summary>
     /// <returns>True if agent is the room. Otherwise false.</returns>
     public bool ContainsAgent()

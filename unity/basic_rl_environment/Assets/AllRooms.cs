@@ -35,6 +35,40 @@ public class AllRooms
     {
         m_AllRoomsInEnv.Clear();
     }
+
+    private bool m_DoorPassageInGoodDirection = false;
+
+    public bool GoodDoorPassage()
+    {
+        return m_DoorPassageInGoodDirection;
+    }
+    public bool CheckForDoorPassage()
+    {
+        // Current position of the agent within the rooms.
+        var agentLocation = new List<bool>();
+        foreach (var r in m_AllRoomsInEnv)
+        {
+            agentLocation.Add(r.ContainsAgent());
+        }
+        
+        // Update Agent position within the rooms.
+        UpdateAgentLocation();
+
+        for (int i = 0; i < m_AllRoomsInEnv.Count; i++)
+        {
+            if (agentLocation[i] != m_AllRoomsInEnv[i].ContainsAgent())
+            {
+                if (agentLocation[i] == m_AllRoomsInEnv[i].ContainsTarget())
+                {
+                    m_DoorPassageInGoodDirection = true;
+                }
+                return true;
+            } 
+        }
+
+        m_DoorPassageInGoodDirection = false;
+        return false;
+    }
     
     /// <summary>
     /// Update the information which room does contain the agent. Based on the provided global position.

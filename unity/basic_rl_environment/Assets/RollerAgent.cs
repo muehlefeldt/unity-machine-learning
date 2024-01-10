@@ -406,6 +406,12 @@ public class RollerAgent : Agent
         // Get the distance to the target.
         CalculateDistanceToTarget();
 
+        /*if (floor.RoomsInEnv.CheckForDoorPassage())
+        {
+            Debug.Log("Door passage");
+            if 
+        }*/
+        
         // Reached target. Success. Terminate episode.
         if (m_DistToTarget < 1.42f)
         {
@@ -546,7 +552,12 @@ public class RollerAgent : Agent
             currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
             return currentReward;*/
             //return 0.4f * m_DistToTargetNormal;
-            return -1f / MaxStep;
+            
+            //currentReward = (1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep;
+            //currentReward = 1f / currentReward;
+            //return currentReward;
+            currentReward = Mathf.Abs((1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep);
+            return currentReward;
         }
         
         return 0f;
@@ -558,12 +569,42 @@ public class RollerAgent : Agent
     /// Trigger is given by contact of the agent with the door.
     /// </summary>
     /// <param name="other"></param>
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
-        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse or RewardFunction.Experiment)
+        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse
+            or RewardFunction.Experiment)
+            {
+                //if (m_DoorPassages < 10)
+                //{
+                if (m_DoorPassages % 2 == 0)
+                {
+                    AddReward(0.5f);
+                    Debug.Log("Door passed +0.5f");
+                }
+                else
+                {
+                    AddReward(-0.8f);
+                    Debug.Log("Door passed -0.8f");
+                }
+                m_DoorPassages++;
+                /*}
+                else
+                {
+                    AddReward(-1f);
+                    Debug.Log("Door passed -1f");
+                }#2#
+            }
         {
-            //if (m_DoorPassages < 10)
-            //{
+            
+        }
+    }*/
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse
+            or RewardFunction.Experiment)
+        {
+            Debug.Log("Trigger Exit");
             if (m_DoorPassages % 2 == 0)
             {
                 AddReward(0.5f);
@@ -575,14 +616,19 @@ public class RollerAgent : Agent
                 Debug.Log("Door passed -0.8f");
             }
             m_DoorPassages++;
-            /*}
-            else
-            {
-                AddReward(-1f);
-                Debug.Log("Door passed -1f");
-            }*/
         }
     }
+
+    private bool PassedDoorInCorrectDirection()
+    {
+        return true;
+    }
+
+    /*private void OnTriggerExit(Collider other)
+    {
+        if (transform.position.z > floor.GetDoorPosition().z)
+    }
+    */
 
     /// <summary>
     /// Initial collision event.

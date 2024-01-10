@@ -846,6 +846,12 @@ learning rate changes to reward signifcant?
 ## 1192
 * Do not terminate ep. on collision.
 
+## 1193
+* Terminated before any running.
+
+## 1194
+* 
+
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
