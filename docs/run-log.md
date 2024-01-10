@@ -850,8 +850,12 @@ learning rate changes to reward signifcant?
 * Terminated before any running.
 
 ## 1194
-* 
+* OnTriggerExit() now used to better reflect door passage of the agent.
+* Reward function needs to be switched. Currently uses stupid combination of distance and step panelty. 
+* Terminated to address issue with reward. 
 
+## 1195
+* Every step now punished by -1 / maxstep. As was previously the case.
 
 * Next: Introduce the decoy.
 * Think about the staged process again!
