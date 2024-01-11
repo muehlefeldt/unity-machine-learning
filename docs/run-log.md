@@ -878,3 +878,9 @@ learning rate changes to reward signifcant?
 
 ## 1200
 * The component of distance in the reward function increased.
+* Again in editor.
+* Not all Areas used.
+
+## 1201
+* As 1200.
+* Reward weight change. More weight given to distance.
