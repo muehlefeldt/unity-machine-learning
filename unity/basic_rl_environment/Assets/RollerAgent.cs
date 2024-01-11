@@ -114,7 +114,11 @@ public class RollerAgent : Agent
         }
         else if (m_AgentPosType is AgentPos.FullyRandom)
         {
+            // Get and set random position.
             transform.position = floor.GetRandomAgentPosition();
+            
+            // Set random rotation.
+            transform.eulerAngles = new Vector3(0f, Random.Range(0f, 360f), 0f);
         }
     }
     

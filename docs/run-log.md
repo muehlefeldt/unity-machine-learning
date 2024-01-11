@@ -866,4 +866,7 @@ learning rate changes to reward signifcant?
 * Make reward function dense as shown by chat. Use dist to target normalised.
 * Now: penalty + last_dist - new_dist
 
+## 1198
+* Random rotation introduced.
+* Short run for visual supervision in the editor.
 
