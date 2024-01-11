@@ -892,6 +892,18 @@ learning rate changes to reward signifcant?
 
 ## 1203
 * No hieght change possible.
+* Terminated.
 
 ## 1204
 * Same again. No height change.
+* Error fixed with height inputs.
+
+## 1205
+* Short run.
+* Terminated.
+
+## 1206
+* Rerun 1206.
+
+## 1207
+* Simpler reward.

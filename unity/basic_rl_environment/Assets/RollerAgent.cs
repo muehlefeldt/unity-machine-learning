@@ -565,7 +565,8 @@ public class RollerAgent : Agent
             //return currentReward;
             //currentReward = Mathf.Abs((1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep);
             //heightPenalty = Mathf.Abs(target.transform.position.y - transform.position.y) * -0.5f;
-            currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 100/MaxStep);
+            //currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 100/MaxStep);
+            currentReward = -1f / currentReward;
             return currentReward;
         }
         
@@ -1013,21 +1014,21 @@ public class RollerAgent : Agent
             // Z. Forward, backwards and no movement.
             else if (Input.GetKey(KeyCode.W))
             {
-                discreteActionsOut[0] = 5;
+                discreteActionsOut[0] = 3;
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                discreteActionsOut[0] = 6;
+                discreteActionsOut[0] = 4;
             }
 
             // Rotation. Right, left and no rotation.
             else if (Input.GetKey(KeyCode.E))
             {
-                discreteActionsOut[0] = 7;
+                discreteActionsOut[0] = 5;
             }
             else if (Input.GetKey(KeyCode.Q))
             {
-                discreteActionsOut[0] = 8;
+                discreteActionsOut[0] = 6;
             }
             else
             {
