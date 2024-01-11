@@ -31,6 +31,7 @@ public class RollerAgent : Agent
     public float m_DistToTarget;
     public float m_DistToTargetNormal;
     private float m_LastDistToTarget;
+    private float m_LastDistToTargetNormal;
     
     // Set how much force is applied to the rigidbody.
     public float forceMultiplier = 10f;
@@ -557,7 +558,7 @@ public class RollerAgent : Agent
             //currentReward = 1f / currentReward;
             //return currentReward;
             //currentReward = Mathf.Abs((1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep);
-            return -1f / MaxStep;
+            return m_LastDistToTargetNormal - m_DistToTargetNormal + (-1f / MaxStep);
         }
         
         return 0f;
@@ -668,7 +669,7 @@ public class RollerAgent : Agent
             {
                 AddReward(-0.5f);
             }*/
-            AddReward(-1f);
+            AddReward(-0.2f);
             //EndEpisode();
         }
         else if (rewardFunctionSelect == RewardFunction.SimpleDist)
@@ -726,7 +727,7 @@ public class RollerAgent : Agent
         {
             //Debug.Log("Experiment.");
             //AddReward(-0.5f);
-            AddReward(-1f);
+            AddReward(-0.1f);
             //EndEpisode();
         }
         else
@@ -800,6 +801,7 @@ public class RollerAgent : Agent
         }
         
         // Calculate normalised distance to target.
+        m_LastDistToTargetNormal = m_DistToTargetNormal;
         m_DistToTargetNormal = m_DistToTarget / m_MaxDist;
         
         // If first call during episode. Set the last and current distance to target equal.
@@ -807,6 +809,12 @@ public class RollerAgent : Agent
         {
             m_LastDistToTarget = m_DistToTarget;
         }
+
+        if (float.IsPositiveInfinity(m_LastDistToTargetNormal))
+        {
+            m_LastDistToTargetNormal = m_DistToTargetNormal;
+        }
+        
     }
     
     /// <summary>
@@ -815,6 +823,8 @@ public class RollerAgent : Agent
     private void ResetDist()
     {
         m_LastDistToTarget = float.PositiveInfinity;
+        m_LastDistToTargetNormal = float.PositiveInfinity;
+        
         m_DistToTarget = float.PositiveInfinity;
     }
     

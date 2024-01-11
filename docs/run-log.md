@@ -856,7 +856,14 @@ learning rate changes to reward signifcant?
 
 ## 1195
 * Every step now punished by -1 / maxstep. As was previously the case.
+* Result: From one room in the other ok ish. But from the the other room ... questionable.
 
-* Next: Introduce the decoy.
-* Think about the staged process again!
+## 1196
+* Shows same behavior as above.
+* Despite reward changes.
+
+## 1197
+* Make reward function dense as shown by chat. Use dist to target normalised.
+* Now: penalty + last_dist - new_dist
+
 
