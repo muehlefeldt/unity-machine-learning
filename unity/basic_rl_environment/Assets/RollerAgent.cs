@@ -308,22 +308,22 @@ public class RollerAgent : Agent
                 case 2:
                     controlSignal.x = -1f;
                     break;
-                case 3:
+                /*case 3:
                     controlSignal.y = 1f;
                     break;
                 case 4:
                     controlSignal.y = -1f;
-                    break;
-                case 5:
+                    break;*/
+                case 3:
                     controlSignal.z = 1f;
                     break;
-                case 6:
+                case 4:
                     controlSignal.z = -1f;
                     break;
-                case 7:
+                case 5:
                     rotate = 1f;
                     break;
-                case 8:
+                case 6:
                     rotate = -1f;
                     break;
             }

@@ -892,3 +892,6 @@ learning rate changes to reward signifcant?
 
 ## 1203
 * No hieght change possible.
+
+## 1204
+* Same again. No height change.
