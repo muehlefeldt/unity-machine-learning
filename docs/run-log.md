@@ -889,3 +889,6 @@ learning rate changes to reward signifcant?
 ## 1202
 * Based on 1201. Using previous nn.
 * Run with build and longer.
+
+## 1203
+* No hieght change possible.
