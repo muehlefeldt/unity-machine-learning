@@ -869,4 +869,12 @@ learning rate changes to reward signifcant?
 ## 1198
 * Random rotation introduced.
 * Short run for visual supervision in the editor.
+* No massive change.
+* Keep this change.
 
+## 1199
+* Reward change: Combine dist and step penalty.
+* Run in editor.
+
+## 1200
+* The component of distance in the reward function increased.

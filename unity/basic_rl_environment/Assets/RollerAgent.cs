@@ -562,7 +562,8 @@ public class RollerAgent : Agent
             //currentReward = 1f / currentReward;
             //return currentReward;
             //currentReward = Mathf.Abs((1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep);
-            return m_LastDistToTargetNormal - m_DistToTargetNormal + (-1f / MaxStep);
+            currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 10/MaxStep);
+            return currentReward;
         }
         
         return 0f;
