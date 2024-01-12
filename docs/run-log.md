@@ -941,4 +941,16 @@ learning rate changes to reward signifcant?
 * Still no movement in y possible for drone.
 * Build.
 * Reward changed as outlined above with facotr.
+* reward = -0.1f * m_DistToTargetNormal;
 * Longer run to get a feel. 10e6 steps.
+* Result: Learning process is very unstable. But atleast promissing.
+* Terminated. Error in action space size.
+
+## 1214
+* Rerun of 1213. But 5e6 steps.
+* Error fix in action space size. Does that even matter?
+
+## 
+* reward = -0.05f * m_DistToTargetNormal;
+* Test different reward scaling factors.
+* Still no movement in y possible for drone.
