@@ -928,3 +928,17 @@ learning rate changes to reward signifcant?
 ## 1211
 * Still no movement in y possible for drone.
 * Dist to target normalised as reward.
+* Shit show: Reward needs to negative when using the dist to target. Higher values indicate less distance to target. See 1212.
+
+## 1212
+* Still no movement in y possible for drone.
+* reward = -1f * m_DistToTargetNormal;
+* Consider to multiply the reward with a factor: For example -0.5 to lessen the rewards impact.
+* Trend during learning: The learning process is slowly progressing but not over the top stable progress.
+* Consider the factor stuff from above. -0.1 seems to be ok.
+
+## 1213
+* Still no movement in y possible for drone.
+* Build.
+* Reward changed as outlined above with facotr.
+* Longer run to get a feel. 10e6 steps.
