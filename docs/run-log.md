@@ -960,5 +960,5 @@ learning rate changes to reward signifcant?
 * reward = -0.01f * m_DistToTargetNormal;
 * Further scale factor search.
 
-##
-* reward = -0.005f * m_DistToTargetNormal;
+## 1217+
+* Hyperparameter search.
