@@ -944,13 +944,21 @@ learning rate changes to reward signifcant?
 * reward = -0.1f * m_DistToTargetNormal;
 * Longer run to get a feel. 10e6 steps.
 * Result: Learning process is very unstable. But atleast promissing.
-* Terminated. Error in action space size.
+* Terminated. Error in action space size. Changes were not made to the prefab of the traingarea. 
 
 ## 1214
 * Rerun of 1213. But 5e6 steps.
 * Error fix in action space size. Does that even matter?
+* Shows also very instable learning.
 
-## 
+## 1215
 * reward = -0.05f * m_DistToTargetNormal;
 * Test different reward scaling factors.
 * Still no movement in y possible for drone.
+
+## 1216
+* reward = -0.01f * m_DistToTargetNormal;
+* Further scale factor search.
+
+##
+* reward = -0.005f * m_DistToTargetNormal;
