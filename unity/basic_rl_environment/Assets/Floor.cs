@@ -237,6 +237,9 @@ public class Floor : MonoBehaviour
         }
         var pos = Vector3.zero;
         pos.x = Vector3.Lerp(m_MinZGlobalCoord, m_MaxZGlobalCoord, r).x;
+        
+        // Set y to a fixed value to ensure a more realistic distance calculation to the target through the door.
+        pos.y = 0.75f;
         pos.z = m_WallStartGlobalCoord.z;
         m_DoorCentreGlobalCoord = pos;
         

@@ -565,9 +565,19 @@ public class RollerAgent : Agent
             //return currentReward;
             //currentReward = Mathf.Abs((1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep);
             //heightPenalty = Mathf.Abs(target.transform.position.y - transform.position.y) * -0.5f;
-            //currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 100/MaxStep);
-            currentReward = -1f / currentReward;
-            return currentReward;
+            //currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 0.1f);
+            //currentReward = -1f / MaxStep;
+            //return currentReward;
+            var reward = 0f;
+            if (m_LastDistToTarget > m_DistToTarget)
+            {
+                reward = 0.01f;
+            }
+            //else if (action > 6) reward = 0.01f;
+            
+            else reward = -0.02f;
+
+            return reward; //+ (-1f / MaxStep);
         }
         
         return 0f;
@@ -874,7 +884,8 @@ public class RollerAgent : Agent
         // Last point of the path is the target position.
         m_Path.Add(targetPosition);
     }
-    
+
+#if UNITY_EDITOR
     void OnDrawGizmos()
     {
         if (m_Path != null)
@@ -906,7 +917,8 @@ public class RollerAgent : Agent
             //Gizmos.DrawIcon();
         }
     }
-
+#endif
+    
     enum ActionsPerStep
     {
         /// <summary>

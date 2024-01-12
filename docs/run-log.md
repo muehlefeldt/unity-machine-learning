@@ -907,3 +907,19 @@ learning rate changes to reward signifcant?
 
 ## 1207
 * Simpler reward.
+* Terminated with error.
+
+## 1208
+* Rerun. Reward func fix.
+
+## 1209
+* Still no height change.
+* Reward: penalty for every step and last dist - current dist * factor.
+* Very unstable and slow learning. But atleast some convergence shown.
+* Length of the episodes inconsistent.
+
+## 1210
+* Short run in editor.
+* Reward: +0.01 if dist to target better. Else -0.02. Collision penalties also apply.
+* Desperate run to be honest.
+* Idea for future run: Training parameter adjust back to smaller values? But the parameters were choosen to promote more stable learning.
