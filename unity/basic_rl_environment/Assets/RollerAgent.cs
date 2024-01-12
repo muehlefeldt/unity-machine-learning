@@ -568,14 +568,7 @@ public class RollerAgent : Agent
             //currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 0.1f);
             //currentReward = -1f / MaxStep;
             //return currentReward;
-            var reward = 0f;
-            if (m_LastDistToTarget > m_DistToTarget)
-            {
-                reward = 0.01f;
-            }
-            //else if (action > 6) reward = 0.01f;
-            
-            else reward = -0.02f;
+            var reward = m_DistToTargetNormal;
 
             return reward; //+ (-1f / MaxStep);
         }

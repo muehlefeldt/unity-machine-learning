@@ -923,3 +923,8 @@ learning rate changes to reward signifcant?
 * Reward: +0.01 if dist to target better. Else -0.02. Collision penalties also apply.
 * Desperate run to be honest.
 * Idea for future run: Training parameter adjust back to smaller values? But the parameters were choosen to promote more stable learning.
+* Result: Very unstable learning.
+
+## 1211
+* Still no movement in y possible for drone.
+* Dist to target normalised as reward.
