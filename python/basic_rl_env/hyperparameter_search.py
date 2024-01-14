@@ -29,6 +29,7 @@ def get_run_id() -> int:
     If called multiple times, the result will be an increased number."""
     dir_contents = [
         *os.listdir(Path(PATHS["results_dir"]).absolute()),
+        *os.listdir(Path(PATHS["results_archive_dir"]).absolute()),
         *os.listdir(Path(PATHS["log_dir"]).absolute()),
         *os.listdir(Path(PATHS["summaries_dir"]).absolute()),
     ]
@@ -384,6 +385,7 @@ if __name__ == "__main__":
         "log_dir": "./logs",
         "summaries_dir": "./summaries",
         "results_dir": "./results",
+        "results_archive_dir": "./results_archive",
         "configs_dir": "./configs",
     }
 

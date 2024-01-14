@@ -960,5 +960,12 @@ learning rate changes to reward signifcant?
 * reward = -0.01f * m_DistToTargetNormal;
 * Further scale factor search.
 
-## 1217+
+## 1217 - 1312
 * Hyperparameter search.
+* Only using 3e6 steps each run.
+* Terminated in the end. Results were absolut shit.
+  * Termination was pain. Every single needs to be terminated by STRG+C.
+* Ok results: 1225, 1228, 1241, ...
+
+## 1313
+* Some bla with reward scaling.
