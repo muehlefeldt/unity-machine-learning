@@ -1,3 +1,6 @@
+*.onnx.meta
+*.onnx
+
 results/
 results_archive/
 logs/
@@ -10,8 +13,7 @@ demonstrations/
 current.yaml
 notebooks/data
 
-*.onnx.meta
-*.onnx
+
 *.mp4
 
 # Byte-compiled / optimized / DLL files
