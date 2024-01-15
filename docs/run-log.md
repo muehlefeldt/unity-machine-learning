@@ -1000,5 +1000,8 @@ learning rate changes to reward signifcant?
 ## 1320
 * Further LSTM test.
 
+## 1321
+* Again LSTM test.
+
 ##
 * Remove door reward? Change scale?

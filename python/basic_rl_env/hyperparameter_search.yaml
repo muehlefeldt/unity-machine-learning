@@ -58,8 +58,8 @@ behaviors:
       hidden_units: 512
       num_layers: 1
       memory:
-        memory_size: 32
-        sequence_length: 4
+        memory_size: 16
+        sequence_length: 16
       #vis_encode_type: simple
     reward_signals:
       extrinsic:
