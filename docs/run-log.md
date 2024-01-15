@@ -965,7 +965,8 @@ learning rate changes to reward signifcant?
 * Only using 3e6 steps each run.
 * Terminated in the end. Results were absolut shit.
   * Termination was pain. Every single needs to be terminated by STRG+C.
-* Ok results: 1225, 1228, 1241, ...
+* Ok results / best results: 1225, 1228, 1241, ...
+* Lesson from these runs? Its not working?
 
 ## 1313
 * Some bla with reward scaling.
@@ -973,3 +974,14 @@ learning rate changes to reward signifcant?
 
 ## 1314
 * Change to punishment.
+* Terminated. Again not good learning.
+
+## 1315
+* Editpr run. Target fixed pos to simplify the problem. 
+  * Currently no height change possible. Target always at the same pos. Door fixed.
+
+## 1316
+* No wall. Fuck me.
+
+##
+* Remove door reward? Change scale?
