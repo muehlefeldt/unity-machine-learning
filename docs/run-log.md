@@ -982,6 +982,11 @@ learning rate changes to reward signifcant?
 
 ## 1316
 * No wall. Fuck me.
+* Target fixed.
+
+## 1317
+* No wall. Target random pos.
+
 
 ##
 * Remove door reward? Change scale?

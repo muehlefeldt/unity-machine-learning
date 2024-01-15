@@ -672,7 +672,7 @@ MonoBehaviour:
   RandomWallPosition: 0
   RanndomDoorPosition: 0
   targetAlwaysInOtherRoomFromAgent: 1
-  targetFixedPosition: 1
+  targetFixedPosition: 0
 --- !u!65 &7692793173245375662
 BoxCollider:
   m_ObjectHideFlags: 0
