@@ -625,7 +625,7 @@ public class RollerAgent : Agent
             }
             else
             {
-                AddReward(-0.8f);
+                AddReward(-0.6f);
                 Debug.Log("Door passed -0.8f");
             }
             m_DoorPassages++;
@@ -681,7 +681,7 @@ public class RollerAgent : Agent
             {
                 AddReward(-0.5f);
             }*/
-            AddReward(-0.2f);
+            AddReward(-0.5f);
             //EndEpisode();
         }
         else if (rewardFunctionSelect == RewardFunction.SimpleDist)
@@ -739,7 +739,7 @@ public class RollerAgent : Agent
         {
             //Debug.Log("Experiment.");
             //AddReward(-0.5f);
-            AddReward(-0.1f);
+            AddReward(-0.3f);
             //EndEpisode();
         }
         else

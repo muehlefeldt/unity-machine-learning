@@ -969,3 +969,7 @@ learning rate changes to reward signifcant?
 
 ## 1313
 * Some bla with reward scaling.
+* Result again not high enough and not stable.
+
+## 1314
+* Change to punishment.
