@@ -990,5 +990,9 @@ learning rate changes to reward signifcant?
 ## 1318
 * Change in reward scaling. No improvement.
 
+## 1319
+* LSTM changes. Where are we with the LSTM config.
+* Mem size up to 128, as is suggested as default.
+
 ##
 * Remove door reward? Change scale?
