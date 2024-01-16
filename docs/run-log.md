@@ -1022,7 +1022,15 @@ learning rate changes to reward signifcant?
 ## 1326
 * Very long run in the editor. I need to sleep.
 * What happens?
+* Terminated after 25e6 steps. Results are unuseable. 
+* Discussion:
+  * The agent knows own and target position.
+  * This should be a very easy problem to solve.
+  * Currently using: LSTM and dense reward.
 
+## 1327
+* Short run ... 
+* reward = 1 - dist_normal
 
 ##
 * Remove door reward? Change scale?
