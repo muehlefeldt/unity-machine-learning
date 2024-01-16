@@ -1019,5 +1019,10 @@ learning rate changes to reward signifcant?
 * Added position data to the observations.
 * Test simple task.
 
+## 1326
+* Very long run in the editor. I need to sleep.
+* What happens?
+
+
 ##
 * Remove door reward? Change scale?
