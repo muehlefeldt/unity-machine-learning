@@ -58,7 +58,7 @@ behaviors:
       hidden_units: 512
       num_layers: 2
       memory:
-        memory_size: 2
+        memory_size: 38
         sequence_length: 16
       #vis_encode_type: simple
     reward_signals:

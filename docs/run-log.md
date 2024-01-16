@@ -1007,10 +1007,13 @@ learning rate changes to reward signifcant?
 
 ## 1322
 * No LSTM.
-* No shit.
+* No, it is shit.
 
 ## 1323
 * LSTM back on.
+
+## 1324
+* More memory size. Equal to sensor count / observation count.
 
 
 ##
