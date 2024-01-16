@@ -244,6 +244,9 @@ public class RollerAgent : Agent
         // Agent rotation. Y axis only.
         Quaternion rotation = m_RBody.rotation;
         sensor.AddObservation(rotation.eulerAngles.y / 360.0f);  // [0,1]
+        
+        sensor.AddObservation(target.transform.localPosition);
+        sensor.AddObservation(transform.localPosition);
     }
 
     /// <summary>

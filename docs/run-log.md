@@ -1015,6 +1015,9 @@ learning rate changes to reward signifcant?
 ## 1324
 * More memory size. Equal to sensor count / observation count.
 
+## 1325
+* Added position data to the observations.
+* Test simple task.
 
 ##
 * Remove door reward? Change scale?
