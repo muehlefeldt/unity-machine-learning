@@ -995,6 +995,7 @@ learning rate changes to reward signifcant?
 * Mem size up to 128, as is suggested as default.
 * Does this provide change in comparison to 1318?
   * First impression: Yes significant change to learning process.
+  * Second impression: No shit.
 * Not nice.
 
 ## 1320
@@ -1002,6 +1003,10 @@ learning rate changes to reward signifcant?
 
 ## 1321
 * Again LSTM test.
+* Shit.
+
+## 1322
+* No LSTM.
 
 ##
 * Remove door reward? Change scale?
