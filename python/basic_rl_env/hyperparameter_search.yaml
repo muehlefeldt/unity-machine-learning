@@ -56,10 +56,10 @@ behaviors:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
       hidden_units: 512
-      num_layers: 1
-      #memory:
-      #  memory_size: 16
-      #  sequence_length: 16
+      num_layers: 2
+      memory:
+        memory_size: 2
+        sequence_length: 16
       #vis_encode_type: simple
     reward_signals:
       extrinsic:

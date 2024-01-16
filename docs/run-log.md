@@ -1007,6 +1007,11 @@ learning rate changes to reward signifcant?
 
 ## 1322
 * No LSTM.
+* No shit.
+
+## 1323
+* LSTM back on.
+
 
 ##
 * Remove door reward? Change scale?
