@@ -1029,8 +1029,21 @@ learning rate changes to reward signifcant?
   * Currently using: LSTM and dense reward.
 
 ## 1327
+* Attention: Reward may be very high due to dense, positive reward.
+  * Issue: Unclear what a good reward can be.
 * Short run ... 
 * reward = 1 - dist_normal
+* Compile problem. Run did not start.
 
-##
-* Remove door reward? Change scale?
+## 1328
+* Similar to 1327 but reward scaled down:
+  *  currentReward = 0.1f * (1f - m_DistToTargetNormal)
+* Again back to 5e6 steps.
+* More observations still added. Does this even change anything?
+* Was terminated by ml-agents. Env exception occured. No clue why.
+
+## 1329
+* One single training area.
+* Question: Do we have a problem with multiple training areas? Esp. with the Areas20 prefab?
+* Hyperparameters and reward are the same as 1328.
+* Attention: Still more observations are used as input.
