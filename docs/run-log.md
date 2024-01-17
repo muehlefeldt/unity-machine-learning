@@ -1055,4 +1055,6 @@ learning rate changes to reward signifcant?
 * Compare cumulative reward to 1215.
 
 ## 1331 New branch with less code
-
+* Code was cleaned.
+* Rerun 1330.
+* Slight collision change.
