@@ -39,11 +39,6 @@ public class RollerAgent : Agent
     // Select sensor count of the agent. Has no influence on sensors along y axis, i.e. height sensors remain constant.
     public int sensorCount = 4;
     
-    /// <summary>
-    /// Select reward function. 
-    /// </summary>
-    public RewardFunction rewardFunctionSelect = RewardFunction.Basic;
-    
     private Vector3 m_LastCollision = Vector3.zero;
 
     void Awake()
@@ -139,22 +134,6 @@ public class RollerAgent : Agent
         floor.Prepare();
         floor.CreateInnerWall();
         
-        // If the Agent fell, zero its momentum
-        // if (transform.localPosition.y < 0 || m_CollisionDetected || m_ImplausiblePosition)
-        // if (transform.localPosition.y < 0 || m_ImplausiblePosition)
-        // {
-        //     //m_CollisionDetected = false;
-        //     m_ImplausiblePosition = false;
-        //     //m_TargetReached = false;
-        //     ResetAgentPosition();
-        // }
-
-        // Move the target to a new spot
-        // if (floor.targetFixedPosition)
-        // {
-        //     ResetAgentPosition();
-        // }
-        
         // Gizmo: Reset last collision position. Used for visual reference only when showing Gizmos.
         m_LastCollision = Vector3.zero;
         
@@ -214,6 +193,7 @@ public class RollerAgent : Agent
         Physics.Raycast(currentRay, out currentHit, maxDistance: floor.GetMaxPossibleDist());
         var len = currentHit.distance;
         
+        #if UNITY_EDITOR
         // Draw gizmo lines to help with debugging.
         if (dir == Vector3.forward)
         {
@@ -223,7 +203,7 @@ public class RollerAgent : Agent
         {
             Debug.DrawRay(transform.position, dirTransform * len, Color.gray);
         }
-        
+        #endif
 
         return currentHit.distance / floor.GetMaxPossibleDist();
     }
@@ -245,8 +225,6 @@ public class RollerAgent : Agent
         Quaternion rotation = m_RBody.rotation;
         sensor.AddObservation(rotation.eulerAngles.y / 360.0f);  // [0,1]
         
-        //sensor.AddObservation(target.transform.localPosition);
-        //sensor.AddObservation(transform.localPosition);
     }
 
     /// <summary>
@@ -468,40 +446,6 @@ public class RollerAgent : Agent
     }
     
     /// <summary>
-    /// Types of reward function available.
-    /// </summary>
-    public enum RewardFunction
-    {
-        /// <summary>
-        /// Most basic reward function.
-        /// </summary>
-        Basic,
-        /// <summary>
-        /// Based on the basic reward function. But with changed values.
-        /// </summary>
-        SimpleDist,
-        /// <summary>
-        /// Complex reward function based on distance. Based on the Matignon et al. paper.
-        /// </summary>
-        ComplexDist,
-        /// <summary>
-        /// Reward contact with correct target.
-        /// </summary>
-        CollisionCheckpoint,
-        /// <summary>
-        /// Sparse reward. Punish each step and reward target found. Punish all other contacts.
-        /// </summary>
-        Sparse,
-        /// <summary>
-        /// Experiment reward function. Used to test different approaches.
-        /// Combines now: Collision penalty. Reduced penalty for door collisions.
-        /// Every step receives distance based reward based on Matignon et al.
-        /// </summary>
-        Experiment
-        
-    }
-
-    /// <summary>
     /// Calculate and return reward based on current distance to target.
     /// </summary>
     public float currentReward = 0f;
@@ -509,194 +453,36 @@ public class RollerAgent : Agent
     //public float heightPenalty = 0f;
     private float GetReward()
     {
-        if (rewardFunctionSelect == RewardFunction.Basic)
-        {
-            var reward = 0f;
-            if (m_LastDistToTarget > m_DistToTarget)
-            {
-                reward = 0.1f;
-            }
-            //if (m_LastDistToTarget > m_DistToTarget) reward = 0.1f;
-            else reward = -0.15f;
-            currentReward = reward + (-1f / MaxStep);
-            return currentReward;
-        }
-        if (rewardFunctionSelect == RewardFunction.SimpleDist)
-        {
-            var reward = 0f;
-            if (m_LastDistToTarget > m_DistToTarget)
-            {
-                reward = 0.01f;
-            }
-            //else if (action > 6) reward = 0.01f;
-            
-            else reward = -0.02f;
-
-            return reward; //+ (-1f / MaxStep);
-        }
-
-        if (rewardFunctionSelect == RewardFunction.ComplexDist)
-        {
-            var beta = 1f;
-            var omega = 0.3f;
-            var x = m_DistToTargetNormal;
-            currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
-            return currentReward;
-        }
-
-        if (rewardFunctionSelect == RewardFunction.CollisionCheckpoint)
-        {
-            return -1f / MaxStep;
-        }
-        
-        if (rewardFunctionSelect == RewardFunction.Sparse)
-        {
-            return -1f / MaxStep;
-        }
-
-        if (rewardFunctionSelect == RewardFunction.Experiment)
-        {
-            /*var beta = 0.1f;
-            var omega = 0.4f;
-            var x = m_DistToTargetNormal;
-            currentReward = beta * math.exp(-1 * (math.pow(x, 2) / (2 * math.pow(omega, 2))));
-            return currentReward;*/
-            //return 0.4f * m_DistToTargetNormal;
-            
-            //currentReward = (1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep;
-            //currentReward = 1f / currentReward;
-            //return currentReward;
-            //currentReward = Mathf.Abs((1f / (m_DistToTargetNormal + 0.00001f)) - 1f / MaxStep);
-            //heightPenalty = Mathf.Abs(target.transform.position.y - transform.position.y) * -0.5f;
-            //currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 0.1f);
-            //currentReward = -1f / MaxStep;
-            //return currentReward;
-            currentReward = -0.01f * m_DistToTargetNormal;
-
-            return currentReward; //+ (-1f / MaxStep);
-        }
-        
-        return 0f;
+        currentReward = -0.01f * m_DistToTargetNormal;
+        return currentReward;
     }
     
     
     public int m_DoorPassages;
-    /// <summary>
-    /// Trigger is given by contact of the agent with the door.
-    /// </summary>
-    /// <param name="other"></param>
-    /*private void OnTriggerEnter(Collider other)
-    {
-        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse
-            or RewardFunction.Experiment)
-            {
-                //if (m_DoorPassages < 10)
-                //{
-                if (m_DoorPassages % 2 == 0)
-                {
-                    AddReward(0.5f);
-                    Debug.Log("Door passed +0.5f");
-                }
-                else
-                {
-                    AddReward(-0.8f);
-                    Debug.Log("Door passed -0.8f");
-                }
-                m_DoorPassages++;
-                /*}
-                else
-                {
-                    AddReward(-1f);
-                    Debug.Log("Door passed -1f");
-                }#2#
-            }
-        {
-            
-        }
-    }*/
-
     private void OnTriggerExit(Collider other)
     {
-        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint or RewardFunction.Sparse
-            or RewardFunction.Experiment)
+        Debug.Log("Trigger Exit");
+        if (m_DoorPassages % 2 == 0)
         {
-            Debug.Log("Trigger Exit");
-            if (m_DoorPassages % 2 == 0)
-            {
-                AddReward(0.5f);
-                Debug.Log("Door passed +0.5f");
-            }
-            else
-            {
-                AddReward(-0.6f);
-                Debug.Log("Door passed -0.8f");
-            }
-            m_DoorPassages++;
+            AddReward(0.5f);
+            Debug.Log("Door passed +0.5f");
         }
+        else
+        {
+            AddReward(-0.6f);
+            Debug.Log("Door passed -0.8f");
+        }
+        m_DoorPassages++;
     }
-
-    private bool PassedDoorInCorrectDirection()
-    {
-        return true;
-    }
-
-    /*private void OnTriggerExit(Collider other)
-    {
-        if (transform.position.z > floor.GetDoorPosition().z)
-    }
-    */
-
+    
     /// <summary>
     /// Initial collision event.
     /// </summary>
     private void OnCollisionEnter(Collision other)
     {
         m_LastCollision = transform.position; // Used for Gizmos.
-        
-        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint)
-        {
-            if (other.gameObject.CompareTag("innerWall"))
-            {
-                AddReward(-0.1f);
-            }
-
-            else if (other.gameObject.CompareTag("outerWalls"))
-            {
-                AddReward(-0.5f);
-            }
-
-            else if (other.gameObject.CompareTag("decoys"))
-            {
-                AddReward(-1f);
-                Debug.Log("Decoy -1");
-            }
-            
-        }
-        else if (rewardFunctionSelect is RewardFunction.Sparse or RewardFunction.Experiment)
-        {
-            // On collision with door give separate reward.
-            /*if (other.gameObject.CompareTag("door"))
-            {
-                AddReward(-0.2f);
-            }
-            // All other collisions: Ceiling, floor, walls.
-            else
-            {
-                AddReward(-0.5f);
-            }*/
-            AddReward(-0.5f);
-            //EndEpisode();
-        }
-        else if (rewardFunctionSelect == RewardFunction.SimpleDist)
-        {
-            AddReward(-0.5f);
-        }
-        else
-        {
-            AddReward(-0.8f);
-        }
-        RecordData(RecorderCodes.Wall);
-        
+   
+        AddReward(-0.2f);
     }
     
     /// <summary>
@@ -704,53 +490,8 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        
-        if (rewardFunctionSelect is RewardFunction.CollisionCheckpoint)
-        {
-            if (other.gameObject.CompareTag("innerWall"))
-            {
-                AddReward(-0.05f);
-            }
-
-            if (other.gameObject.CompareTag("outerWalls"))
-            {
-                AddReward(-0.2f);
-            }
-
-            if (other.gameObject.CompareTag("decoys"))
-            {
-                AddReward(-0.8f);
-            }
-            
-        }
-        else if (rewardFunctionSelect is RewardFunction.Sparse)
-        {
-            if (other.gameObject.CompareTag("door"))
-            {
-                AddReward(-0.05f);
-            }
-            else
-            {
-                AddReward(-0.1f);
-            }
-        }
-        else if (rewardFunctionSelect is RewardFunction.SimpleDist)
-        {
-            AddReward(-0.1f);
-        }
-        else if (rewardFunctionSelect is RewardFunction.Experiment)
-        {
-            //Debug.Log("Experiment.");
-            //AddReward(-0.5f);
-            AddReward(-0.3f);
-            //EndEpisode();
-        }
-        else
-        {
-            AddReward(-0.5f);
-        }
+        AddReward(-0.1f);
         RecordData(RecorderCodes.Wall);
-        
     }
 
     /// <summary>
@@ -905,12 +646,6 @@ public class RollerAgent : Agent
         {
             //Gizmos.DrawCube(m_LastImplausiblePos, new Vector3(0.3f, 0.3f, 0.3f));
             Debug.DrawRay(m_LastImplausiblePos, Vector3.up * 100f, Color.red);
-        }
-
-        if (rewardFunctionSelect == RewardFunction.ComplexDist)
-        {
-            Gizmos.color = Color.black;
-            //Gizmos.DrawIcon();
         }
     }
 #endif

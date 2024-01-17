@@ -1053,3 +1053,6 @@ learning rate changes to reward signifcant?
   * currentReward = -0.01f * m_DistToTargetNormal;
 * Rest is the same as 1329.
 * Compare cumulative reward to 1215.
+
+## 1331 New branch with less code
+
