@@ -245,8 +245,8 @@ public class RollerAgent : Agent
         Quaternion rotation = m_RBody.rotation;
         sensor.AddObservation(rotation.eulerAngles.y / 360.0f);  // [0,1]
         
-        sensor.AddObservation(target.transform.localPosition);
-        sensor.AddObservation(transform.localPosition);
+        //sensor.AddObservation(target.transform.localPosition);
+        //sensor.AddObservation(transform.localPosition);
     }
 
     /// <summary>
@@ -571,7 +571,7 @@ public class RollerAgent : Agent
             //currentReward = -1f / MaxStep + ((m_LastDistToTargetNormal - m_DistToTargetNormal) * 0.1f);
             //currentReward = -1f / MaxStep;
             //return currentReward;
-            currentReward = 0.1f * (1f - m_DistToTargetNormal);
+            currentReward = -0.01f * m_DistToTargetNormal;
 
             return currentReward; //+ (-1f / MaxStep);
         }

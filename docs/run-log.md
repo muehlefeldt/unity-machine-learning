@@ -1047,3 +1047,7 @@ learning rate changes to reward signifcant?
 * Question: Do we have a problem with multiple training areas? Esp. with the Areas20 prefab?
 * Hyperparameters and reward are the same as 1328.
 * Attention: Still more observations are used as input.
+
+## 1330
+* Reward change. Still only one training area.
+* Rest is the same as 1329.
