@@ -1058,3 +1058,8 @@ learning rate changes to reward signifcant?
 * Code was cleaned.
 * Rerun 1330.
 * Slight collision change.
+* Terminated.
+
+## 1332
+* Reward scale changed.
+* Compare to 1331 after 1e6 steps.

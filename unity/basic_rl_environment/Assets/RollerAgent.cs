@@ -453,7 +453,7 @@ public class RollerAgent : Agent
     //public float heightPenalty = 0f;
     private float GetReward()
     {
-        currentReward = -0.01f * m_DistToTargetNormal;
+        currentReward = -0.1f * m_DistToTargetNormal;
         return currentReward;
     }
     
