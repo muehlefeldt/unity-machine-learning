@@ -1062,4 +1062,9 @@ learning rate changes to reward signifcant?
 
 ## 1332
 * Reward scale changed.
+  * currentReward = -0.1f * m_DistToTargetNormal
 * Compare to 1331 after 1e6 steps.
+* Still very unstable.
+
+## 1333
+* currentReward = -1f * m_DistToTargetNormal
