@@ -403,7 +403,7 @@ public class RollerAgent : Agent
         {
             RecordData(RecorderCodes.Target);
             m_EndReason = EpEndReasons.TargetReached;
-            SetReward(1f);
+            //SetReward(1f);
             EndEpisode();
         }
         
@@ -478,21 +478,22 @@ public class RollerAgent : Agent
     /// <summary>
     /// Initial collision event.
     /// </summary>
-    private void OnCollisionEnter(Collision other)
+    /*private void OnCollisionEnter(Collision other)
     {
         m_LastCollision = transform.position; // Used for Gizmos.
    
         AddReward(-0.2f);
     }
+    */
     
     /// <summary>
     /// If the collision continues after the initial event reduced punishment.
     /// </summary>
-    private void OnCollisionStay(Collision other)
+    /*private void OnCollisionStay(Collision other)
     {
         AddReward(-0.1f);
         RecordData(RecorderCodes.Wall);
-    }
+    }*/
 
     /// <summary>
     /// Codes used for tensorboard stats recorder.

@@ -1068,3 +1068,7 @@ learning rate changes to reward signifcant?
 
 ## 1333
 * currentReward = -1f * m_DistToTargetNormal
+* Shit.
+
+## 1334
+* No collision penalties.
