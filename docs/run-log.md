@@ -1050,4 +1050,6 @@ learning rate changes to reward signifcant?
 
 ## 1330
 * Reward change. Still only one training area.
+  * currentReward = -0.01f * m_DistToTargetNormal;
 * Rest is the same as 1329.
+* Compare cumulative reward to 1215.
