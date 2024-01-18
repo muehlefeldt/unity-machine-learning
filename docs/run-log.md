@@ -1096,3 +1096,9 @@ learning rate changes to reward signifcant?
 
 ## 1341
 * Back to known reward ... 
+
+## 1342
+* reward = -1f / maxStep
+
+## 1343
+* Same as 1342 but less sensors. No up and down.
