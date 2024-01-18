@@ -1093,3 +1093,6 @@ learning rate changes to reward signifcant?
 
 ## 1340
 * Rerun of 1339. More training areas. 
+
+## 1341
+* Back to known reward ... 
