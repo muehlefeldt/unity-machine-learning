@@ -478,7 +478,6 @@ MonoBehaviour:
   m_DistToTargetNormal: 0
   forceMultiplier: 10
   sensorCount: 32
-  rewardFunctionSelect: 5
   actionCount: 0
   currentReward: 0
   m_DoorPassages: 0
@@ -494,7 +493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 1
+  DecisionPeriod: 5
   TakeActionsBetweenDecisions: 0
 --- !u!114 &6229546468222189732
 MonoBehaviour:

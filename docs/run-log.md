@@ -1072,3 +1072,20 @@ learning rate changes to reward signifcant?
 
 ## 1334
 * No collision penalties.
+
+## 1335
+* currentReward = scalar * m_DistToTargetNormal;
+* Did not run. Promblem with editor.
+
+## 1336
+* Terminated. Reward problem.
+
+## 1337
+
+## 1338
+* Decision requester set to 5.
+* Terminated after no good progress observed.
+
+
+## 1339
+* Slow process.
