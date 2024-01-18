@@ -1089,3 +1089,7 @@ learning rate changes to reward signifcant?
 
 ## 1339
 * Slow process.
+* Only one training area.
+
+## 1340
+* Rerun of 1339. More training areas. 
