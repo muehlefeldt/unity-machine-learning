@@ -1138,9 +1138,19 @@ learning rate changes to reward signifcant?
 * Does this converge? Against which value?
 
 ## 1352
-* Decision period to 10.
+* Decision period (dp) to 10.
 * Using build.
 * Compare to 1350. Was using dp = 5.
+
+## 1353
+* Decision period (dp) to 10 but no decisions between.
+* Otherwise same as 1353.
+* Compare against 1352!
+  * Much higher initial cumulative reward compared to 1352.
+
+## 1354
+* DP = 3 and decisions between.
+* Compare against 1352.
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
