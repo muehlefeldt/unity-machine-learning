@@ -1125,7 +1125,17 @@ learning rate changes to reward signifcant?
 * Result is not too bad ...
 
 ## 1350
-* Rerun of 1349 but with simple dense reward structure.
+* Rerun of 1349 but with simple dense reward structure. 1349 was sparse reward with static punishment for each step.
   * currentReward = -0.01f * m_DistToTargetNormal;
 * How does this behave with decision period 5 and decisions between?
+* Converge against +1f?
+* Shouldn't a dense reward help the training speed?
+* Attention: Punishment per step is now higher! Result is lower initial reward.
+* Question: Decision period higher?
 
+## 1351
+* Continue based on 1350.
+* Does this converge? Against which value?
+
+## ToDo
+* How do we ensure enough distance between agent and target at respawn?
