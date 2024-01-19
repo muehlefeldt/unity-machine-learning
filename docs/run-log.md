@@ -1102,3 +1102,8 @@ learning rate changes to reward signifcant?
 
 ## 1343
 * Same as 1342 but less sensors. No up and down.
+
+## 1344 and 1345 and 1346
+* Awake() fix.
+* Rerun of 1343.
+* 1344 and 1345 were incorrect runs. Heuristic was activated. 

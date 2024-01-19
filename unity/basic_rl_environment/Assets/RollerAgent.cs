@@ -41,8 +41,9 @@ public class RollerAgent : Agent
     
     private Vector3 m_LastCollision = Vector3.zero;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         // Set the observation size to the requested sensor count + 2 sensors up and down.
         GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount + 4;
     }
