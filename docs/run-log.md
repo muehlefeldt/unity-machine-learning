@@ -1137,5 +1137,10 @@ learning rate changes to reward signifcant?
 * Continue based on 1350.
 * Does this converge? Against which value?
 
-## ToDo
+## 1352
+* Decision period to 10.
+* Using build.
+* Compare to 1350. Was using dp = 5.
+
+## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
