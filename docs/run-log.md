@@ -1114,4 +1114,9 @@ learning rate changes to reward signifcant?
 
 ## 1347 and 1348
 * Again with Decision period set to 1.
+  * Still no clue what this changes.
+  * Really! What does this shit do?
 * Attention: The one single training area needs to be checked.
+
+## 1349
+* Decisoin period: 5 and take decision between.
