@@ -1107,3 +1107,11 @@ learning rate changes to reward signifcant?
 * Awake() fix.
 * Rerun of 1343.
 * 1344 and 1345 were incorrect runs. Heuristic was activated. 
+* Do we see a change to 1343?
+* Also uses more training areas. 
+* 1346 also terminated.
+  * Still seeing unstable learning behaviour.
+
+## 1347 and 1348
+* Again with Decision period set to 1.
+* Attention: The one single training area needs to be checked.
