@@ -454,7 +454,7 @@ public class RollerAgent : Agent
     //public float heightPenalty = 0f;
     private float GetReward()
     {
-        //currentReward = -0.01f * m_DistToTargetNormal;
+        currentReward = -0.01f * m_DistToTargetNormal;
         /*var scalar = -1f;
         if (m_LastDistToTarget > m_DistToTarget)
         {
@@ -462,7 +462,7 @@ public class RollerAgent : Agent
         }
 
         currentReward = scalar * (1f - m_DistToTargetNormal);*/
-        currentReward = -1f / MaxStep;
+        //currentReward = -1f / MaxStep;
         return currentReward;
     }
     

@@ -1119,4 +1119,13 @@ learning rate changes to reward signifcant?
 * Attention: The one single training area needs to be checked.
 
 ## 1349
-* Decisoin period: 5 and take decision between.
+* Decision period: 5 and take decision between.
+* This should converge against +1.
+* What is the decision period?
+* Result is not too bad ...
+
+## 1350
+* Rerun of 1349 but with simple dense reward structure.
+  * currentReward = -0.01f * m_DistToTargetNormal;
+* How does this behave with decision period 5 and decisions between?
+
