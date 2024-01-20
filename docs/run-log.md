@@ -1119,6 +1119,7 @@ learning rate changes to reward signifcant?
 * Attention: The one single training area needs to be checked.
 
 ## 1349
+* DB = 5 and DB = True.
 * Decision period: 5 and take decision between.
 * This should converge against +1.
 * What is the decision period?
@@ -1140,6 +1141,7 @@ learning rate changes to reward signifcant?
 ## 1351
 * Continue based on 1350.
 * Does this converge? Against which value?
+* Simply a longer run of 1350. No meaningful improvements.
 
 ## 1352
 * Decision period (dp) to 10 and DB true.
@@ -1192,6 +1194,13 @@ learning rate changes to reward signifcant?
 * Initial run with DB = True. Should we try a run with DB = False?
 * Again relativly short run.
 * Compare against 1350.
+  * Initial progress is similar to 1350. Esp. cumulative reward.
+  * Is there even any change to 1350 in the config? Other than probably the NN structure.
+
+## 1365
+* Same as 1364. Reward scale change.
+  * currentReward = -0.1f * m_DistToTargetNormal;
+
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
