@@ -1138,7 +1138,7 @@ learning rate changes to reward signifcant?
 * Does this converge? Against which value?
 
 ## 1352
-* Decision period (dp) to 10.
+* Decision period (dp) to 10 and DB true.
 * Using build.
 * Compare to 1350. Was using dp = 5.
 
@@ -1151,6 +1151,20 @@ learning rate changes to reward signifcant?
 ## 1354
 * DP = 3 and decisions between.
 * Compare against 1352.
+* First impression: Unstable learning in comparison to 1352.
+
+## 1355+
+* Hyperparameter search.
+* DP = 10 and DB (Decisions between).
+* Summary file: 1356 best run with learning 1e-3 (pretty high) and less layers with num_layers = 1.
+* 1356:
+  * Visiual observations shows no good to the target.
+  * Reward is converging but below 0f.
+
+## 1361
+* Rerun of 1356 config.
+* max_step: Limited to 2.5e6.
+* Change: DP = 15 and NO DB. What is the change?
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
