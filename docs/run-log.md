@@ -1165,6 +1165,12 @@ learning rate changes to reward signifcant?
 * Rerun of 1356 config.
 * max_step: Limited to 2.5e6.
 * Change: DP = 15 and NO DB. What is the change?
+* Cumulativ reward starts much higher. 
+* Ep length is not really decreasing.
+
+## 1362
+* Same as 1361.
+* DP = 15 and DB = True.
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
