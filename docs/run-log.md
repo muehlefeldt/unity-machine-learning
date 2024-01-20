@@ -1171,6 +1171,11 @@ learning rate changes to reward signifcant?
 ## 1362
 * Same as 1361.
 * DP = 15 and DB = True.
+* Ep. length decreasing faster compared to 1361.
+
+## 
+* Test with DP = 20 and DB = False.
+* Same as 1361.
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
