@@ -1124,7 +1124,8 @@ learning rate changes to reward signifcant?
 * What is the decision period?
 * Result is not too bad ...
 
-## 1350
+## 1350 - Interesting and good run
+* DP = 5 and DB = True.
 * Rerun of 1349 but with simple dense reward structure. 1349 was sparse reward with static punishment for each step.
   * currentReward = -0.01f * m_DistToTargetNormal;
 * How does this behave with decision period 5 and decisions between?
@@ -1132,6 +1133,9 @@ learning rate changes to reward signifcant?
 * Shouldn't a dense reward help the training speed?
 * Attention: Punishment per step is now higher! Result is lower initial reward.
 * Question: Decision period higher?
+* Visual observation in the editor:
+  * Good movement speed.
+  * How does DB = True impact this shit?
 
 ## 1351
 * Continue based on 1350.
@@ -1167,15 +1171,27 @@ learning rate changes to reward signifcant?
 * Change: DP = 15 and NO DB. What is the change?
 * Cumulativ reward starts much higher. 
 * Ep length is not really decreasing.
+* NN in the editor:
+  * Also very slow movement. Same as 1363.
 
 ## 1362
 * Same as 1361.
 * DP = 15 and DB = True.
 * Ep. length decreasing faster compared to 1361.
 
-## 
+## 1363
 * Test with DP = 20 and DB = False.
 * Same as 1361.
+* Take a look at the NN in the editor.
+  * Agent does pretty much not move. Very very slow movement.
+* Why the cumulativ reward just above 0f?
+* Ep. length is pretty much static. 
+
+## 1364
+* Based on 1350 config: DP = 5 and DB.
+* Initial run with DB = True. Should we try a run with DB = False?
+* Again relativly short run.
+* Compare against 1350.
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
