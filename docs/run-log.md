@@ -1200,6 +1200,8 @@ learning rate changes to reward signifcant?
 ## 1365
 * Same as 1364. Reward scale change.
   * currentReward = -0.1f * m_DistToTargetNormal;
+  * Attention: Cumulativ reward changes significant but expected.
+* Still shorter run.
 
 
 ## ToDo for the night
