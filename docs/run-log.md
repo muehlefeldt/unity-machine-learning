@@ -1202,7 +1202,16 @@ learning rate changes to reward signifcant?
   * currentReward = -0.1f * m_DistToTargetNormal;
   * Attention: Cumulativ reward changes significant but expected.
 * Still shorter run.
+* Ep. length shows similar behaviour at the beginning to 1350, 1349 and 1364. At least in the beginning ...
 
+## 1366
+* Again reward scale change.
+  * currentReward = -0.005f * m_DistToTargetNormal;
+* Comparable to 1349? Was 1349 with sparse reward?
+
+## 1367
+* currentReward = -0.01f * m_DistToTargetNormal;
+* Collision penalty increased.
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?

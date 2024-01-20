@@ -454,7 +454,7 @@ public class RollerAgent : Agent
     //public float heightPenalty = 0f;
     private float GetReward()
     {
-        currentReward = -0.1f * m_DistToTargetNormal;
+        currentReward = -0.01f * m_DistToTargetNormal;
         /*var scalar = -1f;
         if (m_LastDistToTarget > m_DistToTarget)
         {
@@ -490,8 +490,8 @@ public class RollerAgent : Agent
     private void OnCollisionEnter(Collision other)
     {
         m_LastCollision = transform.position; // Used for Gizmos.
-   
-        AddReward(-0.2f);
+        AddReward(-0.5f);
+        RecordData(RecorderCodes.Wall);
     }
     
     
@@ -500,7 +500,8 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        AddReward(-0.1f);
+        m_LastCollision = transform.position;
+        AddReward(-0.3f);
         RecordData(RecorderCodes.Wall);
     }
 
