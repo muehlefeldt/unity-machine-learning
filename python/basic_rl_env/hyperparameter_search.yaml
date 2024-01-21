@@ -34,7 +34,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 2.5e6
+    max_steps: 10e6
     time_horizon: 1000
     summary_freq: 10000
 
@@ -58,8 +58,8 @@ behaviors:
       hidden_units: 512
       num_layers: 1
       memory:
-        memory_size: 38
-        sequence_length: 16
+        memory_size: 128
+        sequence_length: 64
       #vis_encode_type: simple
     reward_signals:
       extrinsic:

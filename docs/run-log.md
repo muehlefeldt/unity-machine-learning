@@ -1212,6 +1212,30 @@ learning rate changes to reward signifcant?
 ## 1367
 * currentReward = -0.01f * m_DistToTargetNormal;
 * Collision penalty increased.
+* Compare against?
+
+## 1368
+* Long run with max_steps = 10e6.
+* Same as 1367 otherwise.
+* Still no convergence against 10e6.
+
+## 1369 - 1980
+* LSTM hyperparamter search.
+* Only 2.5e6 max_steps.
+* "Best" run 1379.  memory_size = 128 and sequence_length = 64.
+* Observation: Interestlingy relativley high values for LSTM config best. 
+
+## 1981
+* Terminated.
+
+## 1982
+* Run based on 1379 config but no longer.
+* max_steps = 10e6.
+* Previous run was only 2.5e6.
+* I suspect there will be no significant improvement.
+
+## 
+* Well ... sparse reward again?
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
