@@ -1233,6 +1233,14 @@ learning rate changes to reward signifcant?
 * max_steps = 10e6.
 * Previous run was only 2.5e6.
 * I suspect there will be no significant improvement.
+* Learning progress continued positivley. Surprise I guess.
+* Recording created.
+
+## 1983
+* 2.5e6 steps with DP = 5 and no DB.
+
+
+
 
 ## 
 * Well ... sparse reward again?
