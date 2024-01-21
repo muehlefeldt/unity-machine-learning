@@ -400,6 +400,36 @@ public class RollerAgent : Agent
         }*/
         
         // Reached target. Success. Terminate episode.
+        /*if (m_DistToTarget < 1.42f)
+        {
+            RecordData(RecorderCodes.Target);
+            m_EndReason = EpEndReasons.TargetReached;
+            AddReward(1f);
+            EndEpisode();
+        }
+        
+        // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
+        if (!IsAgentPositionPlausible())
+        {
+            m_EndReason = EpEndReasons.PositionImplausible;
+            m_LastImplausiblePos = transform.position;
+            EndEpisode();
+        }
+    
+        // Fix the rotation of the agent. Does not require the termination of the episode.
+        if (!IsAgentRotationPlausible())
+        {
+            FixAgentRotation();
+        }
+        
+        AddReward(GetReward());*/
+    }
+
+    void FixedUpdate()
+    {
+        // Get the distance to the target.
+        CalculateDistanceToTarget();
+        
         if (m_DistToTarget < 1.42f)
         {
             RecordData(RecorderCodes.Target);
