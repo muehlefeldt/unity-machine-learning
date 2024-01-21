@@ -1219,16 +1219,16 @@ learning rate changes to reward signifcant?
 * Same as 1367 otherwise.
 * Still no convergence against 10e6.
 
-## 1369 - 1980
+## 1369 - 1380
 * LSTM hyperparamter search.
 * Only 2.5e6 max_steps.
 * "Best" run 1379.  memory_size = 128 and sequence_length = 64.
 * Observation: Interestlingy relativley high values for LSTM config best. 
 
-## 1981
+## 1381
 * Terminated.
 
-## 1982
+## 1382
 * Run based on 1379 config but no longer.
 * max_steps = 10e6.
 * Previous run was only 2.5e6.
@@ -1236,22 +1236,30 @@ learning rate changes to reward signifcant?
 * Learning progress continued positivley. Surprise I guess.
 * Recording created.
 
-## 1983
+## 1383
 * 2.5e6 steps with DP = 5 and no DB.
 * Compare against 1379.
 
-## 1984, 1985, 1986 (all terminated)
+## 1384, 1385, 1386 (all terminated)
 * Idea from the example Walker.
 * Reward function moved to FixedUpdate().
 * Provides denser reward?
 * Run in the editor and using same config as 1983.
 * Terminated: Something in the code? Jap because you are stupid.
 
-## 1987
+## 1387
+* Same as before.
+* DP = 5 and DB = False.
+* Fix: Infinity value for distance caused reward problems.
+* Initial learning similar to 1379. But shows a similiar learning behavior as 1383. Very very slow learning but something happens.
 
+## 1388
+* Same as 1387 but with DB = True.
+* Using build. Was pretty slow wotherwise. I am bored.
+* Terminated due to config problem.
 
-## 
-* Well ... sparse reward again?
+## 1389
+* Same as 1388.
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?
