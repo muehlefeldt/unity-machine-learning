@@ -484,7 +484,12 @@ public class RollerAgent : Agent
     //public float heightPenalty = 0f;
     private float GetReward()
     {
-        currentReward = -0.01f * m_DistToTargetNormal;
+        var dist = m_DistToTargetNormal;
+        if (float.IsPositiveInfinity(dist))
+        {
+            dist = 1f;
+        }
+        currentReward = -0.01f * dist;
         /*var scalar = -1f;
         if (m_LastDistToTarget > m_DistToTarget)
         {

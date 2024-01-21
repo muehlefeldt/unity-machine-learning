@@ -1240,11 +1240,14 @@ learning rate changes to reward signifcant?
 * 2.5e6 steps with DP = 5 and no DB.
 * Compare against 1379.
 
-## 1984
+## 1984, 1985, 1986 (all terminated)
 * Idea from the example Walker.
 * Reward function moved to FixedUpdate().
 * Provides denser reward?
 * Run in the editor and using same config as 1983.
+* Terminated: Something in the code? Jap because you are stupid.
+
+## 1987
 
 
 ## 
