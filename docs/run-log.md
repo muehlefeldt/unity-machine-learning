@@ -1277,3 +1277,12 @@ learning rate changes to reward signifcant?
 ## 1392
 * Ensure enough distance between agent and target at respawn.
 * Short test run to look for problems after code change.
+* Reward looks quite good. Very close to the 1390 progress.
+
+## 1393
+* Short run to look at beta / entropy.
+* Test with default beta = 5e-3.
+* Just to take a look. No further config changes.
+
+##
+* Hyperparameter study.
