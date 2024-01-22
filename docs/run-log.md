@@ -1260,6 +1260,10 @@ learning rate changes to reward signifcant?
 
 ## 1389
 * Same as 1388.
+* Was learning but no fast. Maybe a extremly long run could produce a useable result ... but that would be pretty shit.
+
+## 1390
+* Sparse reward. Addreward() moved back to OnActionReceived().
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn?

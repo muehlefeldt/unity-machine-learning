@@ -400,7 +400,7 @@ public class RollerAgent : Agent
         }*/
         
         // Reached target. Success. Terminate episode.
-        /*if (m_DistToTarget < 1.42f)
+        if (m_DistToTarget < 1.42f)
         {
             RecordData(RecorderCodes.Target);
             m_EndReason = EpEndReasons.TargetReached;
@@ -422,10 +422,10 @@ public class RollerAgent : Agent
             FixAgentRotation();
         }
         
-        AddReward(GetReward());*/
+        AddReward(GetReward());
     }
 
-    void FixedUpdate()
+    /*void FixedUpdate()
     {
         // Get the distance to the target.
         CalculateDistanceToTarget();
@@ -453,7 +453,7 @@ public class RollerAgent : Agent
         }
         
         AddReward(GetReward());
-    }
+    }*/
 
     private Vector3 m_LastImplausiblePos = Vector3.zero;
 
@@ -484,12 +484,12 @@ public class RollerAgent : Agent
     //public float heightPenalty = 0f;
     private float GetReward()
     {
-        var dist = m_DistToTargetNormal;
+        /*var dist = m_DistToTargetNormal;
         if (float.IsPositiveInfinity(dist))
         {
             dist = 1f;
         }
-        currentReward = -0.01f * dist;
+        currentReward = -0.01f * dist;*/
         /*var scalar = -1f;
         if (m_LastDistToTarget > m_DistToTarget)
         {
@@ -497,7 +497,7 @@ public class RollerAgent : Agent
         }
 
         currentReward = scalar * (1f - m_DistToTargetNormal);*/
-        //currentReward = -1f / MaxStep;
+        currentReward = -1f / MaxStep;
         return currentReward;
     }
     
