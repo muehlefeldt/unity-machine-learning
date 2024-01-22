@@ -1255,7 +1255,7 @@ learning rate changes to reward signifcant?
 
 ## 1388
 * Same as 1387 but with DB = True.
-* Using build. Was pretty slow wotherwise. I am bored.
+* Using build. Was pretty slow otherwise. I am bored.
 * Terminated due to config problem.
 
 ## 1389
@@ -1274,5 +1274,6 @@ learning rate changes to reward signifcant?
 * Result was quite nice.
 * Summary: No height change by agent possible. Sparse reward. Shows at least that navigation is possible. 
 
-## ToDo for the night
-* How do we ensure enough distance between agent and target at respawn? That is still a problem on 2024-01-22
+## 1392
+* Ensure enough distance between agent and target at respawn.
+* Short test run to look for problems after code change.
