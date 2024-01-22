@@ -1272,6 +1272,7 @@ learning rate changes to reward signifcant?
 * Otherwise same as 1390.
 * Recording.
 * Result was quite nice.
+* Summary: No height change by agent possible. Sparse reward. Shows at least that navigation is possible. 
 
 ## ToDo for the night
 * How do we ensure enough distance between agent and target at respawn? That is still a problem on 2024-01-22

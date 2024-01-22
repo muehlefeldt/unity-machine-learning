@@ -261,23 +261,34 @@ public class Floor : MonoBehaviour
     /// <summary>
     /// Reset the position of the target to a random position. Based on the created rooms in the environment.
     /// </summary>
+    /// <remarks>Be sure to call this function only after the position of the agent was changed.</remarks>
     public bool targetFixedPosition = false;
     public void ResetTargetPosition()
     {
-        if (targetFixedPosition)
+        if (targetFixedPosition) // Target shall always be spawned at the same position.
         {
             target.transform.localPosition = new Vector3(0f, 0.5f, -12f);
         }
         else // Random position of the target requested.
         {
             var distToDoor = 0f;
+            var distToAgent = 0f;
+            
             var newTargetPos = Vector3.zero;
             
-            // While distance to door is too short, get new position.
-            while (distToDoor < 4f) 
+            // While distance to door or to the agent is too short, get new position.
+            while (distToDoor < 4f || distToAgent < 4f)
             {
+                // Get the possible condition of the target.
                 newTargetPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agent.transform.position);
-                distToDoor = Vector3.Distance(newTargetPos, m_DoorCentreGlobalCoord);
+                
+                // Get distance to the door.
+                distToDoor = CreateWall ? Vector3.Distance(newTargetPos, m_DoorCentreGlobalCoord) :
+                    // If we do not have a door present, the distance is in every case ok and can be assumed as infinity.
+                    float.PositiveInfinity;
+                
+                // Get the distance to the agent.
+                distToAgent = Vector3.Distance(newTargetPos, agent.transform.position);
             }
             
             // Set the position of the target.
