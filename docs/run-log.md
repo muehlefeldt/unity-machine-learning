@@ -1283,6 +1283,8 @@ learning rate changes to reward signifcant?
 * Short run to look at beta / entropy.
 * Test with default beta = 5e-3.
 * Just to take a look. No further config changes.
+* Entropy remains above 1390 but only slightly.
+* Learning progress is comparable to 1390 and 1392.
 
-##
+## 1394+
 * Hyperparameter study.
