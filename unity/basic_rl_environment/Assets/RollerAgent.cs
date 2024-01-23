@@ -501,7 +501,9 @@ public class RollerAgent : Agent
         return currentReward;
     }
     
-    
+    /// <summary>
+    /// Exit Trigger
+    /// </summary>
     public int m_DoorPassages;
     private void OnTriggerExit(Collider other)
     {

@@ -669,7 +669,7 @@ MonoBehaviour:
   doorWidth: 4
   CreateWall: 1
   RandomWallPosition: 0
-  RanndomDoorPosition: 0
+  RanndomDoorPosition: 1
   targetAlwaysInOtherRoomFromAgent: 1
   targetFixedPosition: 0
 --- !u!65 &7692793173245375662

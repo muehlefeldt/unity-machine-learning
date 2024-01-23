@@ -1304,3 +1304,15 @@ learning rate changes to reward signifcant?
 
 ## 1407
 * Same as 1406 but longer with 10e6 steps.
+* Should converge against 1.5.
+  * Reward +0.5 for door and +1 for target close enough.
+  * Given 1000 MaxSteps are 200 Academy Steps possible. 200 * (-1) / 1000 = -0.2 max penalty per step.
+  * 1.3 cumulativ reward and above is the target.
+* Door fixed and no height change of the drone.
+
+## 1408
+* Door random. Wall fixed.
+* Config same as 1407 but longer wit 20e6 steps.
+
+# ToDo
+* Do we have a problem with the door passage detection?
