@@ -668,7 +668,7 @@ MonoBehaviour:
   useDecoy: 0
   doorWidth: 4
   CreateWall: 1
-  RandomWallPosition: 0
+  RandomWallPosition: 1
   RanndomDoorPosition: 1
   targetAlwaysInOtherRoomFromAgent: 1
   targetFixedPosition: 0

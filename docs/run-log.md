@@ -1309,10 +1309,17 @@ learning rate changes to reward signifcant?
   * Given 1000 MaxSteps are 200 Academy Steps possible. 200 * (-1) / 1000 = -0.2 max penalty per step.
   * 1.3 cumulativ reward and above is the target.
 * Door fixed and no height change of the drone.
+* Recording at half way point.
 
 ## 1408
 * Door random. Wall fixed.
 * Config same as 1407 but longer wit 20e6 steps.
+* Recording.
+* Result not too bad.
+
+## 1409
+* Wall and door random. Build.
+* 50e6 steps allowed.
 
 # ToDo
 * Do we have a problem with the door passage detection?
