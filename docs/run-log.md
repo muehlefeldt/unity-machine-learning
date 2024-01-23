@@ -1289,9 +1289,18 @@ learning rate changes to reward signifcant?
 ## 1394 - 1405
 * Hyperparameter study.
 * learning rate and beta studied.
-* 1404 best run as per summary.
+* 1404 best run as per summary. learning_rate = 1e-3 and beta = 5e-3.
 * Comparison to 1393, 1392 and 1390:
   * Cumulative reward progress extremly similar.
   * Entropy remaind pretty high. Above 1393 levels.
   * These runs did not really show any improvement in learning speed.
 
+## 1406
+* Build run with the fixed door.
+* Run reintroduces the wall using a sparse reward structure.
+* Using the NN config of 1404.
+* Recording.
+* Result was actually pretty promising.
+
+## 1407
+* Same as 1406 but longer with 10e6 steps.
