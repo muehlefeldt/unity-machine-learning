@@ -1286,5 +1286,12 @@ learning rate changes to reward signifcant?
 * Entropy remains above 1390 but only slightly.
 * Learning progress is comparable to 1390 and 1392.
 
-## 1394+
+## 1394 - 1405
 * Hyperparameter study.
+* learning rate and beta studied.
+* 1404 best run as per summary.
+* Comparison to 1393, 1392 and 1390:
+  * Cumulative reward progress extremly similar.
+  * Entropy remaind pretty high. Above 1393 levels.
+  * These runs did not really show any improvement in learning speed.
+
