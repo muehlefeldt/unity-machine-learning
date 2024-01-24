@@ -1321,5 +1321,9 @@ learning rate changes to reward signifcant?
 * Wall and door random. Build.
 * 50e6 steps allowed.
 
+## 1410
+* Continue 1409 with 20e6 steps.
+* Build remains same. No height change by drone.
+
 # ToDo
 * Do we have a problem with the door passage detection?
