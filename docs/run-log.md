@@ -1313,7 +1313,7 @@ learning rate changes to reward signifcant?
 
 ## 1408
 * Door random. Wall fixed.
-* Config same as 1407 but longer wit 20e6 steps.
+* Config same as 1407 but longer with 20e6 steps.
 * Recording.
 * Result not too bad.
 
@@ -1330,3 +1330,12 @@ learning rate changes to reward signifcant?
 ## 1411
 * Continue 1410 but with new build after door passage fix and recording data of the door passages.
 * New build should change no significant environment stuff.
+* Terminated.
+* Finishes the runs started with 1409. All runs improved upon the previous results.
+* Overall quite nice results.
+* But is only slowly converging.
+* Sometimes significant std of the reward up to 11. Maybe caused by improper selected hyperparameter for runs based on previous nn. No clue, just a guess.
+
+# Next
+* Target can be in all rooms. Pretty close to question 2.
+* Test implementation of the target in all rooms problem. Esp. the reward of the door and associated functions in the floor and AllRooms classes are important.

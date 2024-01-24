@@ -11,6 +11,9 @@ public class AllRooms
     private Vector3 m_CurrentAgentPos;
     private int m_CurrentAgentRoomId;
     
+    // Indicates if agent and target are placed in the same room.
+    private bool m_AgentAndTargetInSameRoom;
+    
     /// <summary>
     /// Constructor: Setup list for the rooms and set where the target needs to be located.
     /// </summary>
@@ -31,11 +34,12 @@ public class AllRooms
     }
     
     /// <summary>
-    /// Clear stored rooms.
+    /// Clear stored rooms and reset indicator for agent and target in the same room.
     /// </summary>
     public void Clear()
     {
         m_AllRoomsInEnv.Clear();
+        m_AgentAndTargetInSameRoom = false;
     }
     
     /// <summary>
@@ -120,13 +124,23 @@ public class AllRooms
             }
 
             // If not a different room is requested a random position is calculated. The position can be in every room. 
-            var possibleRandomPos = new List<Vector3>();
+            //var possibleRandomPos = new List<Vector3>();
+            
+            // Select a random room from the possible rooms.
+            var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
+            
+            // Check if target and agent are in the same room. If both are in the same room bool is set to indicate so.
             foreach (var singleRoom in m_AllRoomsInEnv)
             {
-                possibleRandomPos.Add(singleRoom.GetRandomPositionWithin());
+                //possibleRandomPos.Add(singleRoom.GetRandomPositionWithin());
+                if (singleRoom.ContainsAgent() && selectedRoom.GetId() == singleRoom.GetId())
+                {
+                    m_AgentAndTargetInSameRoom = true;
+                }
             }
 
-            return possibleRandomPos[Random.Range(0, possibleRandomPos.Count)];
+            return selectedRoom.GetRandomPositionWithin();
+            //return possibleRandomPos[Random.Range(0, possibleRandomPos.Count)];
         }
 
         if (type is PositionType.Agent)
@@ -143,6 +157,15 @@ public class AllRooms
         {
             return Vector3.zero;
         }
+    }
+    
+    /// <summary>
+    /// Are agent and target placed in the same room during creation on the current environment.
+    /// </summary>
+    /// <returns></returns>
+    public bool AreAgentAndTargetInSameRoom()
+    {
+        return m_AgentAndTargetInSameRoom;
     }
     
     /// <summary>

@@ -39,11 +39,17 @@ public class RollerAgent : Agent
     // Select sensor count of the agent. Has no influence on sensors along y axis, i.e. height sensors remain constant.
     public int sensorCount = 4;
     
+    // Last detected collision between agent and other object. 
     private Vector3 m_LastCollision = Vector3.zero;
+    
+    // Number of complete door passages. Reset at every 
+    private int m_DoorPassages;
 
     protected override void Awake()
     {
+        // Crucial to call Awake() from the base class to ensure proper initialisation.
         base.Awake();
+        
         // Set the observation size to the requested sensor count + 2 sensors up and down.
         GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount + 4;
     }
@@ -517,26 +523,47 @@ public class RollerAgent : Agent
     }
 
     /// <summary>
-    /// Exit Trigger.
+    /// Called on trigger exit after collider contact finishes with the door.
     /// </summary>
-    public int m_DoorPassages;
+    /// <remarks>Takes into account if agent and target are placed in the same room.
+    /// Important change to the reward function</remarks>
     private void OnTriggerExit(Collider other)
     {
         // Make sure a proper door passage occured.
         if (m_DoorPassageStartInRoom != GetCurrentRoomId())
         {
-            Debug.Log("Trigger Exit.");
-            if (m_DoorPassages % 2 == 0)
+            // Door passage can only be rewarded if target and agent are NOT in the same room.
+            if (!floor.RoomsInEnv.AreAgentAndTargetInSameRoom())
             {
-                AddReward(0.5f);
-                Debug.Log("Door passed +0.5f");
-                
+                Debug.Log("Trigger Exit.");
+                if (m_DoorPassages % 2 == 0)
+                {
+                    AddReward(0.5f);
+                    Debug.Log("Door passed +0.5f");
+                    RecordData(RecorderCodes.GoodDoorPassage);
+                }
+                else
+                {
+                    AddReward(-0.6f);
+                    Debug.Log("Door passed -0.8f");
+                    RecordData(RecorderCodes.BadDoorPassage);
+                }
             }
-            else
+            else // Agent and target start in the same room.
             {
-                AddReward(-0.6f);
-                Debug.Log("Door passed -0.8f");
+                // Door passage now in the wrong direction. Away from the target. Both started in the same room.
+                if (m_DoorPassages % 2 == 0)
+                {
+                    AddReward(-0.6f);
+                    RecordData(RecorderCodes.BadDoorPassage);
+                }
+                else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
+                {
+                    AddReward(0.5f);
+                    RecordData(RecorderCodes.GoodDoorPassage);
+                }
             }
+
             m_DoorPassages++;
         }
     }

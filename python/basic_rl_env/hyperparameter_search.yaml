@@ -14,7 +14,7 @@ userconfig:
   keep_files: true
 
   # Initialize from existing previous run.
-  not_based_on_previous_nn: false
+  not_based_on_previous_nn: true
 
   # Provide run id of previous NN to be used for new run.
   previous_run_id: 1410

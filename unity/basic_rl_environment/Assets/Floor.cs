@@ -199,6 +199,7 @@ public class Floor : MonoBehaviour
     /// <summary>
     /// Create rooms by creating a inner wall.
     /// </summary>
+    /// <remarks>Function is also called if only one room is used. In this case the single room is stored and prepared for further use.</remarks>
     public void CreateInnerWall()
     {
         // The wall inner wall is only created if selected in the Unity editor. Set to true as default.
