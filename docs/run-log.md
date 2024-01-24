@@ -1325,6 +1325,8 @@ learning rate changes to reward signifcant?
 * Continue 1409 with 20e6 steps.
 * Build remains same. No height change by drone.
 * Again we want a convergence against 1.5.
+* Recording.
 
-# ToDo
-* Do we have a problem with the door passage detection?
+## 1411
+* Continue 1410 but with new build after door passage fix and recording data of the door passages.
+* New build should change no significant environment stuff.
