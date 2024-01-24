@@ -141,26 +141,40 @@ public class Floor : MonoBehaviour
 
         return false;
     }
-
+    
+#if UNITY_EDITOR
+    /// <summary>
+    /// Visual cues for debugging in the editor.
+    /// </summary>
     void OnDrawGizmos()
-    {
+    {   
+        // In case of an inner wall. Highlight start and end of the wall including the door.
         if (CreateWall)
         {
             foreach (var coord in new List<Vector3>() { m_WallStartGlobalCoord, m_WallEndGlobalCoord })
             {
                 Gizmos.DrawSphere(coord, 0.3f);
-                //Handles.Label(coord, "Wall");
+                Handles.Label(coord, "Wall");
             }
-
+            
             foreach (var coord in new List<Vector3>()
                          { m_DoorStartGlobalCoord, m_DoorCentreGlobalCoord, m_DoorEndGlobalCoord })
             {
                 Gizmos.DrawWireSphere(coord, 0.3f);
-                //Handles.Label(coord, "Door");
+                Handles.Label(coord, "Door");
             }
         }
+        
+        // Show id of the rooms.
+        foreach (var singleRoom in RoomsInEnv.GetAllRooms())
+        {
+            Handles.Label(singleRoom.GetMiddlePosition(), singleRoom.GetId().ToString());
+        }
     }
-
+#endif
+    /// <summary>
+    /// Get the max possible distance on the current training area.
+    /// </summary>
     public float GetMaxPossibleDist()
     {
         return m_MaxDist;
@@ -199,14 +213,14 @@ public class Floor : MonoBehaviour
             innerWallCreator.CreateWallWithDoor((m_WallStartGlobalCoord, m_WallEndGlobalCoord), (m_DoorStartGlobalCoord, m_DoorEndGlobalCoord));
 
             // Add the created rooms to the room management object.
-            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[0], m_CornersGlobalCoords[1], m_WallStartGlobalCoord, m_WallEndGlobalCoord});
-            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[2], m_CornersGlobalCoords[3], m_WallStartGlobalCoord, m_WallEndGlobalCoord});
+            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[0], m_CornersGlobalCoords[1], m_WallStartGlobalCoord, m_WallEndGlobalCoord}, roomId: 0);
+            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[2], m_CornersGlobalCoords[3], m_WallStartGlobalCoord, m_WallEndGlobalCoord}, roomId: 1);
         }
         else
         {
             // Env has only one room when no wall is created. Only one room needs to be stored.
             RoomsInEnv.Clear(); 
-            RoomsInEnv.AddRoom(m_CornersGlobalCoords);
+            RoomsInEnv.AddRoom(m_CornersGlobalCoords, roomId: 0);
         }
     }
     
@@ -303,6 +317,11 @@ public class Floor : MonoBehaviour
     public Vector3 GetRandomAgentPosition()
     {
         return RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Agent, agent.transform.position);
+    }
+
+    public int GetAgentRoomId(Vector3 agentGlobalPosition)
+    {
+        return RoomsInEnv.GetCurrentAgentRoomId(agentGlobalPosition);
     }
 
     

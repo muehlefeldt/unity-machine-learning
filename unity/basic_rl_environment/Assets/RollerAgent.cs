@@ -5,7 +5,7 @@ using System.Numerics;
 using Unity.Mathematics;
 //using DefaultNamespace;
 using UnityEngine;
-
+using UnityEditor;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
@@ -500,25 +500,45 @@ public class RollerAgent : Agent
         currentReward = -1f / MaxStep;
         return currentReward;
     }
-    
+
     /// <summary>
-    /// Exit Trigger
+    /// Get the ID of the room the agent is currently in.
+    /// </summary>
+    /// <returns></returns>
+    private int GetCurrentRoomId()
+    {
+        return floor.GetAgentRoomId(transform.position);
+    }
+
+    private int m_DoorPassageStartInRoom;
+    private void OnTriggerEnter(Collider other)
+    {
+        m_DoorPassageStartInRoom = GetCurrentRoomId();
+    }
+
+    /// <summary>
+    /// Exit Trigger.
     /// </summary>
     public int m_DoorPassages;
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Trigger Exit");
-        if (m_DoorPassages % 2 == 0)
+        // Make sure a proper door passage occured.
+        if (m_DoorPassageStartInRoom != GetCurrentRoomId())
         {
-            AddReward(0.5f);
-            Debug.Log("Door passed +0.5f");
+            Debug.Log("Trigger Exit.");
+            if (m_DoorPassages % 2 == 0)
+            {
+                AddReward(0.5f);
+                Debug.Log("Door passed +0.5f");
+                
+            }
+            else
+            {
+                AddReward(-0.6f);
+                Debug.Log("Door passed -0.8f");
+            }
+            m_DoorPassages++;
         }
-        else
-        {
-            AddReward(-0.6f);
-            Debug.Log("Door passed -0.8f");
-        }
-        m_DoorPassages++;
     }
     
     /// <summary>
@@ -552,12 +572,21 @@ public class RollerAgent : Agent
         Implausible,
         Target,
         RotationError,
-        OutOfBounds
+        OutOfBounds,
+        /// <summary>
+        /// Door passage in correct direction towards the target.
+        /// </summary>
+        GoodDoorPassage,
+        /// <summary>
+        /// Door passage away from the target. Passage in the wrong direction.
+        /// </summary>
+        BadDoorPassage
     }
     
     /// <summary>
     /// Record data for tensorboard statistics.
     /// </summary>
+    /// <remarks>Write data based on selected Recorder codes within the code.</remarks>
     /// <param name="msg">Recorder code</param>
     private void RecordData(RecorderCodes msg)
     {
@@ -582,6 +611,14 @@ public class RollerAgent : Agent
             
             case RecorderCodes.OutOfBounds:
                 statsRecorder.Add("Out of bounds", 1f);
+                break;
+            
+            case RecorderCodes.GoodDoorPassage:
+                statsRecorder.Add("Good door passage", 1f);
+                break;
+            
+            case RecorderCodes.BadDoorPassage:
+                statsRecorder.Add("Bad door passage", 1f);
                 break;
         }
     }
@@ -671,8 +708,12 @@ public class RollerAgent : Agent
     }
 
 #if UNITY_EDITOR
+    /// <summary>
+    /// Debugging visual cues within in the editor.
+    /// </summary>
     void OnDrawGizmos()
     {
+        // Draw the path from target to the target. Takes the door into account.
         if (m_Path != null)
         {
             for (int i = 1; i < m_Path.Count; i++)
@@ -685,14 +726,16 @@ public class RollerAgent : Agent
                 Gizmos.DrawCube(coord, new Vector3(0.3f, 0.3f, 0.3f));    
             }
         }
-
+        
+        // Highlight last detected collision between agent and other object.
         if (m_LastCollision != Vector3.zero)
         {
             Gizmos.DrawCube(m_LastCollision, new Vector3(0.3f, 0.3f, 0.3f));
         }
+        
+        // Highlight implausible positions. Especially after glitches through walls.
         if (m_LastImplausiblePos != Vector3.zero)
         {
-            //Gizmos.DrawCube(m_LastImplausiblePos, new Vector3(0.3f, 0.3f, 0.3f));
             Debug.DrawRay(m_LastImplausiblePos, Vector3.up * 100f, Color.red);
         }
     }

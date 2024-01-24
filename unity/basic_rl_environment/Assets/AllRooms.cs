@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
@@ -8,6 +9,7 @@ public class AllRooms
     private bool m_TargetAlwaysInOtherRoomFromAgent;
     private bool m_CreateWall;
     private Vector3 m_CurrentAgentPos;
+    private int m_CurrentAgentRoomId;
     
     /// <summary>
     /// Constructor: Setup list for the rooms and set where the target needs to be located.
@@ -23,9 +25,9 @@ public class AllRooms
     /// <summary>
     /// Add a new room.
     /// </summary>
-    public void AddRoom(List<Vector3> corners)
+    public void AddRoom(List<Vector3> corners, int roomId)
     {
-        m_AllRoomsInEnv.Add(new Room(corners));
+        m_AllRoomsInEnv.Add(new Room(corners, roomId));
     }
     
     /// <summary>
@@ -35,59 +37,41 @@ public class AllRooms
     {
         m_AllRoomsInEnv.Clear();
     }
-
-    private bool m_DoorPassageInGoodDirection = false;
-
-    public bool GoodDoorPassage()
-    {
-        return m_DoorPassageInGoodDirection;
-    }
-    public bool CheckForDoorPassage()
-    {
-        // Current position of the agent within the rooms.
-        var agentLocation = new List<bool>();
-        foreach (var r in m_AllRoomsInEnv)
-        {
-            agentLocation.Add(r.ContainsAgent());
-        }
-        
-        // Update Agent position within the rooms.
-        UpdateAgentLocation();
-
-        for (int i = 0; i < m_AllRoomsInEnv.Count; i++)
-        {
-            if (agentLocation[i] != m_AllRoomsInEnv[i].ContainsAgent())
-            {
-                if (agentLocation[i] == m_AllRoomsInEnv[i].ContainsTarget())
-                {
-                    m_DoorPassageInGoodDirection = true;
-                }
-                return true;
-            } 
-        }
-
-        m_DoorPassageInGoodDirection = false;
-        return false;
-    }
     
     /// <summary>
     /// Update the information which room does contain the agent. Based on the provided global position.
     /// Relevant because of the possible requirement to position the target in a different room from the agent.
     /// </summary>
-    private void UpdateAgentLocation()
+    private void UpdateAgentLocation(Vector3 agentGlobalPosition)
     {
+        // Update the information which room does contain the agent in the current env state.
+        m_CurrentAgentPos = agentGlobalPosition;
+        
         // Parse every room. Due to the limited number of rooms, this should be no performance issue.
         foreach (var singleRoom in m_AllRoomsInEnv)
         {
+            // If the room contains the agent position, set agent contained and save room id.
             if (singleRoom.DoesContainGlobalCoord(m_CurrentAgentPos))
             {
                 singleRoom.SetAgentPresent();
+                m_CurrentAgentRoomId = singleRoom.GetId();
             }
             else
             {
                 singleRoom.SetNotAgentPresent();
             }
         }
+    }
+    
+    /// <summary>
+    /// Return the Id of the room containing the global position of the agent.
+    /// </summary>
+    /// <param name="agentGlobalPosition">Vector3 containing the global position of the agent.</param>
+    /// <returns></returns>
+    public int GetCurrentAgentRoomId(Vector3 agentGlobalPosition)
+    {
+        UpdateAgentLocation(agentGlobalPosition);
+        return m_CurrentAgentRoomId;
     }
 
     public enum PositionType
@@ -111,9 +95,7 @@ public class AllRooms
     {
         if (type is PositionType.Target)
         {
-            // Update the information which room does contain the agent in the current env state.
-            m_CurrentAgentPos = agentGlobalPosition;
-            UpdateAgentLocation();
+            UpdateAgentLocation(agentGlobalPosition);
 
             // No wall should mean there is only one room within the env.
             if (!m_CreateWall)
@@ -161,5 +143,14 @@ public class AllRooms
         {
             return Vector3.zero;
         }
+    }
+    
+    /// <summary>
+    /// Return list with all rooms in the environment.
+    /// </summary>
+    /// <returns></returns>
+    public List<Room> GetAllRooms()
+    {
+        return m_AllRoomsInEnv;
     }
 }
