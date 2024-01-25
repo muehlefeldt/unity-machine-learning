@@ -15,15 +15,9 @@ public class Floor : MonoBehaviour
     //private List<Vector3> m_GlobalVertices = new List<Vector3>();
     
     // Maximum possible distance on this floor.
-    public float m_MaxDist = 1f;
+    private float m_MaxDist = 1f;
     
-    //private int[] m_PossibleWallLocations = new int[] {0, 11, 22, 33, 66, 77, 88, 99, 110};
-    //private int m_IndexWallEnd = 10;
-
-    //public List<Tuple<Vector3, Vector3>> CreatedWallsCoord = new List<Tuple<Vector3, Vector3>>();
-    //public List<Vector3> CreatedDoorsCoord = new List<Vector3>();
-
-    public InnerWallCreator innerWallCreator;
+    private InnerWallCreator innerWallCreator;
 
     public AllRooms RoomsInEnv;
     public RollerAgent agent;
@@ -32,8 +26,6 @@ public class Floor : MonoBehaviour
     // Select if a decoy object is requested.
     public bool useDecoy = false;
     private Decoy m_Decoy;
-    
-    //public bool finished = false;
     
     // Store global coords of the floor. Populated during startup.
     private List<Vector3> m_CornersGlobalCoords;
@@ -56,8 +48,11 @@ public class Floor : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        // Get the MeshFilter component of the floor object
+        // Get the MeshFilter component of the floor object.
         MeshFilter floorMeshFilter = GetComponent<MeshFilter>();
+        
+        // Initialise the creater object for the inner wall. 
+        innerWallCreator = new InnerWallCreator(transform);
         
         // Setup the room management.
         RoomsInEnv = new AllRooms(CreateWall, targetAlwaysInOtherRoomFromAgent);
@@ -85,9 +80,6 @@ public class Floor : MonoBehaviour
             m_MaxXGlobalCoord = sortedX[^1];
             m_MinZGlobalCoord = sortedZ[0];
             m_MaxZGlobalCoord = sortedZ[^1];
-        
-
-            //finished = true;
             
             CalculateMaxDist();
 
@@ -179,7 +171,10 @@ public class Floor : MonoBehaviour
     {
         return m_MaxDist;
     }
-
+    
+    /// <summary>
+    /// Prepare the floor for new episode.
+    /// </summary>
     public void Prepare()
     {
         innerWallCreator.DestroyAll();
@@ -193,8 +188,6 @@ public class Floor : MonoBehaviour
     public bool RandomWallPosition = true;
     public bool RanndomDoorPosition = true;
     public bool targetAlwaysInOtherRoomFromAgent = false;
-
-    //private bool m_AgentInFirstRoom = false;
     
     /// <summary>
     /// Create rooms by creating a inner wall.

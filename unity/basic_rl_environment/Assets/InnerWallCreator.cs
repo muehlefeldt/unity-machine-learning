@@ -1,19 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InnerWallCreator : MonoBehaviour
+public class InnerWallCreator
 {
-    public Floor floor;
+    //public Floor floor;
     private List<GameObject> m_GameObjects = new List<GameObject>();
     private Material m_WallMaterial;
     private Material m_FrameMaterial;
     private Material m_CheckpointMaterial;
+
+    private Transform m_FloorTransform;
     
-    private void Start()
+    public InnerWallCreator(Transform floorTransform)
     {
         m_WallMaterial = Resources.Load<Material>("WallMaterial");
         m_FrameMaterial = Resources.Load<Material>("FrameMaterial");
         m_CheckpointMaterial = Resources.Load<Material>("CheckpointMaterial");
+
+        m_FloorTransform = floorTransform;
     }
     
     /// <summary>
@@ -55,14 +59,14 @@ public class InnerWallCreator : MonoBehaviour
         pos.y = 1f;
         //pos.x += 1f;
         var locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
-        CreateFrameObject(this.transform, pos, locScale);
+        CreateFrameObject(m_FloorTransform, pos, locScale);
         
         pos = doorCoords.Item2;
         pos.x = pos.x - (m_DoorFrameWidth / 2);
         pos.y = 1f;
         //pos.x += 1f;
         locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
-        CreateFrameObject(this.transform, pos, locScale);
+        CreateFrameObject(m_FloorTransform, pos, locScale);
 
 
         var passageCoordStart = doorCoords.Item1;
@@ -78,7 +82,7 @@ public class InnerWallCreator : MonoBehaviour
         pos.y = 1.75f;
         //newCube.transform.position = position;
         //m_GameObjects.Add(newCube);
-        CreateFrameObject(this.transform, pos, locScale);
+        CreateFrameObject(m_FloorTransform, pos, locScale);
 
         var checkpoint = CreateNewCheckpoint();
         checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameWidth, 0.1f);
@@ -94,7 +98,7 @@ public class InnerWallCreator : MonoBehaviour
     private GameObject CreateNewCube()
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newCube.transform.parent = transform;
+        newCube.transform.parent = m_FloorTransform;
         newCube.tag = "innerWall";
         SetMaterial(newCube);
         SetCollider(newCube);
@@ -117,7 +121,7 @@ public class InnerWallCreator : MonoBehaviour
     private GameObject CreateNewCheckpoint()
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newCube.transform.parent = transform;
+        newCube.transform.parent = m_FloorTransform;
         newCube.GetComponent<Collider>().isTrigger = true;
         newCube.layer = 2;
         newCube.GetComponent<Renderer>().material = m_CheckpointMaterial;
@@ -146,7 +150,7 @@ public class InnerWallCreator : MonoBehaviour
     {
         foreach (var element in m_GameObjects)
         {
-            Destroy(element);
+            UnityEngine.Object.Destroy(element);
         }
         
     }

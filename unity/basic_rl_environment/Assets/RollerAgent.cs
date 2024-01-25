@@ -138,6 +138,7 @@ public class RollerAgent : Agent
     {
         m_DoorPassages = 0;
         actionCount = 0;
+        m_GuiText = "";
         floor.Prepare();
         floor.CreateInnerWall();
         
@@ -522,11 +523,20 @@ public class RollerAgent : Agent
         m_DoorPassageStartInRoom = GetCurrentRoomId();
     }
 
+#if UNITY_EDITOR
+
+    private string m_GuiText;
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 1000, 20), m_GuiText);
+    }
+#endif    
+
     /// <summary>
     /// Called on trigger exit after collider contact finishes with the door.
     /// </summary>
     /// <remarks>Takes into account if agent and target are placed in the same room.
-    /// Important change to the reward function</remarks>
+    /// Important change to the reward function due to direction change of what is a good door passage.</remarks>
     private void OnTriggerExit(Collider other)
     {
         // Make sure a proper door passage occured.
@@ -535,17 +545,16 @@ public class RollerAgent : Agent
             // Door passage can only be rewarded if target and agent are NOT in the same room.
             if (!floor.RoomsInEnv.AreAgentAndTargetInSameRoom())
             {
-                Debug.Log("Trigger Exit.");
                 if (m_DoorPassages % 2 == 0)
                 {
                     AddReward(0.5f);
-                    Debug.Log("Door passed +0.5f");
+                    m_GuiText = "Not same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
                 else
                 {
                     AddReward(-0.6f);
-                    Debug.Log("Door passed -0.8f");
+                    m_GuiText = "Not same room: Door passed -0.8f";
                     RecordData(RecorderCodes.BadDoorPassage);
                 }
             }
@@ -555,11 +564,13 @@ public class RollerAgent : Agent
                 if (m_DoorPassages % 2 == 0)
                 {
                     AddReward(-0.6f);
+                    m_GuiText = "Same room: Door passed -0.6f";
                     RecordData(RecorderCodes.BadDoorPassage);
                 }
                 else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
                 {
                     AddReward(0.5f);
+                    m_GuiText = "Same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
             }
