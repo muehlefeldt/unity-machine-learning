@@ -8,7 +8,8 @@ public class InnerWallCreator
     private Material m_WallMaterial;
     private Material m_FrameMaterial;
     private Material m_CheckpointMaterial;
-
+    
+    // Tranform of the floor is used as parent of the created objects.
     private Transform m_FloorTransform;
     
     public InnerWallCreator(Transform floorTransform)
@@ -23,12 +24,10 @@ public class InnerWallCreator
     /// <summary>
     /// Create part of the wall. Creates one single cube.
     /// </summary>
-    /// <param name="coordStartWall"></param>
-    /// <param name="coordEndWall"></param>
+    /// <param name="coordStartWall">Start coordinates of the cube.</param>
+    /// <param name="coordEndWall">End coordinates of the cube.</param>
     private void CreateWall(Vector3 coordStartWall, Vector3 coordEndWall)
     {
-        //coordStartWall.x -= m_DoorFrameWidth;
-        //coordEndWall.x -= m_DoorFrameWidth;
         var between = coordEndWall - coordStartWall;
         var dist = Vector3.Distance(coordStartWall, coordEndWall);
 
@@ -38,11 +37,9 @@ public class InnerWallCreator
         var position = coordStartWall + (between / 2);
         position.y = 1f;
         newCube.transform.position = position;
-        //SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
-
-    //public float m_DoorWidth = 3.0f;
+    
     private float m_DoorFrameWidth = 0.5f;
 
     private void CreateDoor((Vector3, Vector3) doorCoords)
@@ -59,14 +56,14 @@ public class InnerWallCreator
         pos.y = 1f;
         //pos.x += 1f;
         var locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
-        CreateFrameObject(m_FloorTransform, pos, locScale);
+        CreateFrameObject(pos, locScale);
         
         pos = doorCoords.Item2;
         pos.x = pos.x - (m_DoorFrameWidth / 2);
         pos.y = 1f;
         //pos.x += 1f;
         locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
-        CreateFrameObject(m_FloorTransform, pos, locScale);
+        CreateFrameObject(pos, locScale);
 
 
         var passageCoordStart = doorCoords.Item1;
@@ -82,7 +79,7 @@ public class InnerWallCreator
         pos.y = 1.75f;
         //newCube.transform.position = position;
         //m_GameObjects.Add(newCube);
-        CreateFrameObject(m_FloorTransform, pos, locScale);
+        CreateFrameObject(pos, locScale);
 
         var checkpoint = CreateNewCheckpoint();
         checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameWidth, 0.1f);
@@ -101,16 +98,15 @@ public class InnerWallCreator
         newCube.transform.parent = m_FloorTransform;
         newCube.tag = "innerWall";
         SetMaterial(newCube);
-        SetCollider(newCube);
         return newCube;
     }
     
-    private void CreateFrameObject(UnityEngine.Transform parent, Vector3 position, Vector3 localScale)
+    private void CreateFrameObject(Vector3 position, Vector3 localScale)
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         newCube.transform.position = position;
         newCube.transform.localScale = localScale;
-        newCube.transform.parent = parent;
+        newCube.transform.parent = m_FloorTransform;
         newCube.tag = "door";
         newCube.name = "Frame";
         newCube.GetComponent<Renderer>().material = m_FrameMaterial;
@@ -144,7 +140,7 @@ public class InnerWallCreator
     }
 
     /// <summary>
-    /// Destroy all created game objects. Delete existing navmesh.
+    /// Destroy all created game objects.
     /// </summary>
     public void DestroyAll()
     {
@@ -162,15 +158,5 @@ public class InnerWallCreator
     private void SetMaterial(GameObject obj)
     {
         obj.GetComponent<Renderer>().material = m_WallMaterial;
-    }
-    
-    /// <summary>
-    /// Set the Collider of a game object as trigger.
-    /// </summary>
-    /// <param name="obj">Game object with collider</param>
-    private void SetCollider(GameObject obj)
-    {
-        //obj.transform.parent = wallParent.transform;
-        //obj.GetComponent<Collider>().isTrigger = true;
     }
 }
