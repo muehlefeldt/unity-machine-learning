@@ -1336,7 +1336,19 @@ learning rate changes to reward signifcant?
 * But is only slowly converging.
 * Sometimes significant std of the reward up to 11. Maybe caused by improper selected hyperparameter for runs based on previous nn. No clue, just a guess.
 
+## 1412
+* Run in the editor. Short.
+* Observe in the editor.
+* A lot of code changes.
+  * Height change by drone can now be selected.
+  * Fix: Proper setting if drone and target are in the same room. Relevant for rewards given for door passages.
+  * Clean up.
+  * Some public variables set to private. Were only public for debugging in the editor.
+  * Sensor count select refined. Sensor number set during Awake().
+* Notice: GUI does not help with multiple traing areas due to overlapping. GUI is more a development feature.
+* Visually good training run.
+* Cumulative reward seems early on slightly 
+
 # Next
 * Target can be in all rooms. Pretty close to question 2.
 * Test implementation of the target in all rooms problem. Esp. the reward of the door and associated functions in the floor and AllRooms classes are important.
-* 
