@@ -126,7 +126,11 @@ public class Room
         pos.z = Vector3.Lerp(m_MinZGlobalCoord, m_MaxZGlobalCoord, GetRandom()).z;;
         return pos;
     }
-
+    
+    /// <summary>
+    /// Get position in the middle of the room.
+    /// </summary>
+    /// <returns>Vector3 with global position.</returns>
     public Vector3 GetMiddlePosition()
     {
         var pos = Vector3.Lerp(m_CornersGlobalCoords[0], m_CornersGlobalCoords.Last(), 0.5f);

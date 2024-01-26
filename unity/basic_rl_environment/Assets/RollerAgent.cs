@@ -21,51 +21,73 @@ using Vector3 = UnityEngine.Vector3;
 public class RollerAgent : Agent
 {
     private Rigidbody m_RBody;
-
-    private List<Vector3> m_SensorDirections;
-    public Target target;
+    //public Target target;
     public Floor floor;
-    public float m_MaxDist;
+    private float m_MaxDist;
     
     // Distances.
-    public float m_DistToTarget;
-    public float m_DistToTargetNormal;
+    private float m_DistToTarget;
+    private float m_DistToTargetNormal;
     private float m_LastDistToTarget;
     private float m_LastDistToTargetNormal;
     
-    // Set how much force is applied to the rigidbody.
+    // Set how much force is applied to the rigid body component.
     public float forceMultiplier = 10f;
     
-    // Select sensor count of the agent. Has no influence on sensors along y axis, i.e. height sensors remain constant.
+    /// <summary>Select sensor count of the agent. These are the main sensors to aid navigation and exploration.
+    /// Has no influence on sensors along y axis, i.e. height sensors remain constant.</summary>
+    [Range(1, 32)]
+    [Tooltip("Number of horizontal sensors.")]
     public int sensorCount = 4;
+    private readonly List<float> m_RayDistances = new List<float>();
     
-    // Last detected collision between agent and other object. 
+    /// <summary>
+    /// Allow or disallow height change by the drone. Has influence on the sensor count and inputs.
+    /// </summary>
+    [Tooltip("Can the drone change its height along the y axis.")]
+    public bool allowYMovement = false;
+    
+    // Internal sensor setup.
+    private List<Vector3> m_SensorDirections;
+    
+    // Last detected collision between agent and other object. Also last implausible position.
     private Vector3 m_LastCollision = Vector3.zero;
+    private Vector3 m_LastImplausiblePos = Vector3.zero;
     
-    // Number of complete door passages. Reset at every 
+    // Number of complete door passages. Reset at every episode start.
     private int m_DoorPassages;
     
     // Gui text for debugging in the editor.
     private string m_GuiText;
-
+    
+    /// <summary>
+    /// Called on loading. Setup of the sensors.
+    /// </summary>
     protected override void Awake()
     {
         // Crucial to call Awake() from the base class to ensure proper initialisation.
         base.Awake();
         
-        // Set the observation size to the requested sensor count + 2 sensors up and down.
-        GetComponent<BehaviorParameters>().BrainParameters.VectorObservationSize = 2 + sensorCount + 4;
+        // Set behavior parameters based on selected options for movement and sensor number.
+        var brainParameters = GetComponent<BehaviorParameters>().BrainParameters;
+        
+        // Set the observation size to the requested horizontal sensor count + 2 sensors up and down.
+        var verticalSensors = allowYMovement ? 2 : 0;
+        brainParameters.VectorObservationSize = verticalSensors + sensorCount + 4;
+        
+        // Set action branch size based on allowed movement.
+        brainParameters.ActionSpec.BranchSizes[0] = allowYMovement ? 9 : 7;
     }
     
     // Is called before the first frame update
-    //public override void Initialize() {
     public void Start() {
         m_RBody = GetComponent<Rigidbody>();
         m_SensorDirections = GetSensorDirections();
-        
-        
     }
-
+    
+    /// <summary>
+    /// Based on the requested number of horizontal sensors setup the directions of the rays in reference to the agent.
+    /// </summary>
     private List<Vector3> GetSensorDirections()
     {
         var directions = new List<Vector3>();
@@ -98,7 +120,7 @@ public class RollerAgent : Agent
         FullyRandom
     }
     /// <summary>
-    /// Reset the position of the agent within the trainingarea.
+    /// Reset the position of the agent within the training area.
     /// </summary>
     private AgentPos m_AgentPosType = AgentPos.FullyRandom;
     private void ResetAgentPosition()
@@ -150,7 +172,6 @@ public class RollerAgent : Agent
         // Gizmo: Reset last collision position. Used for visual reference only when showing Gizmos.
         m_LastCollision = Vector3.zero;
         
-        // ToDo: What the fuck!!!!!!!!! Innerwall creator uses agent position but at that point the position of the agent is not Known!
         // Reset the position of the agent if target was not reached or the position is not plausible.
         //if (m_EndReason is EpEndReasons.None or EpEndReasons.PositionImplausible or EpEndReasons.TargetReached)
         //{
@@ -174,8 +195,6 @@ public class RollerAgent : Agent
         CalculateDistanceToTarget();
     }
     
-    private readonly List<float> m_RayDistances = new List<float>();
-    
     /// <summary>
     /// Prepare observations. Get sensor data to be used.
     /// </summary>
@@ -183,14 +202,17 @@ public class RollerAgent : Agent
     {
         m_RayDistances.Clear(); // Removed old measurements.
         
-        // Get up and down distance data.
-        //m_RayDistances.Add(PerformRaycastGetDistance(Vector3.up));
-        //m_RayDistances.Add(PerformRaycastGetDistance(Vector3.down));
-        
         // Get the remaining distance measurements as requested through the editor.
         foreach (var dir in m_SensorDirections)
         {
             m_RayDistances.Add(PerformRaycastGetDistance(dir));
+        }
+        
+        // Get up and down distance data if movement along y axis is allowed.
+        if (allowYMovement)
+        {
+            m_RayDistances.Add(PerformRaycastGetDistance(Vector3.up));
+            m_RayDistances.Add(PerformRaycastGetDistance(Vector3.down));
         }
     }
     
@@ -303,12 +325,6 @@ public class RollerAgent : Agent
                 case 2:
                     controlSignal.x = -1f;
                     break;
-                /*case 3:
-                    controlSignal.y = 1f;
-                    break;
-                case 4:
-                    controlSignal.y = -1f;
-                    break;*/
                 case 3:
                     controlSignal.z = 1f;
                     break;
@@ -320,6 +336,12 @@ public class RollerAgent : Agent
                     break;
                 case 6:
                     rotate = -1f;
+                    break;
+                case 7 when allowYMovement:
+                    controlSignal.y = 1f;
+                    break;
+                case 8 when allowYMovement:
+                    controlSignal.y = -1f;
                     break;
             }
         }
@@ -380,9 +402,10 @@ public class RollerAgent : Agent
         }
 
         // Rotate the agent.
-        var turnSpeed = 200;
-        var rotateDir = transform.up * rotate;
+        //var turnSpeed = 200;
+        //var rotateDir = transform.up * rotate;
         //transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+        
         var eulerAngleVelocity = new Vector3(0, 100 * rotate, 0);
         Quaternion deltaRotation = Quaternion.Euler(eulerAngleVelocity * Time.fixedDeltaTime);
         m_RBody.MoveRotation(m_RBody.rotation * deltaRotation);
@@ -401,16 +424,11 @@ public class RollerAgent : Agent
     public int actionCount = 0;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        // Perform the movement of the agent.
         MoveAgent(actionBuffers);
         
         // Get the distance to the target.
         CalculateDistanceToTarget();
-
-        /*if (floor.RoomsInEnv.CheckForDoorPassage())
-        {
-            Debug.Log("Door passage");
-            if 
-        }*/
         
         // Reached target. Success. Terminate episode.
         if (m_DistToTarget < 1.42f)
@@ -437,39 +455,7 @@ public class RollerAgent : Agent
         
         AddReward(GetReward());
     }
-
-    /*void FixedUpdate()
-    {
-        // Get the distance to the target.
-        CalculateDistanceToTarget();
-        
-        if (m_DistToTarget < 1.42f)
-        {
-            RecordData(RecorderCodes.Target);
-            m_EndReason = EpEndReasons.TargetReached;
-            AddReward(1f);
-            EndEpisode();
-        }
-        
-        // Verify agent state (position) is plausible. Terminate episode if agent is beyond limits of the area.
-        if (!IsAgentPositionPlausible())
-        {
-            m_EndReason = EpEndReasons.PositionImplausible;
-            m_LastImplausiblePos = transform.position;
-            EndEpisode();
-        }
     
-        // Fix the rotation of the agent. Does not require the termination of the episode.
-        if (!IsAgentRotationPlausible())
-        {
-            FixAgentRotation();
-        }
-        
-        AddReward(GetReward());
-    }*/
-
-    private Vector3 m_LastImplausiblePos = Vector3.zero;
-
     /// <summary>
     /// Reasons to the episode.
     /// </summary>
@@ -869,24 +855,15 @@ public class RollerAgent : Agent
 
         else if (m_Actions == ActionsPerStep.Single)
         {
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.D)) // Move right.
             {
                 discreteActionsOut[0] = 1;
             }
-            else if (Input.GetKey(KeyCode.A))
+            else if (Input.GetKey(KeyCode.A)) // Move left.
             {
                 discreteActionsOut[0] = 2;
             }
-
-            // Y. Up, down and no movement.
-            /*else if (Input.GetKey(KeyCode.X))
-            {
-                discreteActionsOut[0] = 3;
-            }
-            else if (Input.GetKey(KeyCode.Y))
-            {
-                discreteActionsOut[0] = 4;
-            }*/
+            
             // Z. Forward, backwards and no movement.
             else if (Input.GetKey(KeyCode.W))
             {
@@ -897,7 +874,7 @@ public class RollerAgent : Agent
                 discreteActionsOut[0] = 4;
             }
 
-            // Rotation. Right, left and no rotation.
+            // Rotation. Right, left.
             else if (Input.GetKey(KeyCode.E))
             {
                 discreteActionsOut[0] = 5;
@@ -906,6 +883,17 @@ public class RollerAgent : Agent
             {
                 discreteActionsOut[0] = 6;
             }
+            
+            // Y. Up, down.
+            else if (allowYMovement && Input.GetKey(KeyCode.X)) {
+                discreteActionsOut[0] = 7;
+            }
+            else if (allowYMovement && Input.GetKey(KeyCode.Y))
+            {
+                discreteActionsOut[0] = 8;
+            }
+            
+            // Default: No movement.
             else
             {
                 discreteActionsOut[0] = 0;
