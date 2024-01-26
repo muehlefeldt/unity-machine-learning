@@ -10,10 +10,6 @@ using Random = UnityEngine.Random;
 
 public class Floor : MonoBehaviour
 {
-    //public List<Vector3> globalCornerCoord = new List<Vector3>();
-    //private Vector3[] m_GlobalVertices;
-    //private List<Vector3> m_GlobalVertices = new List<Vector3>();
-    
     // Maximum possible distance on this floor.
     private float m_MaxDist = 1f;
     
@@ -42,16 +38,22 @@ public class Floor : MonoBehaviour
     private Vector3 m_DoorEndGlobalCoord;
     private Vector3 m_DoorCentreGlobalCoord;
     
-
+    // Set width of the door through the unity editor. Use the prefab.
     public float doorWidth = 5f;
     
+    // Public bools to be set through the Unity editor. Allow for a simpler environment during the training. 
+    public bool CreateWall = true;
+    public bool RandomWallPosition = true;
+    public bool RanndomDoorPosition = true;
+    public bool targetAlwaysInOtherRoomFromAgent = false;
+   
     // Start is called before the first frame update
     void Awake()
     {
         // Get the MeshFilter component of the floor object.
         MeshFilter floorMeshFilter = GetComponent<MeshFilter>();
         
-        // Initialise the creater object for the inner wall. 
+        // Initialise the creator object for the inner wall. 
         innerWallCreator = new InnerWallCreator(transform);
         
         // Setup the room management.
@@ -70,8 +72,6 @@ public class Floor : MonoBehaviour
             corners.Add(transform.TransformPoint(floorMesh.vertices[10]));
             corners.Add(transform.TransformPoint(floorMesh.vertices[110]));
             corners.Add(transform.TransformPoint(floorMesh.vertices[120]));
-            //globalCornerCoord.Add(m_GlobalVertices[110]);
-            //globalCornerCoord.Add(m_GlobalVertices[120]);
 
             // Store max and min values corners for later use.
             var sortedX = corners.OrderBy(v => v.x).ToList();
@@ -163,7 +163,25 @@ public class Floor : MonoBehaviour
             Handles.Label(singleRoom.GetMiddlePosition(), singleRoom.GetId().ToString());
         }
     }
+    
+    private void OnGUI()
+    {
+        var text = "";
+        foreach (var singleRoom in RoomsInEnv.GetAllRooms())
+        {
+            text += String.Format(
+                "Room {0}\n" +
+                "Contains agent: {1}\n" +
+                "Contains target: {2}\n", 
+                singleRoom.GetId(), singleRoom.ContainsAgent(), singleRoom.ContainsTarget());
+        }
+
+        text += String.Format("Agent and Target same room: {0}\n", RoomsInEnv.AreAgentAndTargetInSameRoom());
+        GUI.Label(new Rect(10, 200, 1000, 200), text);
+    }
+
 #endif
+    
     /// <summary>
     /// Get the max possible distance on the current training area.
     /// </summary>
@@ -175,32 +193,29 @@ public class Floor : MonoBehaviour
     /// <summary>
     /// Prepare the floor for new episode.
     /// </summary>
-    public void Prepare()
+    private void Prepare()
     {
         innerWallCreator.DestroyAll();
+        
+        // Previously created rooms can be removed.
+        RoomsInEnv.Clear();
     }
-
-    /// <summary>
-    /// Create a inner wall.
-    /// Reference: https://answers.unity.com/questions/52747/how-i-can-create-a-cube-with-specific-coordenates.html
-    /// </summary>
-    public bool CreateWall = true;
-    public bool RandomWallPosition = true;
-    public bool RanndomDoorPosition = true;
-    public bool targetAlwaysInOtherRoomFromAgent = false;
     
     /// <summary>
     /// Create rooms by creating a inner wall.
     /// </summary>
-    /// <remarks>Function is also called if only one room is used. In this case the single room is stored and prepared for further use.</remarks>
+    /// <remarks>Function is also called if only one room is used.
+    /// In this case the single room is stored and prepared for further use.
+    /// Reference: https://answers.unity.com/questions/52747/how-i-can-create-a-cube-with-specific-coordenates.html
+    /// </remarks>
     public void CreateInnerWall()
     {
+        // Prepare the floor for a new wall.
+        Prepare();
+        
         // The wall inner wall is only created if selected in the Unity editor. Set to true as default.
         if (CreateWall)
         {
-            // Previously created rooms can be removed.
-            RoomsInEnv.Clear();
-            
             // Calculate and store inner wall and door positions.
             SetWallCoords();
             SetDoorCoords();
@@ -213,7 +228,6 @@ public class Floor : MonoBehaviour
         else
         {
             // Env has only one room when no wall is created. Only one room needs to be stored.
-            RoomsInEnv.Clear(); 
             RoomsInEnv.AddRoom(m_CornersGlobalCoords, roomId: 0);
         }
     }

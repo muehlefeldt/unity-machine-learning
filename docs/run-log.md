@@ -1339,3 +1339,4 @@ learning rate changes to reward signifcant?
 # Next
 * Target can be in all rooms. Pretty close to question 2.
 * Test implementation of the target in all rooms problem. Esp. the reward of the door and associated functions in the floor and AllRooms classes are important.
+* 

@@ -44,6 +44,9 @@ public class RollerAgent : Agent
     
     // Number of complete door passages. Reset at every 
     private int m_DoorPassages;
+    
+    // Gui text for debugging in the editor.
+    private string m_GuiText;
 
     protected override void Awake()
     {
@@ -136,20 +139,23 @@ public class RollerAgent : Agent
     private EpEndReasons m_EndReason = EpEndReasons.None;
     public override void OnEpisodeBegin()
     {
+        // Reset variables on ep begin.
         m_DoorPassages = 0;
         actionCount = 0;
         m_GuiText = "";
-        floor.Prepare();
+        
+        // Creates a wall or not if so desired within the floor parameters.
         floor.CreateInnerWall();
         
         // Gizmo: Reset last collision position. Used for visual reference only when showing Gizmos.
         m_LastCollision = Vector3.zero;
         
+        // ToDo: What the fuck!!!!!!!!! Innerwall creator uses agent position but at that point the position of the agent is not Known!
         // Reset the position of the agent if target was not reached or the position is not plausible.
-        if (m_EndReason is EpEndReasons.None or EpEndReasons.PositionImplausible or EpEndReasons.TargetReached)
-        {
+        //if (m_EndReason is EpEndReasons.None or EpEndReasons.PositionImplausible or EpEndReasons.TargetReached)
+        //{
             ResetAgentPosition();
-        }
+        //}
         
         // Reset the end reason of the last episode to default.
         m_EndReason = EpEndReasons.None;
@@ -524,8 +530,6 @@ public class RollerAgent : Agent
     }
 
 #if UNITY_EDITOR
-
-    private string m_GuiText;
     private void OnGUI()
     {
         GUI.Label(new Rect(10, 10, 1000, 20), m_GuiText);
@@ -554,7 +558,7 @@ public class RollerAgent : Agent
                 else
                 {
                     AddReward(-0.6f);
-                    m_GuiText = "Not same room: Door passed -0.8f";
+                    m_GuiText = "Not same room: Door passed -0.6f";
                     RecordData(RecorderCodes.BadDoorPassage);
                 }
             }

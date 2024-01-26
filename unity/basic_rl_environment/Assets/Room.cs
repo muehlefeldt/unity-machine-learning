@@ -12,19 +12,22 @@ public class Room
     private Vector3 m_MaxXGlobalCoord;
     private Vector3 m_MinZGlobalCoord;
     private Vector3 m_MaxZGlobalCoord;
-
+    
+    // Id of the room.
     private int m_Id;
-
+    
+    // Does the room contain the target and agent.
     private bool m_ContainsTarget = false;
     private bool m_ContainsAgent = false;
-    
+
     /// <summary>
-    /// Constructor:
+    /// Create room.
     /// </summary>
-    /// <param name="corners"></param>
+    /// <param name="corners">Corner coordinates of the room</param>
+    /// <param name="roomId">Id of the room.</param>
     public Room(List<Vector3> corners, int roomId)
     {
-        // Store the corner coords sorted by x value..
+        // Store the corner coords sorted by x value.
         m_CornersGlobalCoords = corners.OrderBy(v => v.x).ToList();
         
         // Set room ID.
@@ -61,7 +64,11 @@ public class Room
 
         return false;
     }
-
+    
+    /// <summary>
+    /// Does the room contain the agent.
+    /// </summary>
+    /// <returns>True if target is in the room. Otherwise false.</returns>
     public bool ContainsTarget()
     {
         return m_ContainsTarget;
@@ -70,7 +77,7 @@ public class Room
     /// <summary>
     /// Does this room contain the agent?
     /// </summary>
-    /// <returns>True if agent is the room. Otherwise false.</returns>
+    /// <returns>True if agent is in the room. Otherwise false.</returns>
     public bool ContainsAgent()
     {
         return m_ContainsAgent;
@@ -96,6 +103,7 @@ public class Room
     {
         m_ContainsTarget = true;
     }
+    
     /// <summary>
     /// Calculate a random position within the room. Returns a Vector3 containing global coordinates (world coords).
     /// Calculation is based on the known corners of the room. Takes an minimum distance from the walls into

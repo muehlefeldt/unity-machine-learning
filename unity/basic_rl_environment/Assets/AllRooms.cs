@@ -13,6 +13,7 @@ public class AllRooms
     
     // Indicates if agent and target are placed in the same room.
     private bool m_AgentAndTargetInSameRoom;
+
     
     /// <summary>
     /// Constructor: Setup list for the rooms and set where the target needs to be located.
@@ -23,6 +24,7 @@ public class AllRooms
         m_AllRoomsInEnv = new List<Room>();
         m_TargetAlwaysInOtherRoomFromAgent = targetInOtherRoom;
         m_CreateWall = createWall;
+        m_AgentAndTargetInSameRoom = false;
     }
     
     /// <summary>
@@ -89,16 +91,19 @@ public class AllRooms
         /// </summary>
         Agent
     }
-    
+
     /// <summary>
     /// Get a random position for the target. Global position is returned.
     /// </summary>
+    /// <param name="type">For what type of object a position is requested: Target or Agent.</param>
     /// <param name="agentGlobalPosition">Vector3 containing the global position of the agent.</param>
     /// <returns>Vector3 with random position to be used for the target.</returns>
     public Vector3 GetRandomPosition(PositionType type, Vector3 agentGlobalPosition)
     {
+        // Generate a random position for the target.
         if (type is PositionType.Target)
         {
+            // Update and store the new agent location.
             UpdateAgentLocation(agentGlobalPosition);
 
             // No wall should mean there is only one room within the env.
@@ -122,25 +127,15 @@ public class AllRooms
                     }
                 }
             }
-
-            // If not a different room is requested a random position is calculated. The position can be in every room. 
-            //var possibleRandomPos = new List<Vector3>();
             
+            // If not a different room is requested a random position is calculated. The position can be in every room. 
             // Select a random room from the possible rooms.
             var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
             
-            // Check if target and agent are in the same room. If both are in the same room bool is set to indicate so.
-            foreach (var singleRoom in m_AllRoomsInEnv)
-            {
-                //possibleRandomPos.Add(singleRoom.GetRandomPositionWithin());
-                if (singleRoom.ContainsAgent() && selectedRoom.GetId() == singleRoom.GetId())
-                {
-                    m_AgentAndTargetInSameRoom = true;
-                }
-            }
+            // If agent and target are going to be in the same room, indicate so.
+            if (selectedRoom.ContainsAgent()) m_AgentAndTargetInSameRoom = true;
 
             return selectedRoom.GetRandomPositionWithin();
-            //return possibleRandomPos[Random.Range(0, possibleRandomPos.Count)];
         }
 
         if (type is PositionType.Agent)

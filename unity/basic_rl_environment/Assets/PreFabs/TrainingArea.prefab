@@ -659,7 +659,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c321ff55c24d3d4fa4adb11570e79c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxDist: 0
   agent: {fileID: 5324353081925522770}
   target: {fileID: 1515308257171817040}
   useDecoy: 0
@@ -668,6 +667,7 @@ MonoBehaviour:
   RandomWallPosition: 1
   RanndomDoorPosition: 1
   targetAlwaysInOtherRoomFromAgent: 0
+  targetAgentAlwaysInSameRoom: 0
   targetFixedPosition: 0
 --- !u!65 &7692793173245375662
 BoxCollider:
