@@ -219,6 +219,8 @@ public class Floor : MonoBehaviour
             // Calculate and store inner wall and door positions.
             SetWallCoords();
             SetDoorCoords();
+            
+            // Create the game objects to construct the wall. 
             innerWallCreator.CreateWallWithDoor((m_WallStartGlobalCoord, m_WallEndGlobalCoord), (m_DoorStartGlobalCoord, m_DoorEndGlobalCoord));
 
             // Add the created rooms to the room management object.

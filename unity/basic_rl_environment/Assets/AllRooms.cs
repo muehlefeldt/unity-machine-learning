@@ -91,6 +91,21 @@ public class AllRooms
         /// </summary>
         Agent
     }
+    
+    /// <summary>
+    /// Reset the target location information in every room. Including the same room indicator.
+    /// </summary>
+    /// <remarks>Important function because multiple positions can be requested for the target due to
+    /// insufficient distance to other objects. In the loop the variables must be reset to the default.
+    /// </remarks>
+    private void ResetTargetLocation()
+    {
+        m_AgentAndTargetInSameRoom = false;
+        foreach (var singleRoom in m_AllRoomsInEnv)
+        {
+            singleRoom.SetTargetNotPresent();
+        }
+    }
 
     /// <summary>
     /// Get a random position for the target. Global position is returned.
@@ -105,7 +120,10 @@ public class AllRooms
         {
             // Update and store the new agent location.
             UpdateAgentLocation(agentGlobalPosition);
-
+            
+            // Ensure the target location information in every room is reset. Including same room indicator.
+            ResetTargetLocation();
+            
             // No wall should mean there is only one room within the env.
             if (!m_CreateWall)
             {
@@ -134,24 +152,25 @@ public class AllRooms
             
             // If agent and target are going to be in the same room, indicate so.
             if (selectedRoom.ContainsAgent()) m_AgentAndTargetInSameRoom = true;
-
+            selectedRoom.SetTargetPresent();
             return selectedRoom.GetRandomPositionWithin();
         }
-
+        
+        // Random position for the agent is requested. This position can be in any room.
         if (type is PositionType.Agent)
         {
-            var possibleRandomPos = new List<Vector3>();
-            foreach (var singleRoom in m_AllRoomsInEnv)
-            {
-                possibleRandomPos.Add(singleRoom.GetRandomPositionWithin());
-            }
-
-            return possibleRandomPos[Random.Range(0, possibleRandomPos.Count)];
+            // Select a random room from the possible rooms.
+            var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
+            
+            // Set the appropriate agent indicator for the room.
+            selectedRoom.SetAgentPresent();
+            
+            // Return a position.
+            return selectedRoom.GetRandomPositionWithin();
         }
-        else
-        {
-            return Vector3.zero;
-        }
+        
+        // Bad default case. Consider to throw an exception.
+        return Vector3.zero;
     }
     
     /// <summary>

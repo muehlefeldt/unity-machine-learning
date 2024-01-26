@@ -7,7 +7,10 @@ using Random = UnityEngine.Random;
 
 public class Room
 {
+    // Store global coordinates of the room in a sorted list.
     private List<Vector3> m_CornersGlobalCoords;
+    
+    // Store the corners based on x and z min / max.
     private Vector3 m_MinXGlobalCoord;
     private Vector3 m_MaxXGlobalCoord;
     private Vector3 m_MinZGlobalCoord;
@@ -102,6 +105,11 @@ public class Room
     public void SetTargetPresent()
     {
         m_ContainsTarget = true;
+    }
+    
+    public void SetTargetNotPresent()
+    {
+        m_ContainsTarget = false;
     }
     
     /// <summary>
