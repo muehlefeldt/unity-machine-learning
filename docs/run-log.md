@@ -1347,7 +1347,13 @@ learning rate changes to reward signifcant?
   * Sensor count select refined. Sensor number set during Awake().
 * Notice: GUI does not help with multiple traing areas due to overlapping. GUI is more a development feature.
 * Visually good training run.
-* Cumulative reward seems early on slightly 
+* Cumulative reward seems early on to slightly stagnate.
+* Surprisingly good first run after the changes.
+
+## 1413
+* Long run using build.
+* Change to the door passage recording. Check if useful.
+* Keep an eye on the hardware performance. Now running 81 training areas.
 
 # Next
 * Target can be in all rooms. Pretty close to question 2.

@@ -642,11 +642,11 @@ public class RollerAgent : Agent
                 break;
             
             case RecorderCodes.GoodDoorPassage:
-                statsRecorder.Add("Good door passage", 1f);
+                statsRecorder.Add("Door/Good passage", 1f, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.BadDoorPassage:
-                statsRecorder.Add("Bad door passage", 1f);
+                statsRecorder.Add("Door/Bad passage", 1f, StatAggregationMethod.Sum);
                 break;
         }
     }
