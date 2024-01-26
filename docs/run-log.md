@@ -1351,10 +1351,7 @@ learning rate changes to reward signifcant?
 * Surprisingly good first run after the changes.
 
 ## 1413
-* Long run using build.
+* Long run using build. 500e6 steps.
 * Change to the door passage recording. Check if useful.
 * Keep an eye on the hardware performance. Now running 81 training areas.
-
-# Next
-* Target can be in all rooms. Pretty close to question 2.
-* Test implementation of the target in all rooms problem. Esp. the reward of the door and associated functions in the floor and AllRooms classes are important.
+* Terminate the run if obvious problems found or result is useable for next week.

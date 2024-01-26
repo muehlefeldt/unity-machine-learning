@@ -19,7 +19,10 @@ public class Floor : MonoBehaviour
     public RollerAgent agent;
     public Target target;
     
-    // Select if a decoy object is requested.
+    /// <summary>
+    /// If selected true a decoy is deployed. The agent needs to distinguish between desired target and decoy. 
+    /// </summary>
+    [Tooltip("Select if a decoy object is requested.")]
     public bool useDecoy = false;
     private Decoy m_Decoy;
     
@@ -38,13 +41,22 @@ public class Floor : MonoBehaviour
     private Vector3 m_DoorEndGlobalCoord;
     private Vector3 m_DoorCentreGlobalCoord;
     
-    // Set width of the door through the unity editor. Use the prefab.
+    // Public bools to be set through the Unity editor. Allow for a simpler environment during the training. 
+    [Tooltip("Create two rooms by introducing an inner wall in the training area. Includes a door.")]
+    public bool CreateWall = true;
+    
+    /// <summary>Set width of the door through the unity editor. Use the prefab to set!</summary>
+    [Range(2f, 5f)]
+    [Tooltip("Width of the created door.")]
     public float doorWidth = 5f;
     
-    // Public bools to be set through the Unity editor. Allow for a simpler environment during the training. 
-    public bool CreateWall = true;
+    [Tooltip("Random position of the inner wall.")]
     public bool RandomWallPosition = true;
+    
+    [Tooltip("Random position of the door within the inner wall.")]
     public bool RanndomDoorPosition = true;
+    
+    [Tooltip("Select if target and agent are always in different rooms.")]
     public bool targetAlwaysInOtherRoomFromAgent = false;
    
     // Start is called before the first frame update
