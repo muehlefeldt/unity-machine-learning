@@ -1355,3 +1355,8 @@ learning rate changes to reward signifcant?
 * Change to the door passage recording. Check if useful.
 * Keep an eye on the hardware performance. Now running 81 training areas.
 * Terminate the run if obvious problems found or result is useable for next week.
+* Run is still running on 2024-01-29. Reward limit not reached.
+
+## 1414
+* Run in editor.
+* No wall but height change enabled.
