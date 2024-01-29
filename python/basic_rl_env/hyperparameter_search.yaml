@@ -34,22 +34,22 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 500e6
-    time_horizon: 1000
+    max_steps: 5e6
+    time_horizon: [1024, 1540, 2048]
     summary_freq: 10000
 
     hyperparameters:
       # Common Trainer Configurations.
       batch_size: 256
-      buffer_size: 20480
-      learning_rate: 1e-3
+      buffer_size: [20480, 102400, 204800]
+      learning_rate: [1e-3, 1e-4]
       learning_rate_schedule: linear
 
       # PPO-specific Configurations.
       beta: 5e-3
       epsilon: 0.2
       lambd: 0.95
-      num_epoch: 2
+      num_epoch: [2, 3]
       
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.

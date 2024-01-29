@@ -1356,7 +1356,17 @@ learning rate changes to reward signifcant?
 * Keep an eye on the hardware performance. Now running 81 training areas.
 * Terminate the run if obvious problems found or result is useable for next week.
 * Run is still running on 2024-01-29. Reward limit not reached.
+* Idiot: Excidental termination of the run at step 239790000 other in that region. Stupid!
 
 ## 1414
-* Run in editor.
-* No wall but height change enabled.
+* Short build run to look at HW performance.
+* Using 141 training areas.
+* Config otherwise same as 1413.
+* CPU hovering around 65%.
+
+## 1415
+* 281 areas. No significant improvement in CPU usage.
+* Not really sure what we learned here.
+
+## 1416+
+* Hyperparameter study.
