@@ -1394,3 +1394,8 @@ learning rate changes to reward signifcant?
 ## 1453
 * Longer run with 10e6 steps.
 * Config as 1433.
+* Expected runtime of 2.6 hours.
+* Not good run. Compare config again against 1433. No was same except max_step.
+
+## 1454+
+* Hyperparameter search. 2 processes.
