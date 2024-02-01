@@ -1368,5 +1368,29 @@ learning rate changes to reward signifcant?
 * 281 areas. No significant improvement in CPU usage.
 * Not really sure what we learned here.
 
-## 1416+
+## 1416 - 1451 Hyperparameter study
 * Hyperparameter study.
+  * time_horizon: [1024, 1540, 2048]
+  * buffer_size: [20480, 102400, 204800]
+  * learning_rate: [1e-3, 1e-4]
+  * num_epoch: [2, 3]
+* Finished. But exception occured. During run 1451. Socket problem maybe?
+  * Repeated this run as 1452.
+* Summary was generated. 
+  * 1433 suggested through summary.
+  * 1416 also good. Std of reward slightly higher.
+* Config of 1433 seems promissing. I like the stability of the learning progress. Ep length is also decreasing:
+  * "time_horizon": 1540
+  * "buffer_size": 102400
+  * "learning_rate": 1e-3
+  * "num_epoch": 3
+
+## 1452
+* Repeat of terminated run 1451 during previous hyperparameter study. Run was terminated with error.
+* Should take 1.5 hours.
+* Nice stability but reward is only slowly increasing.
+* Ep length remains high, no decrease.
+
+## 1453
+* Longer run with 10e6 steps.
+* Config as 1433.
