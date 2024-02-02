@@ -1399,3 +1399,6 @@ learning rate changes to reward signifcant?
 
 ## 1454+
 * Hyperparameter search. 2 processes.
+
+# Next
+* CLI build with sensonr count dynamic
