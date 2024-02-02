@@ -1,22 +1,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InnerWallCreator : MonoBehaviour
+public class InnerWallCreator
 {
-    public Floor floor;
+    //public Floor floor;
     private List<GameObject> m_GameObjects = new List<GameObject>();
     private Material m_WallMaterial;
+    private Material m_FrameMaterial;
+    private Material m_CheckpointMaterial;
     
-    private void Start()
+    // Tranform of the floor is used as parent of the created objects.
+    private Transform m_FloorTransform;
+    
+    public InnerWallCreator(Transform floorTransform)
     {
         m_WallMaterial = Resources.Load<Material>("WallMaterial");
+        m_FrameMaterial = Resources.Load<Material>("FrameMaterial");
+        m_CheckpointMaterial = Resources.Load<Material>("CheckpointMaterial");
+
+        m_FloorTransform = floorTransform;
     }
     
     /// <summary>
     /// Create part of the wall. Creates one single cube.
     /// </summary>
-    /// <param name="coordStartWall"></param>
-    /// <param name="coordEndWall"></param>
+    /// <param name="coordStartWall">Start coordinates of the cube.</param>
+    /// <param name="coordEndWall">End coordinates of the cube.</param>
     private void CreateWall(Vector3 coordStartWall, Vector3 coordEndWall)
     {
         var between = coordEndWall - coordStartWall;
@@ -28,12 +37,10 @@ public class InnerWallCreator : MonoBehaviour
         var position = coordStartWall + (between / 2);
         position.y = 1f;
         newCube.transform.position = position;
-        //SetCollider(newCube);
         m_GameObjects.Add(newCube);
     }
-
-    //public float m_DoorWidth = 3.0f;
-    private float m_DoorFrameHeight = 0.5f;
+    
+    private float m_DoorFrameWidth = 0.5f;
 
     private void CreateDoor((Vector3, Vector3) doorCoords)
     {
@@ -44,19 +51,40 @@ public class InnerWallCreator : MonoBehaviour
         var between = doorCoords.Item1 - doorCoords.Item2;
         var dist = Vector3.Distance(doorCoords.Item1, doorCoords.Item2);
 
-        var newCube = CreateNewCube();
+        var pos = doorCoords.Item1;
+        pos.x = pos.x + (m_DoorFrameWidth / 2);
+        pos.y = 1f;
+        //pos.x += 1f;
+        var locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
+        CreateFrameObject(pos, locScale);
+        
+        pos = doorCoords.Item2;
+        pos.x = pos.x - (m_DoorFrameWidth / 2);
+        pos.y = 1f;
+        //pos.x += 1f;
+        locScale = new Vector3(m_DoorFrameWidth, 2, 0.1f);
+        CreateFrameObject(pos, locScale);
 
-        newCube.transform.localScale = new Vector3(dist, m_DoorFrameHeight, 0.1f);
 
-        var position = doorCoords.Item1 - (between / 2);
-        position.y = 1.75f;
-        newCube.transform.position = position;
-        m_GameObjects.Add(newCube);
+        var passageCoordStart = doorCoords.Item1;
+        passageCoordStart.x += m_DoorFrameWidth;
+        var passageCoordEnd = doorCoords.Item2;
+        passageCoordEnd.x -= m_DoorFrameWidth;
+
+        dist = Vector3.Distance(passageCoordStart, passageCoordEnd);
+        
+        //var newCube = CreateNewCube();
+        locScale = new Vector3(dist, m_DoorFrameWidth, 0.1f);
+        pos = doorCoords.Item1 - (between / 2);
+        pos.y = 1.75f;
+        //newCube.transform.position = position;
+        //m_GameObjects.Add(newCube);
+        CreateFrameObject(pos, locScale);
 
         var checkpoint = CreateNewCheckpoint();
-        checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameHeight, 0.1f);
-        position.y = 0.75f;
-        checkpoint.transform.position = position;
+        checkpoint.transform.localScale = new Vector3(dist, 2 - m_DoorFrameWidth, 0.1f);
+        pos.y = 0.75f;
+        checkpoint.transform.position = pos;
         m_GameObjects.Add(checkpoint);
     }
 
@@ -67,19 +95,32 @@ public class InnerWallCreator : MonoBehaviour
     private GameObject CreateNewCube()
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newCube.transform.parent = transform;
+        newCube.transform.parent = m_FloorTransform;
         newCube.tag = "innerWall";
         SetMaterial(newCube);
-        SetCollider(newCube);
         return newCube;
+    }
+    
+    private void CreateFrameObject(Vector3 position, Vector3 localScale)
+    {
+        var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        newCube.transform.position = position;
+        newCube.transform.localScale = localScale;
+        newCube.transform.parent = m_FloorTransform;
+        newCube.tag = "door";
+        newCube.name = "Frame";
+        newCube.GetComponent<Renderer>().material = m_FrameMaterial;
+        //SetCollider(newCube);
+        m_GameObjects.Add(newCube);
     }
     
     private GameObject CreateNewCheckpoint()
     {
         var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newCube.transform.parent = transform;
+        newCube.transform.parent = m_FloorTransform;
         newCube.GetComponent<Collider>().isTrigger = true;
         newCube.layer = 2;
+        newCube.GetComponent<Renderer>().material = m_CheckpointMaterial;
         return newCube;
     }
     
@@ -99,13 +140,13 @@ public class InnerWallCreator : MonoBehaviour
     }
 
     /// <summary>
-    /// Destroy all created game objects. Delete existing navmesh.
+    /// Destroy all created game objects.
     /// </summary>
     public void DestroyAll()
     {
         foreach (var element in m_GameObjects)
         {
-            Destroy(element);
+            UnityEngine.Object.Destroy(element);
         }
         
     }
@@ -117,15 +158,5 @@ public class InnerWallCreator : MonoBehaviour
     private void SetMaterial(GameObject obj)
     {
         obj.GetComponent<Renderer>().material = m_WallMaterial;
-    }
-    
-    /// <summary>
-    /// Set the Collider of a game object as trigger.
-    /// </summary>
-    /// <param name="obj">Game object with collider</param>
-    private void SetCollider(GameObject obj)
-    {
-        //obj.transform.parent = wallParent.transform;
-        //obj.GetComponent<Collider>().isTrigger = true;
     }
 }

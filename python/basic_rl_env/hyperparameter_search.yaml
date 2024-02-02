@@ -2,7 +2,7 @@
 
 userconfig:
   # Use build env? Set false for run using the unity editor.
-  build: false
+  build: true
 
   # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
@@ -17,16 +17,16 @@ userconfig:
   not_based_on_previous_nn: true
 
   # Provide run id of previous NN to be used for new run.
-  previous_run_id: 1119
+  previous_run_id: 1410
 
   # Specify number of parallel env to use.
   num_env: 1
 
   # Number of parallel processes.
-  num_process: 1
+  num_process: 2
 
   # Provide message for the log file for better traceability.
-  message: "Continue with decoy training."
+  message: "See log file."
 
 # ML-Agents configuration.
 behaviors:
@@ -34,23 +34,22 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 30e6
-    time_horizon: 1000
+    max_steps: 10e6
+    time_horizon: [1000, 1540]
     summary_freq: 10000
 
     hyperparameters:
       # Common Trainer Configurations.
-      batch_size: 512
-      buffer_size: 204800
-      learning_rate: 1e-3
+      batch_size: [256, 356]
+      buffer_size: 102400
+      learning_rate: [5e-3, 1e-3]
       learning_rate_schedule: linear
 
       # PPO-specific Configurations.
-      #beta: 0.0025
-      beta: 0.0025
+      beta: [1e-2, 5e-3, 1e-3]
       epsilon: 0.2
       lambd: 0.95
-      num_epoch: 2
+      num_epoch: 3
       
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.
@@ -65,12 +64,12 @@ behaviors:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-      curiosity:
-        strength: 1.0
-        gamma: 0.99
-        learning_rate: 3e-4
-        network_settings: 
-          hidden_units: 128
+      #curiosity:
+      #  strength: 1.0
+      #  gamma: 0.99
+      #  learning_rate: 3e-4
+      #  network_settings: 
+      #   hidden_units: 128
       
     
 

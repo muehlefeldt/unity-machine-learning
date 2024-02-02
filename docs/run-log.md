@@ -663,10 +663,742 @@ learning rate changes to reward signifcant?
 * Again curiosty test, same as 1121.
 * Result: Shit. Not stable learning.
 
-## Next
-* Reward without distance. Only collision. Punish each step.
+## 1123
+* Reward without distance. Only collision punished. Punish each step. +1 For target reached. Sparse reward function.
 * Staged process. 
   * First: Train only with the target and no decoy.
-  * Next: Introduce the decoy.
-* Think about the staged process again!
+* No curiosty.
+* First part in editor. Check for problems with changed decoy deployment.
+* Heuristic was still set in area 1.
+* Disappointing result.
 
+## 1124
+* Short run.
+* Test 
+
+## 1125 and 1126
+* Test in editor. Only to check door and frame placement.
+* Door frame introduced.
+  * Allows granular reward giving through different tags on the objects.
+
+## 1127
+* Sparse reward function gives reward for door passage. 0.5 for correct direction and -0.5 for incorrect direction of passage.
+  * After 10 passages -1 given to discourage multiple passages.
+* Test with build.
+
+## 1128 - 1129
+* No clue.
+
+## 1130
+* Experiment reward function introduced to separate new tests from existing reward functions.
+  * Uses sparse reward through collisions and being close enough to the target.
+  * Also uses distance based function following Matignon et al. 
+* Short run. In editor.
+* Beta = 0.5.
+  * Question regarding beta is the interaction with sparse rewards given through collisions.
+
+## 1131
+* Beta set to 0.2.
+* Experiment reward function. Combine sparse collision rewards with feedback for every step.
+
+## 1132
+* Beta set to 0.4.
+* Build run with 30e6 steps.
+
+## 1133
+* Omega = 0.4 and beta = 0.4 remains.
+* Reduced number of steps. 10e6.
+  * Should be sufficient to get an overview.
+* Take a detailed look at the episode length.
+* And maybe a further reduction in steps to 5e6 reasonable.
+
+## 1134
+* Rerun of 1133 but in editor to check more training areas.
+* Will be terminated early if behaviour of the new areas is good.
+* CPU usage low?
+
+## 1135
+* Rerun of 1133 in build. Compare runtime against 1134.
+* Runtime was better. Comparable reward.
+* Ep length reduction still problem but there was no change to improve this.
+
+## 1136
+* Build rerun of 1133 again. Now 40 areas with prefab.
+* Check runtime and reward.
+* 1000 sec less needed.
+* Maybe mainly an issue of RAM usage? Who knows. No, tensorboard uses a lot RAM.
+
+## 1137
+* Now 60 areas. Rest unchanged.
+* We now seem to hit the CPU limit.
+* Check runtime and reward.
+
+## 1138
+* Rerun but without tensorboard running in the background.
+
+## 1139 to 1156
+* Number of configurations of hyperparameters.
+* 1149 looked nice in the summary.
+
+## 1157 and more.
+* Compare runtime against 1149. Uses the same config but more areas. Baseline config has mem size 128 and seq len 64.
+  * Now up to 100 areas. Was 60, I believe.
+  * No tensorboard running.
+* Some LSTM parameter search.
+
+## 1169
+* Based on best result from 1157 ff. 
+* Similiar to 1149 but 100e6 steps.
+* Lets take a look at sunday.
+* Bad result. Ep. len not reduced.
+
+## 1170
+* Test without door. Short only with 5e6 steps.
+* We should be seeing a somewhat useable result. Or not?
+...
+
+## 1171
+* No door. Changed the reward function. But it is shit, isnt it?
+
+## 1172
+* Do not use distance to target as reward part.
+
+## 1173
+* We need to take one or more steps back.
+* No door and target fixed.
+
+## 1174
+* Terminated.
+
+## 1175
+* Target no longer fixed. Otherwise same as 1173.
+
+## 1176
+* Longer run based on 1174. Terminated.
+  * Wrong previous run selected.
+
+## 1177
+* Longer run. Based on 1175.
+
+## 1178
+* Test run. 32 sensors.
+* Uses build. 
+
+## 1179
+* Again a lot sensors. Same as 1178.
+* Experiment reward function: Fixed missing collision penalties.
+* Short run with build.
+* Add one single area to be used as heuristic test area.
+
+## 1180
+* Increased collision penalty.
+
+## 1181
+* End ep on collision.
+* Why is the ep length not reducing as predicted?
+* Problem with the observation size? Move the setting of the size to awake()?
+
+## 1182
+* Same as 1181 but with build and longer.
+
+## 1183
+* Same as 1182. With user monitoring. No build.
+* Terminated with error. Awake() and sensor input size?
+
+## 1184
+* Awake() with sensor size setting introduced.
+* Otherwise as 1183. User monitoring.
+
+## 1185
+... No clue.
+* Very short run.
+
+## 1186
+* Reduced size of nn to 256.
+* Compare against waht result?
+
+## 1187
+* Continue with the nn of 1186.
+* Train for another 15e6 steps.
+* Expected runtime is 2h.
+* Again with build.
+* Question: Do we converge against 1? Does the convergence stop?
+
+## 1188
+* Still continued learning based in 1187 and 1186.
+* Long run overnight with 50e6.
+* Converges against somewhat 1.0.
+
+## 1189
+* Shit show with wall.
+
+## 1190
+* Door 0.5 and -0.8.
+* Short run with build.
+* Had problem, see 1191.
+
+## 1191
+* Door passage was handled badly. Way too simple approach?
+* Door rewards were not used. Fix.
+* Rerun of 1190. 
+* Next run: Without terminating episodes on collision. Just add -1 on collision?
+
+## 1192
+* Do not terminate ep. on collision.
+
+## 1193
+* Terminated before any running.
+
+## 1194
+* OnTriggerExit() now used to better reflect door passage of the agent.
+* Reward function needs to be switched. Currently uses stupid combination of distance and step panelty. 
+* Terminated to address issue with reward. 
+
+## 1195
+* Every step now punished by -1 / maxstep. As was previously the case.
+* Result: From one room in the other ok ish. But from the the other room ... questionable.
+
+## 1196
+* Shows same behavior as above.
+* Despite reward changes.
+
+## 1197
+* Make reward function dense as shown by chat. Use dist to target normalised.
+* Now: penalty + last_dist - new_dist
+
+## 1198
+* Random rotation introduced.
+* Short run for visual supervision in the editor.
+* No massive change.
+* Keep this change.
+
+## 1199
+* Reward change: Combine dist and step penalty.
+* Run in editor.
+
+## 1200
+* The component of distance in the reward function increased.
+* Again in editor.
+* Not all Areas used.
+* Result shows no significant change.
+
+## 1201
+* As 1200.
+* Reward weight change. More weight given to distance.
+
+## 1202
+* Based on 1201. Using previous nn.
+* Run with build and longer.
+
+## 1203
+* No hieght change possible.
+* Terminated.
+
+## 1204
+* Same again. No height change.
+* Error fixed with height inputs.
+
+## 1205
+* Short run.
+* Terminated.
+
+## 1206
+* Rerun 1206.
+
+## 1207
+* Simpler reward.
+* Terminated with error.
+
+## 1208
+* Rerun. Reward func fix.
+
+## 1209
+* Still no height change.
+* Reward: penalty for every step and last dist - current dist * factor.
+* Very unstable and slow learning. But atleast some convergence shown.
+* Length of the episodes inconsistent.
+
+## 1210
+* Short run in editor.
+* Reward: +0.01 if dist to target better. Else -0.02. Collision penalties also apply.
+* Desperate run to be honest.
+* Idea for future run: Training parameter adjust back to smaller values? But the parameters were choosen to promote more stable learning.
+* Result: Very unstable learning.
+
+## 1211
+* Still no movement in y possible for drone.
+* Dist to target normalised as reward.
+* Shit show: Reward needs to negative when using the dist to target. Higher values indicate less distance to target. See 1212.
+
+## 1212
+* Still no movement in y possible for drone.
+* reward = -1f * m_DistToTargetNormal;
+* Consider to multiply the reward with a factor: For example -0.5 to lessen the rewards impact.
+* Trend during learning: The learning process is slowly progressing but not over the top stable progress.
+* Consider the factor stuff from above. -0.1 seems to be ok.
+
+## 1213
+* Still no movement in y possible for drone.
+* Build.
+* Reward changed as outlined above with facotr.
+* reward = -0.1f * m_DistToTargetNormal;
+* Longer run to get a feel. 10e6 steps.
+* Result: Learning process is very unstable. But atleast promissing.
+* Terminated. Error in action space size. Changes were not made to the prefab of the traingarea. 
+
+## 1214
+* Rerun of 1213. But 5e6 steps.
+* Error fix in action space size. Does that even matter?
+* Shows also very instable learning.
+
+## 1215
+* reward = -0.05f * m_DistToTargetNormal;
+* Test different reward scaling factors.
+* Still no movement in y possible for drone.
+
+## 1216
+* reward = -0.01f * m_DistToTargetNormal;
+* Further scale factor search.
+
+## 1217 - 1312
+* Hyperparameter search.
+* Only using 3e6 steps each run.
+* Terminated in the end. Results were absolut shit.
+  * Termination was pain. Every single needs to be terminated by STRG+C.
+* Ok results / best results: 1225, 1228, 1241, ...
+* Lesson from these runs? Its not working?
+
+## 1313
+* Some bla with reward scaling.
+* Result again not high enough and not stable.
+
+## 1314
+* Change to punishment.
+* Terminated. Again not good learning.
+
+## 1315
+* Editpr run. Target fixed pos to simplify the problem. 
+  * Currently no height change possible. Target always at the same pos. Door fixed.
+
+## 1316
+* No wall. Fuck me.
+* Target fixed.
+
+## 1317
+* No wall. Target random pos.
+
+## 1318
+* Change in reward scaling. No improvement.
+
+## 1319
+* LSTM changes. Where are we with the LSTM config.
+* Mem size up to 128, as is suggested as default.
+* Does this provide change in comparison to 1318?
+  * First impression: Yes significant change to learning process.
+  * Second impression: No shit.
+* Not nice.
+
+## 1320
+* Further LSTM test.
+
+## 1321
+* Again LSTM test.
+* Shit.
+
+## 1322
+* No LSTM.
+* No, it is shit.
+
+## 1323
+* LSTM back on.
+
+## 1324
+* More memory size. Equal to sensor count / observation count.
+
+## 1325
+* Added position data to the observations.
+* Test simple task.
+
+## 1326
+* Very long run in the editor. I need to sleep.
+* What happens?
+* Terminated after 25e6 steps. Results are unuseable. 
+* Discussion:
+  * The agent knows own and target position.
+  * This should be a very easy problem to solve.
+  * Currently using: LSTM and dense reward.
+
+## 1327
+* Attention: Reward may be very high due to dense, positive reward.
+  * Issue: Unclear what a good reward can be.
+* Short run ... 
+* reward = 1 - dist_normal
+* Compile problem. Run did not start.
+
+## 1328
+* Similar to 1327 but reward scaled down:
+  *  currentReward = 0.1f * (1f - m_DistToTargetNormal)
+* Again back to 5e6 steps.
+* More observations still added. Does this even change anything?
+* Was terminated by ml-agents. Env exception occured. No clue why.
+
+## 1329
+* One single training area.
+* Question: Do we have a problem with multiple training areas? Esp. with the Areas20 prefab?
+* Hyperparameters and reward are the same as 1328.
+* Attention: Still more observations are used as input.
+
+## 1330
+* Reward change. Still only one training area.
+  * currentReward = -0.01f * m_DistToTargetNormal;
+* Rest is the same as 1329.
+* Compare cumulative reward to 1215.
+
+## 1331 New branch with less code
+* Code was cleaned.
+* Rerun 1330.
+* Slight collision change.
+* Terminated.
+
+## 1332
+* Reward scale changed.
+  * currentReward = -0.1f * m_DistToTargetNormal
+* Compare to 1331 after 1e6 steps.
+* Still very unstable.
+
+## 1333
+* currentReward = -1f * m_DistToTargetNormal
+* Shit.
+
+## 1334
+* No collision penalties.
+
+## 1335
+* currentReward = scalar * m_DistToTargetNormal;
+* Did not run. Promblem with editor.
+
+## 1336
+* Terminated. Reward problem.
+
+## 1337
+
+## 1338
+* Decision requester set to 5.
+* Terminated after no good progress observed.
+
+
+## 1339
+* Slow process.
+* Only one training area.
+
+## 1340
+* Rerun of 1339. More training areas. 
+
+## 1341
+* Back to known reward ... 
+
+## 1342
+* reward = -1f / maxStep
+
+## 1343
+* Same as 1342 but less sensors. No up and down.
+
+## 1344 and 1345 and 1346
+* Awake() fix.
+* Rerun of 1343.
+* 1344 and 1345 were incorrect runs. Heuristic was activated. 
+* Do we see a change to 1343?
+* Also uses more training areas. 
+* 1346 also terminated.
+  * Still seeing unstable learning behaviour.
+
+## 1347 and 1348
+* Again with Decision period set to 1.
+  * Still no clue what this changes.
+  * Really! What does this shit do?
+* Attention: The one single training area needs to be checked.
+
+## 1349
+* DB = 5 and DB = True.
+* Decision period: 5 and take decision between.
+* This should converge against +1.
+* What is the decision period?
+* Result is not too bad ...
+
+## 1350 - Interesting and good run
+* DP = 5 and DB = True.
+* Rerun of 1349 but with simple dense reward structure. 1349 was sparse reward with static punishment for each step.
+  * currentReward = -0.01f * m_DistToTargetNormal;
+* How does this behave with decision period 5 and decisions between?
+* Converge against +1f?
+* Shouldn't a dense reward help the training speed?
+* Attention: Punishment per step is now higher! Result is lower initial reward.
+* Question: Decision period higher?
+* Visual observation in the editor:
+  * Good movement speed.
+  * How does DB = True impact this shit?
+
+## 1351
+* Continue based on 1350.
+* Does this converge? Against which value?
+* Simply a longer run of 1350. No meaningful improvements.
+
+## 1352
+* Decision period (dp) to 10 and DB true.
+* Using build.
+* Compare to 1350. Was using dp = 5.
+
+## 1353
+* Decision period (dp) to 10 but no decisions between.
+* Otherwise same as 1353.
+* Compare against 1352!
+  * Much higher initial cumulative reward compared to 1352.
+
+## 1354
+* DP = 3 and decisions between.
+* Compare against 1352.
+* First impression: Unstable learning in comparison to 1352.
+
+## 1355+
+* Hyperparameter search.
+* DP = 10 and DB (Decisions between).
+* Summary file: 1356 best run with learning 1e-3 (pretty high) and less layers with num_layers = 1.
+* 1356:
+  * Visiual observations shows no good to the target.
+  * Reward is converging but below 0f.
+
+## 1361
+* Rerun of 1356 config.
+* max_step: Limited to 2.5e6.
+* Change: DP = 15 and NO DB. What is the change?
+* Cumulativ reward starts much higher. 
+* Ep length is not really decreasing.
+* NN in the editor:
+  * Also very slow movement. Same as 1363.
+
+## 1362
+* Same as 1361.
+* DP = 15 and DB = True.
+* Ep. length decreasing faster compared to 1361.
+
+## 1363
+* Test with DP = 20 and DB = False.
+* Same as 1361.
+* Take a look at the NN in the editor.
+  * Agent does pretty much not move. Very very slow movement.
+* Why the cumulativ reward just above 0f?
+* Ep. length is pretty much static. 
+
+## 1364
+* Based on 1350 config: DP = 5 and DB.
+* Initial run with DB = True. Should we try a run with DB = False?
+* Again relativly short run.
+* Compare against 1350.
+  * Initial progress is similar to 1350. Esp. cumulative reward.
+  * Is there even any change to 1350 in the config? Other than probably the NN structure.
+
+## 1365
+* Same as 1364. Reward scale change.
+  * currentReward = -0.1f * m_DistToTargetNormal;
+  * Attention: Cumulativ reward changes significant but expected.
+* Still shorter run.
+* Ep. length shows similar behaviour at the beginning to 1350, 1349 and 1364. At least in the beginning ...
+
+## 1366
+* Again reward scale change.
+  * currentReward = -0.005f * m_DistToTargetNormal;
+* Comparable to 1349? Was 1349 with sparse reward?
+
+## 1367
+* currentReward = -0.01f * m_DistToTargetNormal;
+* Collision penalty increased.
+* Compare against?
+
+## 1368
+* Long run with max_steps = 10e6.
+* Same as 1367 otherwise.
+* Still no convergence against 10e6.
+
+## 1369 - 1380
+* LSTM hyperparamter search.
+* Only 2.5e6 max_steps.
+* "Best" run 1379.  memory_size = 128 and sequence_length = 64.
+* Observation: Interestlingy relativley high values for LSTM config best. 
+
+## 1381
+* Terminated.
+
+## 1382
+* Run based on 1379 config but no longer.
+* max_steps = 10e6.
+* Previous run was only 2.5e6.
+* I suspect there will be no significant improvement.
+* Learning progress continued positivley. Surprise I guess.
+* Recording created.
+
+## 1383
+* 2.5e6 steps with DP = 5 and no DB.
+* Compare against 1379.
+
+## 1384, 1385, 1386 (all terminated)
+* Idea from the example Walker.
+* Reward function moved to FixedUpdate().
+* Provides denser reward?
+* Run in the editor and using same config as 1983.
+* Terminated: Something in the code? Jap because you are stupid.
+
+## 1387
+* Same as before.
+* DP = 5 and DB = False.
+* Fix: Infinity value for distance caused reward problems.
+* Initial learning similar to 1379. But shows a similiar learning behavior as 1383. Very very slow learning but something happens.
+
+## 1388
+* Same as 1387 but with DB = True.
+* Using build. Was pretty slow otherwise. I am bored.
+* Terminated due to config problem.
+
+## 1389
+* Same as 1388.
+* Was learning but no fast. Maybe a extremly long run could produce a useable result ... but that would be pretty shit.
+
+## 1390
+* Sparse reward. Addreward() moved back to OnActionReceived().
+* Reward progress is very nice.
+* Recording.
+
+## 1391
+* Based on the promissing results of 1390 a longer run with 10e6 steps.
+* Otherwise same as 1390.
+* Recording.
+* Result was quite nice.
+* Summary: No height change by agent possible. Sparse reward. Shows at least that navigation is possible. 
+
+## 1392
+* Ensure enough distance between agent and target at respawn.
+* Short test run to look for problems after code change.
+* Reward looks quite good. Very close to the 1390 progress.
+
+## 1393
+* Short run to look at beta / entropy.
+* Test with default beta = 5e-3.
+* Just to take a look. No further config changes.
+* Entropy remains above 1390 but only slightly.
+* Learning progress is comparable to 1390 and 1392.
+
+## 1394 - 1405
+* Hyperparameter study.
+* learning rate and beta studied.
+* 1404 best run as per summary. learning_rate = 1e-3 and beta = 5e-3.
+* Comparison to 1393, 1392 and 1390:
+  * Cumulative reward progress extremly similar.
+  * Entropy remaind pretty high. Above 1393 levels.
+  * These runs did not really show any improvement in learning speed.
+
+## 1406
+* Build run with the fixed door.
+* Run reintroduces the wall using a sparse reward structure.
+* Using the NN config of 1404.
+* Recording.
+* Result was actually pretty promising.
+
+## 1407
+* Same as 1406 but longer with 10e6 steps.
+* Should converge against 1.5.
+  * Reward +0.5 for door and +1 for target close enough.
+  * Given 1000 MaxSteps are 200 Academy Steps possible. 200 * (-1) / 1000 = -0.2 max penalty per step.
+  * 1.3 cumulativ reward and above is the target.
+* Door fixed and no height change of the drone.
+* Recording at half way point.
+
+## 1408
+* Door random. Wall fixed.
+* Config same as 1407 but longer with 20e6 steps.
+* Recording.
+* Result not too bad.
+
+## 1409
+* Wall and door random. Build.
+* 50e6 steps allowed.
+
+## 1410
+* Continue 1409 with 20e6 steps.
+* Build remains same. No height change by drone.
+* Again we want a convergence against 1.5.
+* Recording.
+
+## 1411
+* Continue 1410 but with new build after door passage fix and recording data of the door passages.
+* New build should change no significant environment stuff.
+* Terminated.
+* Finishes the runs started with 1409. All runs improved upon the previous results.
+* Overall quite nice results.
+* But is only slowly converging.
+* Sometimes significant std of the reward up to 11. Maybe caused by improper selected hyperparameter for runs based on previous nn. No clue, just a guess.
+
+## 1412
+* Run in the editor. Short.
+* Observe in the editor.
+* A lot of code changes.
+  * Height change by drone can now be selected.
+  * Fix: Proper setting if drone and target are in the same room. Relevant for rewards given for door passages.
+  * Clean up.
+  * Some public variables set to private. Were only public for debugging in the editor.
+  * Sensor count select refined. Sensor number set during Awake().
+* Notice: GUI does not help with multiple traing areas due to overlapping. GUI is more a development feature.
+* Visually good training run.
+* Cumulative reward seems early on to slightly stagnate.
+* Surprisingly good first run after the changes.
+
+## 1413
+* Long run using build. 500e6 steps.
+* Change to the door passage recording. Check if useful.
+* Keep an eye on the hardware performance. Now running 81 training areas.
+* Terminate the run if obvious problems found or result is useable for next week.
+* Run is still running on 2024-01-29. Reward limit not reached.
+* Idiot: Excidental termination of the run at step 239790000 other in that region. Stupid!
+
+## 1414
+* Short build run to look at HW performance.
+* Using 141 training areas.
+* Config otherwise same as 1413.
+* CPU hovering around 65%.
+
+## 1415
+* 281 areas. No significant improvement in CPU usage.
+* Not really sure what we learned here.
+
+## 1416 - 1451 Hyperparameter study
+* Hyperparameter study.
+  * time_horizon: [1024, 1540, 2048]
+  * buffer_size: [20480, 102400, 204800]
+  * learning_rate: [1e-3, 1e-4]
+  * num_epoch: [2, 3]
+* Finished. But exception occured. During run 1451. Socket problem maybe?
+  * Repeated this run as 1452.
+* Summary was generated. 
+  * 1433 suggested through summary.
+  * 1416 also good. Std of reward slightly higher.
+* Config of 1433 seems promissing. I like the stability of the learning progress. Ep length is also decreasing:
+  * "time_horizon": 1540
+  * "buffer_size": 102400
+  * "learning_rate": 1e-3
+  * "num_epoch": 3
+
+## 1452
+* Repeat of terminated run 1451 during previous hyperparameter study. Run was terminated with error.
+* Should take 1.5 hours.
+* Nice stability but reward is only slowly increasing.
+* Ep length remains high, no decrease.
+
+## 1453
+* Longer run with 10e6 steps.
+* Config as 1433.
+* Expected runtime of 2.6 hours.
+* Not good run. Compare config again against 1433. No was same except max_step.
+
+## 1454+
+* Hyperparameter search. 2 processes.
+
+# Next
+* CLI build with sensonr count dynamic

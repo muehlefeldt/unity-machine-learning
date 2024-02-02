@@ -10,27 +10,21 @@ using Random = UnityEngine.Random;
 
 public class Floor : MonoBehaviour
 {
-    //public List<Vector3> globalCornerCoord = new List<Vector3>();
-    //private Vector3[] m_GlobalVertices;
-    //private List<Vector3> m_GlobalVertices = new List<Vector3>();
-    
     // Maximum possible distance on this floor.
-    public float m_MaxDist = 1f;
+    private float m_MaxDist = 1f;
     
-    //private int[] m_PossibleWallLocations = new int[] {0, 11, 22, 33, 66, 77, 88, 99, 110};
-    //private int m_IndexWallEnd = 10;
-
-    //public List<Tuple<Vector3, Vector3>> CreatedWallsCoord = new List<Tuple<Vector3, Vector3>>();
-    //public List<Vector3> CreatedDoorsCoord = new List<Vector3>();
-
-    public InnerWallCreator innerWallCreator;
+    private InnerWallCreator innerWallCreator;
 
     public AllRooms RoomsInEnv;
     public RollerAgent agent;
     public Target target;
-    public Decoy decoy;
     
-    //public bool finished = false;
+    /// <summary>
+    /// If selected true a decoy is deployed. The agent needs to distinguish between desired target and decoy. 
+    /// </summary>
+    [Tooltip("Select if a decoy object is requested.")]
+    public bool useDecoy = false;
+    private Decoy m_Decoy;
     
     // Store global coords of the floor. Populated during startup.
     private List<Vector3> m_CornersGlobalCoords;
@@ -47,14 +41,32 @@ public class Floor : MonoBehaviour
     private Vector3 m_DoorEndGlobalCoord;
     private Vector3 m_DoorCentreGlobalCoord;
     
-
+    // Public bools to be set through the Unity editor. Allow for a simpler environment during the training. 
+    [Tooltip("Create two rooms by introducing an inner wall in the training area. Includes a door.")]
+    public bool CreateWall = true;
+    
+    /// <summary>Set width of the door through the unity editor. Use the prefab to set!</summary>
+    [Range(2f, 5f)]
+    [Tooltip("Width of the created door.")]
     public float doorWidth = 5f;
     
+    [Tooltip("Random position of the inner wall.")]
+    public bool RandomWallPosition = true;
+    
+    [Tooltip("Random position of the door within the inner wall.")]
+    public bool RanndomDoorPosition = true;
+    
+    [Tooltip("Select if target and agent are always in different rooms.")]
+    public bool targetAlwaysInOtherRoomFromAgent = false;
+   
     // Start is called before the first frame update
     void Awake()
     {
-        // Get the MeshFilter component of the floor object
+        // Get the MeshFilter component of the floor object.
         MeshFilter floorMeshFilter = GetComponent<MeshFilter>();
+        
+        // Initialise the creator object for the inner wall. 
+        innerWallCreator = new InnerWallCreator(transform);
         
         // Setup the room management.
         RoomsInEnv = new AllRooms(CreateWall, targetAlwaysInOtherRoomFromAgent);
@@ -64,21 +76,7 @@ public class Floor : MonoBehaviour
         {
             // Get the shared mesh of the floor
             Mesh floorMesh = floorMeshFilter.sharedMesh;
-            
-            // Get the corner coordinates in world space
-            // Retrieve the vertices of the floor mesh and transform them to world space
-            //m_GlobalVertices = floorMesh.vertices;
 
-            /*var globalVertices = new List<Vector3>();
-            foreach (var vert in floorMesh.vertices)
-            {
-                globalVertices.Add(transform.TransformPoint(vert));
-            }*/
-
-            /*globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[0]));
-            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[10]));
-            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[110]));
-            globalCornerCoord.Add(m_FloorMatrix.MultiplyPoint3x4(m_GlobalVertices[120]));*/
             var corners = new List<Vector3>();
             m_CornersGlobalCoords = corners;
             
@@ -86,8 +84,6 @@ public class Floor : MonoBehaviour
             corners.Add(transform.TransformPoint(floorMesh.vertices[10]));
             corners.Add(transform.TransformPoint(floorMesh.vertices[110]));
             corners.Add(transform.TransformPoint(floorMesh.vertices[120]));
-            //globalCornerCoord.Add(m_GlobalVertices[110]);
-            //globalCornerCoord.Add(m_GlobalVertices[120]);
 
             // Store max and min values corners for later use.
             var sortedX = corners.OrderBy(v => v.x).ToList();
@@ -96,11 +92,13 @@ public class Floor : MonoBehaviour
             m_MaxXGlobalCoord = sortedX[^1];
             m_MinZGlobalCoord = sortedZ[0];
             m_MaxZGlobalCoord = sortedZ[^1];
-        
-
-            //finished = true;
             
             CalculateMaxDist();
+
+            if (useDecoy)
+            {
+                m_Decoy = new Decoy(this.transform);
+            }
         }
     }
     
@@ -147,68 +145,104 @@ public class Floor : MonoBehaviour
 
         return false;
     }
-
+    
+#if UNITY_EDITOR
+    /// <summary>
+    /// Visual cues for debugging in the editor.
+    /// </summary>
     void OnDrawGizmos()
-    {
-        foreach (var coord in new List<Vector3>(){m_WallStartGlobalCoord, m_WallEndGlobalCoord})
+    {   
+        // In case of an inner wall. Highlight start and end of the wall including the door.
+        if (CreateWall)
         {
-            Gizmos.DrawSphere(coord, 0.3f);
-            //Handles.Label(coord, "Wall");
-        }
-        foreach (var coord in new List<Vector3>(){m_DoorStartGlobalCoord, m_DoorCentreGlobalCoord, m_DoorEndGlobalCoord})
-        {
-            Gizmos.DrawWireSphere(coord, 0.3f);
-            //Handles.Label(coord, "Door");
+            foreach (var coord in new List<Vector3>() { m_WallStartGlobalCoord, m_WallEndGlobalCoord })
+            {
+                Gizmos.DrawSphere(coord, 0.3f);
+                Handles.Label(coord, "Wall");
+            }
+            
+            foreach (var coord in new List<Vector3>()
+                         { m_DoorStartGlobalCoord, m_DoorCentreGlobalCoord, m_DoorEndGlobalCoord })
+            {
+                Gizmos.DrawWireSphere(coord, 0.3f);
+                Handles.Label(coord, "Door");
+            }
         }
         
+        // Show id of the rooms.
+        foreach (var singleRoom in RoomsInEnv.GetAllRooms())
+        {
+            Handles.Label(singleRoom.GetMiddlePosition(), singleRoom.GetId().ToString());
+        }
+    }
+    
+    private void OnGUI()
+    {
+        var text = "";
+        foreach (var singleRoom in RoomsInEnv.GetAllRooms())
+        {
+            text += String.Format(
+                "Room {0}\n" +
+                "Contains agent: {1}\n" +
+                "Contains target: {2}\n", 
+                singleRoom.GetId(), singleRoom.ContainsAgent(), singleRoom.ContainsTarget());
+        }
+
+        text += String.Format("Agent and Target same room: {0}\n", RoomsInEnv.AreAgentAndTargetInSameRoom());
+        GUI.Label(new Rect(10, 200, 1000, 200), text);
     }
 
+#endif
+    
+    /// <summary>
+    /// Get the max possible distance on the current training area.
+    /// </summary>
     public float GetMaxPossibleDist()
     {
         return m_MaxDist;
     }
-
-    public void Prepare()
+    
+    /// <summary>
+    /// Prepare the floor for new episode.
+    /// </summary>
+    private void Prepare()
     {
         innerWallCreator.DestroyAll();
+        
+        // Previously created rooms can be removed.
+        RoomsInEnv.Clear();
     }
-
-    /// <summary>
-    /// Create a inner wall.
-    /// Reference: https://answers.unity.com/questions/52747/how-i-can-create-a-cube-with-specific-coordenates.html
-    /// </summary>
-    public bool CreateWall = true;
-    public bool RandomWallPosition = true;
-    public bool RanndomDoorPosition = true;
-    public bool targetAlwaysInOtherRoomFromAgent = false;
-
-    //private bool m_AgentInFirstRoom = false;
     
     /// <summary>
     /// Create rooms by creating a inner wall.
     /// </summary>
+    /// <remarks>Function is also called if only one room is used.
+    /// In this case the single room is stored and prepared for further use.
+    /// Reference: https://answers.unity.com/questions/52747/how-i-can-create-a-cube-with-specific-coordenates.html
+    /// </remarks>
     public void CreateInnerWall()
     {
+        // Prepare the floor for a new wall.
+        Prepare();
+        
         // The wall inner wall is only created if selected in the Unity editor. Set to true as default.
         if (CreateWall)
         {
-            // Previously created rooms can be removed.
-            RoomsInEnv.Clear();
-            
             // Calculate and store inner wall and door positions.
             SetWallCoords();
             SetDoorCoords();
+            
+            // Create the game objects to construct the wall. 
             innerWallCreator.CreateWallWithDoor((m_WallStartGlobalCoord, m_WallEndGlobalCoord), (m_DoorStartGlobalCoord, m_DoorEndGlobalCoord));
 
             // Add the created rooms to the room management object.
-            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[0], m_CornersGlobalCoords[1], m_WallStartGlobalCoord, m_WallEndGlobalCoord});
-            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[2], m_CornersGlobalCoords[3], m_WallStartGlobalCoord, m_WallEndGlobalCoord});
+            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[0], m_CornersGlobalCoords[1], m_WallStartGlobalCoord, m_WallEndGlobalCoord}, roomId: 0);
+            RoomsInEnv.AddRoom(new List<Vector3>{m_CornersGlobalCoords[2], m_CornersGlobalCoords[3], m_WallStartGlobalCoord, m_WallEndGlobalCoord}, roomId: 1);
         }
         else
         {
             // Env has only one room when no wall is created. Only one room needs to be stored.
-            RoomsInEnv.Clear(); 
-            RoomsInEnv.AddRoom(m_CornersGlobalCoords);
+            RoomsInEnv.AddRoom(m_CornersGlobalCoords, roomId: 0);
         }
     }
     
@@ -239,6 +273,9 @@ public class Floor : MonoBehaviour
         }
         var pos = Vector3.zero;
         pos.x = Vector3.Lerp(m_MinZGlobalCoord, m_MaxZGlobalCoord, r).x;
+        
+        // Set y to a fixed value to ensure a more realistic distance calculation to the target through the door.
+        pos.y = 0.75f;
         pos.z = m_WallStartGlobalCoord.z;
         m_DoorCentreGlobalCoord = pos;
         
@@ -260,23 +297,34 @@ public class Floor : MonoBehaviour
     /// <summary>
     /// Reset the position of the target to a random position. Based on the created rooms in the environment.
     /// </summary>
+    /// <remarks>Be sure to call this function only after the position of the agent was changed.</remarks>
     public bool targetFixedPosition = false;
     public void ResetTargetPosition()
     {
-        if (targetFixedPosition)
+        if (targetFixedPosition) // Target shall always be spawned at the same position.
         {
             target.transform.localPosition = new Vector3(0f, 0.5f, -12f);
         }
         else // Random position of the target requested.
         {
             var distToDoor = 0f;
+            var distToAgent = 0f;
+            
             var newTargetPos = Vector3.zero;
             
-            // While distance to door is too short, get new position.
-            while (distToDoor < 4f) 
+            // While distance to door or to the agent is too short, get new position.
+            while (distToDoor < 4f || distToAgent < 4f)
             {
+                // Get the possible condition of the target.
                 newTargetPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agent.transform.position);
-                distToDoor = Vector3.Distance(newTargetPos, m_DoorCentreGlobalCoord);
+                
+                // Get distance to the door.
+                distToDoor = CreateWall ? Vector3.Distance(newTargetPos, m_DoorCentreGlobalCoord) :
+                    // If we do not have a door present, the distance is in every case ok and can be assumed as infinity.
+                    float.PositiveInfinity;
+                
+                // Get the distance to the agent.
+                distToAgent = Vector3.Distance(newTargetPos, agent.transform.position);
             }
             
             // Set the position of the target.
@@ -293,29 +341,37 @@ public class Floor : MonoBehaviour
         return RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Agent, agent.transform.position);
     }
 
+    public int GetAgentRoomId(Vector3 agentGlobalPosition)
+    {
+        return RoomsInEnv.GetCurrentAgentRoomId(agentGlobalPosition);
+    }
+
     
     /// <summary>
     /// Reset the position of the decoy object. Takes distance to target and door into account.
     /// </summary>
     public void ResetDecoyPosition()
     {
-        var agentPos = agent.transform.position;
-        var targetPos = target.transform.position;
-        
-        var newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
-        
-        var distToTarget = Vector3.Distance(newDecoyPos, targetPos);
-        var distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
-        while (distToTarget < 4f || distToDoor < 4f)
+        if (useDecoy)
         {
-            newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
-            distToTarget = Vector3.Distance(newDecoyPos, targetPos);
-            distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
+            var agentPos = agent.transform.position;
+            var targetPos = target.transform.position;
+
+            var newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
+
+            var distToTarget = Vector3.Distance(newDecoyPos, targetPos);
+            var distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
+            while (distToTarget < 4f || distToDoor < 4f)
+            {
+                newDecoyPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agentPos);
+                distToTarget = Vector3.Distance(newDecoyPos, targetPos);
+                distToDoor = Vector3.Distance(newDecoyPos, m_DoorCentreGlobalCoord);
+            }
+
+            // Set the correct height of the decoy.
+            newDecoyPos.y = 1f;
+            m_Decoy.ResetPosition(newDecoyPos);
         }
-        
-        // Set the correct height of the decoy.
-        newDecoyPos.y = 1f;
-        decoy.ResetPosition(newDecoyPos);
     }
 
     /// <summary>
