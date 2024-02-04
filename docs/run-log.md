@@ -1397,8 +1397,20 @@ learning rate changes to reward signifcant?
 * Expected runtime of 2.6 hours.
 * Not good run. Compare config again against 1433. No was same except max_step.
 
-## 1454+
+## 1454 - 1477
 * Hyperparameter search. 2 processes.
+* Good runs.
+* Summary: Take look at 1477.
+  * Jap quite nice results.
+  * Runs 10e6 steps long. 
+* 1477 config:
+  * time_horizon: 1540
+  * batch_size: 356
+  * learning_rate: 1e-3
+  * beta: 1e-3
+* Also good runs: 1476 and 1474.
+  * 1476 also good. Increased beta value compared to 1477.
 
 # Next
-* CLI build with sensonr count dynamic
+* CLI build with sensonr count dynamic.
+* Same room starts count rausschreiben.
