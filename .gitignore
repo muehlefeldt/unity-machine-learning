@@ -1,6 +1,7 @@
 *.onnx.meta
 *.onnx
 
+stats/
 results/
 results_archive/
 logs/

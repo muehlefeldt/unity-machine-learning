@@ -1410,6 +1410,13 @@ learning rate changes to reward signifcant?
   * beta: 1e-3
 * Also good runs: 1476 and 1474.
   * 1476 also good. Increased beta value compared to 1477.
+* Kept only the best runs in the results dir.
+
+## 1478
+* Short run to test code.
+  * Writes stats to json file.
+* Using a build. Run 2e6 steps.
+* 1477 config used.
 
 # Next
 * CLI build with sensonr count dynamic.

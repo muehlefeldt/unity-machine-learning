@@ -78,11 +78,13 @@ public class RollerAgent : Agent
         // Set action branch size based on allowed movement.
         brainParameters.ActionSpec.BranchSizes[0] = allowYMovement ? 9 : 7;
     }
-    
+
+    private CustomStatsManager m_StatsManager;
     // Is called before the first frame update
     public void Start() {
         m_RBody = GetComponent<Rigidbody>();
         m_SensorDirections = GetSensorDirections();
+        m_StatsManager = FindObjectOfType<CustomStatsManager>();
     }
     
     /// <summary>
@@ -166,6 +168,9 @@ public class RollerAgent : Agent
         actionCount = 0;
         m_GuiText = "";
         
+        // Increment the global episode counter in the stats.
+        m_StatsManager.NewEpisode();
+        
         // Creates a wall or not if so desired within the floor parameters.
         floor.CreateInnerWall();
         
@@ -193,6 +198,11 @@ public class RollerAgent : Agent
         
         // Calculate the distance to the target.
         CalculateDistanceToTarget();
+
+        if (floor.RoomsInEnv.AreAgentAndTargetInSameRoom())
+        {
+            m_StatsManager.TargetAndAgentSameRoom();
+        }
     }
     
     /// <summary>
