@@ -16,9 +16,14 @@ public class CustomStatsManager : MonoBehaviour
 
     public string exportPath;
     
-    private void Awake()
+    private void Start()
     {
-        exportPath = @"C:\Users\max.muehlefeldt\Documents\GitHub\unity-machine-learning\python\basic_rl_env\stats\" + DateTime.Now + ".json";
+        var args = FindObjectOfType<CliArguments>();
+        exportPath = args.StatsExportPath;
+        lock (m_LockObject)
+        {
+            m_Stats.sensorCount = args.SensorCount;
+        }
     }
 
     /// <summary>

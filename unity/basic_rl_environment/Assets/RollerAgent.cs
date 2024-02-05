@@ -59,14 +59,28 @@ public class RollerAgent : Agent
     
     // Gui text for debugging in the editor.
     private string m_GuiText;
-    
+
     /// <summary>
     /// Called on loading. Setup of the sensors.
     /// </summary>
+    /// <remarks>This function is always called before any Start functions and also just after a prefab
+    /// is instantiated.
+    /// (If a GameObject is inactive during start up Awake is not called until it is made active.)</remarks>
+    /*protected override void Awake()
+    {
+        // Crucial to call Awake() from the base class to ensure proper initialisation.
+        base.Awake();
+    }*/
+
+    /*protected override void OnEnable() {
+        base.OnEnable();*/
     protected override void Awake()
     {
         // Crucial to call Awake() from the base class to ensure proper initialisation.
         base.Awake();
+        
+        // Get the requested sensor count from CLI arguments.
+        sensorCount = FindObjectOfType<CliArguments>().SensorCount;
         
         // Set behavior parameters based on selected options for movement and sensor number.
         var brainParameters = GetComponent<BehaviorParameters>().BrainParameters;

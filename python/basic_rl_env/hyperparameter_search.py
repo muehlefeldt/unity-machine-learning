@@ -138,6 +138,7 @@ def get_parameter_combinations(parameters: list[dict]) -> list[dict]:
                     "run_id": first_id + tmp_id,
                     # Decide on base port for ml-agents.
                     "base_port": 5005 + tmp_id,
+                    # Add CLI arguments to be used.
                 }
             )
         tmp_id += 1
@@ -185,12 +186,21 @@ def commence_mlagents_run(run_info: dict) -> dict:
         return_code = 0
         run_name = f"{run_id}"
 
+        cli_arguments: list[str] = [
+            "--env-args",
+            "--sensors",
+            f"{run_info['userconfig']['sensors']}",
+            "--statspath",
+            str(Path(run_info["userconfig"]["stats_export_path"]).absolute() / f"{run_id}.json"),
+        ]
+
         # Start ml-algents training using build version of unity.
         start_time = time.time()
 
         # Construct the ml-agents arguments to be called through subprocess.
         ml_agents_arguments = []
-        if run_info["userconfig"]["build"]:  # Run ml-agents with pre build unity environemnts.
+        if run_info["userconfig"]["build"]:
+            # Run ml-agents with pre build unity environemnts.
             ml_agents_arguments = [
                 "mlagents-learn",
                 f"{Path(run_info['config_file']).absolute()}",
@@ -202,12 +212,14 @@ def commence_mlagents_run(run_info: dict) -> dict:
                 "--torch-device",
                 "cpu",
                 "--force",
+                *cli_arguments,
             ]
             # Is the run based on the result (nn) of a previous run?
             if not run_info["userconfig"]["not_based_on_previous_nn"]:
                 ml_agents_arguments.append(
                     f"--initialize-from={run_info['userconfig']['previous_run_id']}"
                 )
+        # elif run_info["userconfig"]["build"] and run_info["userconfig"]["cli_build"]:
 
         else:  # Run mlagents with the unity editor.
             # If we do not use a build environment, interaction with the unity editor is needed.
@@ -218,6 +230,7 @@ def commence_mlagents_run(run_info: dict) -> dict:
                 "--torch-device",
                 "cpu",
                 "--force",
+                *cli_arguments,
             ]
             # Is the run based on the result (nn) of a previous run?
             if not run_info["userconfig"]["not_based_on_previous_nn"]:
@@ -254,9 +267,10 @@ def commence_mlagents_run(run_info: dict) -> dict:
 
 
 def check_userconfig():
-    """Check userconfig in the configuration yaml file for content and datatypes."""
+    """Check userconfig in the configuration yaml file for content and datatypes.
+    If problem is found (missing keys or value types wrong) Error is raised."""
 
-    # Userconfig contains all custom settings.
+    # Userconfig contains all custom settings. If not present stop here.
     if not "userconfig" in config:
         raise ValueError
 
@@ -272,6 +286,8 @@ def check_userconfig():
         ("keep_files", bool),
         ("not_based_on_previous_nn", bool),
         ("previous_run_id", int),
+        ("sensors", int),
+        ("stats_export_path", str),
     ]
 
     # Are keys and types of the specified value present?
@@ -399,6 +415,7 @@ if __name__ == "__main__":
     with open(Path(PATHS["config_file"]).absolute(), mode="r", encoding="utf8") as config_file:
         config = yaml.safe_load(config_file)
 
+    # Make sure config provided in configuration file is useable.
     try:
         check_userconfig()
     except ValueError:
@@ -406,25 +423,24 @@ if __name__ == "__main__":
         raise
 
     userconfig = dict.copy(config["userconfig"])
-    # User config information no longer needed.
-    config.pop("userconfig")
+    config.pop("userconfig")  # User config information no longer needed.
 
     # Check the loaded config for user specified modes.
     # Build env requested?
-    use_build_env = userconfig["build"]
+    # use_build_env: bool = userconfig["build"]
 
     # Production mode requested?
-    production = userconfig["production"]
+    production: bool = userconfig["production"]
 
     # Summary requested?
-    generate_summary = userconfig["summary"]
-    num_env = userconfig["num_env"]
+    generate_summary: bool = userconfig["summary"]
+    num_env: int = userconfig["num_env"]
 
     # Get the message from the config file to be logged.
-    message_for_log = userconfig["message"]
+    message_for_log: bool = userconfig["message"]
 
     # Get the id of the first run. Used for logging and summary.
-    ID_FIRST_RUN = get_run_id()
+    ID_FIRST_RUN: int = get_run_id()
 
     # Logging config.
     log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
@@ -451,7 +467,6 @@ if __name__ == "__main__":
     if not userconfig["build"]:
         summary = list(map(commence_mlagents_run, combinations))
     # elif userconfig["num_process"] == 1:
-    #    # Todo
     else:
         # Perform actual calculations using ml-agents distributed over a number of processes.
         with Pool(

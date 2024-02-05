@@ -2,6 +2,7 @@
 
 userconfig:
   # Use build env? Set false for run using the unity editor.
+  # Attention: This requieres a manually pre build by the user using the editor if set to true.
   build: true
 
   # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
@@ -27,6 +28,9 @@ userconfig:
 
   # Provide message for the log file for better traceability.
   message: "See log file."
+
+  sensors: 10
+  stats_export_path: "C:/Users/max.muehlefeldt/Documents/GitHub/unity-machine-learning/python/basic_rl_env/stats"
 
 # ML-Agents configuration.
 behaviors:
