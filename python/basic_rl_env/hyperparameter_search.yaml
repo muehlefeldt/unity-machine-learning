@@ -36,7 +36,7 @@ userconfig:
 # during inital loading of the Unity environment.
 env_config:
   # Define number of horizontal sensors. Can be single int or a list of int.
-  sensorCount: [1, 2, 4]
+  sensorCount: [1, 2, 4, 8]
 
 # Paths used by the python script to generate, save and load files.
 paths:
@@ -83,7 +83,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 2e6
+    max_steps: 5e6
     time_horizon: 1540
     summary_freq: 10000
 

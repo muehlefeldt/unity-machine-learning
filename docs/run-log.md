@@ -1428,10 +1428,13 @@ learning rate changes to reward signifcant?
 ## 1524 - 1533.
 * Dev. Disregard.
 
-## 1534+
+## 1534 - 1536
 * Short runs for sensor study.
 * sensorCount: [1, 2, 4]
 
+## 1537+
+* Again sensor study but with 5e6 steps a bit longer.
+* sensorCount: [1, 2, 4, 8]
 
 # Next
 * CLI build with sensonr count dynamic.
