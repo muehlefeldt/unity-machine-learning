@@ -6,27 +6,27 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-
+/// <summary>
+/// Class to manage loading of configuration file to setup training areas as requested by the user.
+/// </summary>
 public class ConfigurationMgmt : MonoBehaviour
 {
     /// <summary>
-    /// Requested sensor count of the agent. Default is set to 32. Range of 1 to 64 allowed.
+    /// Property to store the loaded configuration.
     /// </summary>
-    //public int SensorCount { get; private set; } = 32;
-
-    /// <summary>
-    /// Requested path of the stats file to be created at the end of the ml-agents run.
-    /// </summary>
-    //public string StatsExportPath { get; private set; } = "c:/build/test.json";
-
     public Configuration config { get; private set; }
     
-    //private string[] m_Args;
+    /// <summary>
+    /// Game objects that contains all training areas. To be set through the editor.
+    /// </summary>
     public GameObject allTrainingAreas;
 
+    /// <summary>
+    /// Text to be displayed on the GUI.
+    /// </summary>
     private string m_GuiText;
     
-    ///<summary> Called before loading of agents to gather requested settings from CLI. </summary>
+    ///<summary> Called before loading of agents to gather requested settings. </summary>
     /// <remarks>This function is always called before any Start functions and also just after a prefab
     /// is instantiated.
     /// (If a GameObject is inactive during start up Awake is not called until it is made active.)</remarks>
@@ -39,11 +39,13 @@ public class ConfigurationMgmt : MonoBehaviour
             throw new FileNotFoundException("Config file for Unity environment not found.");
         }
         
+        // Load the actual json.
         string jsonString = File.ReadAllText(jsonFilePath);
 
-        // Deserialize the JSON data into a C# object
+        // Deserialize the JSON data into a C# object.
         config = JsonUtility.FromJson<Configuration>(jsonString);
-
+        
+        // Set the GUI text. No need to call this more often.
         m_GuiText = string.Format("Run {0}\nSensor count {1}\nStats file {2}", config.runId, config.sensorCount, config.statsExportPath);
         
         // Activate the training areas. This ensure the correct call order of Awake() within the areas.
