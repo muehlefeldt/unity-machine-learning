@@ -2,6 +2,7 @@
 *.onnx
 
 env_config.json
+env_config.json.meta
 unity_configs/
 stats/
 results/
