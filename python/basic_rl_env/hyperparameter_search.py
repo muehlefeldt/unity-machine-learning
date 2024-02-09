@@ -244,17 +244,6 @@ def commence_mlagents_run(run_info: dict) -> dict:
 
         save_env_config_file(run_info)
 
-        return_code: int = 0
-        #run_name: str = f"{run_id}"
-
-        #cli_arguments: list[str] = [
-        #    "--env-args",
-        #    "--sensors",
-        #    f"{run_info['userconfig']['sensors']}",
-        #    "--statspath",
-        #    str(Path(run_info["userconfig"]["stats_export_path"]).absolute() / f"{run_id}.json"),
-        #]
-
         # Start ml-algents training using build version of unity.
         start_time = time.time()
 
@@ -269,11 +258,10 @@ def commence_mlagents_run(run_info: dict) -> dict:
                 f"--run-id={run_id}",
                 f"--num-envs={run_info['userconfig']['num_env']}",
                 f"--base-port={run_info['base_port']}",
-                #"--no-graphics",
+                "--no-graphics",
                 "--torch-device",
                 "cpu",
                 "--force",
-                #*cli_arguments,
             ]
             # Is the run based on the result (nn) of a previous run?
             if not run_info["userconfig"]["not_based_on_previous_nn"]:
@@ -501,18 +489,6 @@ def prepare_paths(complete_config):
 
 
 if __name__ == "__main__":
-    # Paths: Config files and unity env.
-    """PATHS = {
-        "working_dir": "./python/basic_rl_env",
-        "config_file": "./hyperparameter_search.yaml",
-        "unity_env": str(Path("C:/build/windows").absolute()),
-        "log_dir": "./logs",
-        "summaries_dir": "./summaries",
-        "results_dir": "./results",
-        "results_archive_dir": "./results_archive",
-        "configs_dir": "./configs",
-    }"""
-
     # Ensure correct working dir.
     if os.getcwd() != Path("./python/basic_rl_env").absolute():
         os.chdir(Path("./python/basic_rl_env").absolute())

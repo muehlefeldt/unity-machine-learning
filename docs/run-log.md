@@ -1425,9 +1425,15 @@ learning rate changes to reward signifcant?
 ## Up to and incl. 1523
 * Development entries. Can be disregarded.
 
-## 1524
-* Dev run in the editor.
+## 1524 - 1533.
+* Dev. Disregard.
+
+## 1534+
+* Short runs for sensor study.
+* sensorCount: [1, 2, 4]
+
 
 # Next
 * CLI build with sensonr count dynamic.
 * Same room starts count rausschreiben.
+* -1 for bad door passage and +1 for good door passage.
