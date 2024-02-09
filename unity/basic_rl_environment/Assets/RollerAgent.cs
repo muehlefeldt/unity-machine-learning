@@ -80,7 +80,7 @@ public class RollerAgent : Agent
         base.Awake();
         
         // Get the requested sensor count from CLI arguments.
-        sensorCount = FindObjectOfType<CliArguments>().SensorCount;
+        sensorCount = FindObjectOfType<ConfigurationMgmt>().config.sensorCount;
         
         // Set behavior parameters based on selected options for movement and sensor number.
         var brainParameters = GetComponent<BehaviorParameters>().BrainParameters;
@@ -539,12 +539,14 @@ public class RollerAgent : Agent
         m_DoorPassageStartInRoom = GetCurrentRoomId();
     }
 
+/*
 #if UNITY_EDITOR
     private void OnGUI()
     {
         GUI.Label(new Rect(10, 10, 1000, 20), m_GuiText);
     }
 #endif    
+*/
 
     /// <summary>
     /// Called on trigger exit after collider contact finishes with the door.

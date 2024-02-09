@@ -1418,6 +1418,16 @@ learning rate changes to reward signifcant?
 * Using a build. Run 2e6 steps.
 * 1477 config used.
 
+## 1479 - 1484
+* Disregard. Test shit for CLI arguments.
+* At least stats seem to do stuff.
+
+## Up to and incl. 1523
+* Development entries. Can be disregarded.
+
+## 1524
+* Dev run in the editor.
+
 # Next
 * CLI build with sensonr count dynamic.
 * Same room starts count rausschreiben.

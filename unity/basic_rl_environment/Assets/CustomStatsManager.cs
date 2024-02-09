@@ -12,17 +12,21 @@ public class CustomStatsManager : MonoBehaviour
     private readonly object m_LockObject = new object();
 
     // Contains the actual stats.
-    private Stats m_Stats = new Stats();
-
-    public string exportPath;
+    private Stats m_Stats;
+    
+    private string m_ExportPath;
     
     private void Start()
     {
-        var args = FindObjectOfType<CliArguments>();
-        exportPath = args.StatsExportPath;
+        m_Stats = new Stats();
+        
+        var configMgmt = FindObjectOfType<ConfigurationMgmt>();
+        m_Stats.runId = configMgmt.config.runId;
+        m_ExportPath = configMgmt.config.statsExportPath;
+        
         lock (m_LockObject)
         {
-            m_Stats.sensorCount = args.SensorCount;
+            m_Stats.sensorCount = configMgmt.config.sensorCount;
         }
     }
 
@@ -64,12 +68,12 @@ public class CustomStatsManager : MonoBehaviour
     /// </summary>
     private void OnApplicationQuit()
     {
-        if (!File.Exists(exportPath))
+        if (!File.Exists(m_ExportPath))
         {
             lock (m_LockObject)
             {
                 var json = JsonUtility.ToJson(m_Stats, prettyPrint: true);
-                System.IO.File.WriteAllText(exportPath, json, Encoding.UTF8);
+                File.WriteAllText(m_ExportPath, json, Encoding.UTF8);
             }
         }
     }

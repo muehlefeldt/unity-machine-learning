@@ -24,18 +24,23 @@ from tensorboard.backend.event_processing.event_file_loader import EventFileLoad
 # from tensorflow.data import TFRecordDataset
 
 
-def get_run_id() -> int:
+def get_run_id(complete_config: dict) -> int:
     """Get the run id (number) based on past runs in the result folder.
     If called multiple times, the result will be an increased number."""
     dir_contents = [
-        *os.listdir(Path(PATHS["results_dir"]).absolute()),
-        *os.listdir(Path(PATHS["results_archive_dir"]).absolute()),
-        *os.listdir(Path(PATHS["log_dir"]).absolute()),
-        *os.listdir(Path(PATHS["summaries_dir"]).absolute()),
+        *os.listdir(complete_config["paths"]["results_dir"]),
+        *os.listdir(complete_config["paths"]["results_archive_dir"]),
+        *os.listdir(complete_config["paths"]["log_dir"]),
+        *os.listdir(complete_config["paths"]["summaries_dir"]),
+        *os.listdir(complete_config["paths"]["configs_dir"]),
+        *os.listdir(complete_config["paths"]["unity_configs_dir"]),
     ]
     numbers = []
     for entry in dir_contents:
-        numbers.append(int(entry.split("_")[0]))
+        if "_" in entry:
+            numbers.append(int(entry.split("_")[0]))
+        else:
+            numbers.append(int(entry.split(".")[0]))
     if not numbers:
         return 0
     return max(numbers) + 1
@@ -131,7 +136,7 @@ def get_parameter_combinations(parameters: list[dict]) -> list[dict]:
                     # Run configuration to be used during the run.
                     "run_config": tmp_config,
                     # Path to the build environment.
-                    "paths": PATHS,
+                    # "paths": PATHS,
                     # Error state of the run. Default case is false.
                     "error": False,
                     # ID of this run config.
@@ -170,29 +175,85 @@ def get_mean_reward(name: str) -> tuple[float, float]:
     return mean(rewards_of_interest), np.round(np.std(rewards_of_interest), 10)
 
 
+def save_env_config_file(complete_config: dict):
+    """Save the configuration for the Unity environment to a file.
+    File is loaded by Unity to configure the enviroment as requested."""
+
+    complete_config["run_config"]["paths"]["env_config_file"] = (
+        complete_config["run_config"]["paths"]["unity_configs_dir"]
+        / f"{complete_config['run_id']}_unity_config.json"
+    )
+
+    # Get the wanted configuration.
+    local_config: dict = complete_config["run_config"]["env_config"]
+
+    # Add further info to the config here as requiered.
+    local_config["runId"] = complete_config["run_id"]
+
+    # Export path as string to ensure Unity can handle the path.
+    # Path is absolute and points to the final stats file for the specific run.
+    local_config["statsExportPath"] = str(
+        complete_config["run_config"]["paths"]["statsExportPath"]
+        / f"{complete_config['run_id']}_stats.json"
+    )
+
+    # Save the dict as backup file.
+    with open(
+        complete_config["run_config"]["paths"]["env_config_file"], mode="w", encoding="utf8"
+    ) as new_file:
+        json.dump(local_config, new_file, indent=4)
+
+    # Save the dict to the pre-build directory.
+    # Also store the file in the assets folder of the editor. Allows for use with the editor.
+    with open(
+        complete_config["run_config"]["paths"]["unity_env_data"] / "env_config.json",
+        mode="w",
+        encoding="utf8",
+    ) as new_file:
+        json.dump(local_config, new_file, indent=4)
+
+    with open(
+        complete_config["run_config"]["paths"]["unity_assets"] / "env_config.json",
+        mode="w",
+        encoding="utf8",
+    ) as new_file:
+        json.dump(local_config, new_file, indent=4)
+
+    return
+
+
 def commence_mlagents_run(run_info: dict) -> dict:
     """Commence a ML-Agents run using the configuration provided in the dict."""
     # Id number of the run. As shown in tensorboard. Needed to ensure traceability.
     run_id = run_info["run_id"]
 
-    # Location of the config file saved to run info.
-    run_info["config_file"] = f"{run_info['paths']['configs_dir']}/{run_id}.yaml"
+    # Location of the config files saved to run info.
+    run_info["run_config"]["paths"]["config_file"] = (
+        run_info["run_config"]["paths"]["configs_dir"] / f"{run_id}.yaml"
+    )
 
-    # Save modified config as yaml file.
+    # Save modified config as yaml file. This is the configuration of ML-Agents.
     if run_info["userconfig"]["production"]:
-        with open(Path(run_info["config_file"]).absolute(), mode="w", encoding="utf8") as new_file:
-            yaml.dump(run_info["run_config"], new_file)
 
-        return_code = 0
-        run_name = f"{run_id}"
+        # Construct and save the ML-Agents specific config.
+        with open(
+            run_info["run_config"]["paths"]["config_file"], mode="w", encoding="utf8"
+        ) as new_file:
+            config_to_save: dict = {"behaviors": run_info["run_config"]["behaviors"]}
+            yaml.dump(config_to_save, new_file)
 
-        cli_arguments: list[str] = [
-            "--env-args",
-            "--sensors",
-            f"{run_info['userconfig']['sensors']}",
-            "--statspath",
-            str(Path(run_info["userconfig"]["stats_export_path"]).absolute() / f"{run_id}.json"),
-        ]
+        save_env_config_file(run_info)
+
+        return_code: int = 0
+        #run_name: str = f"{run_id}"
+
+        #cli_arguments: list[str] = [
+        #    "--env-args",
+        #    "--sensors",
+        #    f"{run_info['userconfig']['sensors']}",
+        #    "--statspath",
+        #    str(Path(run_info["userconfig"]["stats_export_path"]).absolute() / f"{run_id}.json"),
+        #]
 
         # Start ml-algents training using build version of unity.
         start_time = time.time()
@@ -203,16 +264,16 @@ def commence_mlagents_run(run_info: dict) -> dict:
             # Run ml-agents with pre build unity environemnts.
             ml_agents_arguments = [
                 "mlagents-learn",
-                f"{Path(run_info['config_file']).absolute()}",
-                f"--env={run_info['paths']['unity_env']}",
-                f"--run-id={run_name}",
+                f"{run_info['run_config']['paths']['config_file']}",
+                f"--env={run_info['run_config']['paths']['unity_env']}",
+                f"--run-id={run_id}",
                 f"--num-envs={run_info['userconfig']['num_env']}",
                 f"--base-port={run_info['base_port']}",
-                "--no-graphics",
+                #"--no-graphics",
                 "--torch-device",
                 "cpu",
                 "--force",
-                *cli_arguments,
+                #*cli_arguments,
             ]
             # Is the run based on the result (nn) of a previous run?
             if not run_info["userconfig"]["not_based_on_previous_nn"]:
@@ -225,12 +286,11 @@ def commence_mlagents_run(run_info: dict) -> dict:
             # If we do not use a build environment, interaction with the unity editor is needed.
             ml_agents_arguments = [
                 "mlagents-learn",
-                f"{Path(run_info['config_file']).absolute()}",
-                f"--run-id={run_name}",
+                f"{run_info['run_config']['paths']['config_file']}",
+                f"--run-id={run_id}",
                 "--torch-device",
                 "cpu",
                 "--force",
-                *cli_arguments,
             ]
             # Is the run based on the result (nn) of a previous run?
             if not run_info["userconfig"]["not_based_on_previous_nn"]:
@@ -256,14 +316,51 @@ def commence_mlagents_run(run_info: dict) -> dict:
         # Stores the directory path needed for possible delete of created files.
         run_info["duration"] = time.time() - start_time
         # run_info["return_code"] = process_result.returncode
-        run_info["run_name"] = run_name
-        run_info["result_dir"] = f"{run_info['paths']['results_dir']}/{run_name}"
+        run_info["run_name"] = run_id
+        run_info["result_dir"] = f"{run_info['run_config']['paths']['results_dir']}/{run_id}"
 
-    else:  # Not production
+    else:  # Not production.
         run_info["error"] = True
         run_info["error_msg"] = "Not production mode."
 
     return run_info
+
+
+def check_env_config():
+    """Check env_config in the configuration yaml file for content and datatypes.
+    If problem is found (missing keys or value types wrong) Error is raised."""
+
+    # Env_config contains all custom settings for the unity environment. If not present stop here.
+    if not "env_config" in config:
+        raise ValueError
+
+    # Provide here key and type of the provided value in the yaml.
+    # Given as {key, type of value, can_be_list}.
+    keys_to_lookup: list[dict] = [
+        {"key": "sensorCount", "value_type": int, "can_be_list": True},
+    ]
+
+    # Are keys and types of the specified value present?
+    for key_value in keys_to_lookup:
+        key = key_value["key"]  # The current key.
+        value_type = key_value["value_type"]  # The current type of the value.
+
+        if not key in config["env_config"]:
+            raise ValueError
+
+        # If the config file contains a list, every entry of the list needs to be checked for type.
+        if key_value["can_be_list"] and isinstance(config["env_config"][key], list):
+            for entry in config["env_config"][key]:
+                if not isinstance(entry, value_type):
+                    raise ValueError
+
+        # Just check type of the provided value in the config.
+        # Default case, even if the value can be in a list.
+        else:
+            if not isinstance(config["env_config"][key], value_type):
+                raise ValueError
+
+    return
 
 
 def check_userconfig():
@@ -286,8 +383,6 @@ def check_userconfig():
         ("keep_files", bool),
         ("not_based_on_previous_nn", bool),
         ("previous_run_id", int),
-        ("sensors", int),
-        ("stats_export_path", str),
     ]
 
     # Are keys and types of the specified value present?
@@ -358,11 +453,18 @@ def create_summary_file(summary_list: list[dict]):
             print("Not able to remove summary file.")
 
 
-def check_directories():
+def check_directories(complete_config):
     """Ensure requiered directories exist."""
-    for name in ["./logs", "./summaries", "./results", "./configs", "/build"]:
+    for key in [
+        "log_dir",
+        "summaries_dir",
+        "results_dir",
+        "results_archive_dir",
+        "configs_dir",
+        "unity_configs_dir",
+    ]:
         # Succeds even if directory already exists.
-        os.makedirs(Path(name).absolute(), exist_ok=True)
+        os.makedirs(Path(complete_config["paths"][key]).absolute(), exist_ok=True)
 
 
 def remove_run_files_log(summary_list: list[dict]):
@@ -392,9 +494,15 @@ def remove_run_files_log(summary_list: list[dict]):
     return
 
 
+def prepare_paths(complete_config):
+    """Save the provided path as absolute paths using pathlib."""
+    for key in complete_config["paths"]:
+        complete_config["paths"][key] = Path(complete_config["paths"][key]).absolute()
+
+
 if __name__ == "__main__":
     # Paths: Config files and unity env.
-    PATHS = {
+    """PATHS = {
         "working_dir": "./python/basic_rl_env",
         "config_file": "./hyperparameter_search.yaml",
         "unity_env": str(Path("C:/build/windows").absolute()),
@@ -403,27 +511,34 @@ if __name__ == "__main__":
         "results_dir": "./results",
         "results_archive_dir": "./results_archive",
         "configs_dir": "./configs",
-    }
+    }"""
 
     # Ensure correct working dir.
-    if os.getcwd() != Path(PATHS["working_dir"]).absolute():
-        os.chdir(Path(PATHS["working_dir"]).absolute())
+    if os.getcwd() != Path("./python/basic_rl_env").absolute():
+        os.chdir(Path("./python/basic_rl_env").absolute())
 
-    check_directories()
-
-    # Open the base config file.
-    with open(Path(PATHS["config_file"]).absolute(), mode="r", encoding="utf8") as config_file:
+    # Open the base config file for this script.
+    with open(
+        Path("./hyperparameter_search.yaml").absolute(), mode="r", encoding="utf8"
+    ) as config_file:
         config = yaml.safe_load(config_file)
 
     # Make sure config provided in configuration file is useable.
     try:
         check_userconfig()
+        check_env_config()
     except ValueError:
-        print("Error: Check user_config in configuration file.")
+        print("Error: Check configuration file for value problem.")
         raise
 
+    # Make paths in the configfile useable and ensure dirs are ok.
+    prepare_paths(config)
+    check_directories(config)
+
     userconfig = dict.copy(config["userconfig"])
+    # env_config = dict.copy(config["env_config"])
     config.pop("userconfig")  # User config information no longer needed.
+    # config.pop("env_config")
 
     # Check the loaded config for user specified modes.
     # Build env requested?
@@ -437,15 +552,15 @@ if __name__ == "__main__":
     num_env: int = userconfig["num_env"]
 
     # Get the message from the config file to be logged.
-    message_for_log: bool = userconfig["message"]
+    message_for_log: str = userconfig["message"]
 
     # Get the id of the first run. Used for logging and summary.
-    ID_FIRST_RUN: int = get_run_id()
+    ID_FIRST_RUN: int = get_run_id(config)
 
     # Logging config.
-    log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
+    # log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
     logging.basicConfig(
-        filename=log_path,
+        filename=config["paths"]["log_dir"] / f"{ID_FIRST_RUN}_search.log",
         level=logging.INFO,
     )
 
@@ -455,8 +570,9 @@ if __name__ == "__main__":
 
     # Get dynamic parameters from the config file.
     # Create all possible and valid combinations of these parameters.
-    dynamic_parameters = get_dynamic_parameters(config, [])
-    combinations = get_parameter_combinations(dynamic_parameters)
+    dynamic_parameters_config = get_dynamic_parameters(config, [])
+    # dynamic_parameters_env_config = get_dynamic_parameters(env_config, [])
+    combinations = get_parameter_combinations(dynamic_parameters_config)
 
     # Get the number of runs the current config is goint to produce.
     NUM_COUNT = len(combinations)

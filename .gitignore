@@ -1,6 +1,8 @@
 *.onnx.meta
 *.onnx
 
+env_config.json
+unity_configs/
 stats/
 results/
 results_archive/
@@ -146,3 +148,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+

@@ -5,6 +5,7 @@ public class Stats
     public ulong sameRoom;
     public ulong episodeCount;
     public int sensorCount;
+    public int runId;
 
     public Stats()
     {
