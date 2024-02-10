@@ -1418,25 +1418,37 @@ learning rate changes to reward signifcant?
 * Using a build. Run 2e6 steps.
 * 1477 config used.
 
-## 1479 - 1484
+## 1479 - 1484 - Only dev
 * Disregard. Test shit for CLI arguments.
 * At least stats seem to do stuff.
 
-## Up to and incl. 1523
+## 1485 - 1533 - Only dev
 * Development entries. Can be disregarded.
-
-## 1524 - 1533.
-* Dev. Disregard.
 
 ## 1534 - 1536
 * Short runs for sensor study.
 * sensorCount: [1, 2, 4]
 
-## 1537+
+## 1537 - 1540
 * Again sensor study but with 5e6 steps a bit longer.
 * sensorCount: [1, 2, 4, 8]
+* Interesting, but question remains about. LSTM settings.
+  * Wouldn't fewer sensors require a more powerfull LSTM?
+* Esp. with very few sensors the ep. length limit is hit and no noticeable reduction is observed.
+
+## 1541
+* sensorCount: 16
+* Result similar 8 sensors.
+
+## 1542
+* Rerun of 1477. Task: Compare results and look for obvious issues the rewritten code may have introduced.
+* sensorCount: 32
+* A bit longer run with 10e6 steps.
+* Expected: Very close result to 1477. 
 
 # Next
 * CLI build with sensonr count dynamic.
 * Same room starts count rausschreiben.
+  * Well, I believe we have a problem?
 * -1 for bad door passage and +1 for good door passage.
+  * Done, but needs recompile.
