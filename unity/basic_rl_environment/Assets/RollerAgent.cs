@@ -60,27 +60,22 @@ public class RollerAgent : Agent
     // Gui text for debugging in the editor.
     private string m_GuiText;
 
+    private Configuration m_Config;
+    
     /// <summary>
     /// Called on loading. Setup of the sensors.
     /// </summary>
     /// <remarks>This function is always called before any Start functions and also just after a prefab
     /// is instantiated.
     /// (If a GameObject is inactive during start up Awake is not called until it is made active.)</remarks>
-    /*protected override void Awake()
-    {
-        // Crucial to call Awake() from the base class to ensure proper initialisation.
-        base.Awake();
-    }*/
-
-    /*protected override void OnEnable() {
-        base.OnEnable();*/
     protected override void Awake()
     {
         // Crucial to call Awake() from the base class to ensure proper initialisation.
         base.Awake();
         
-        // Get the requested sensor count from CLI arguments.
-        sensorCount = FindObjectOfType<ConfigurationMgmt>().config.sensorCount;
+        // Get the configuration from the the configMgmt and set the requested sensor count from CLI arguments.
+        m_Config = FindObjectOfType<ConfigurationMgmt>().config;
+        sensorCount = m_Config.sensorCount;
         
         // Set behavior parameters based on selected options for movement and sensor number.
         var brainParameters = GetComponent<BehaviorParameters>().BrainParameters;
@@ -738,7 +733,7 @@ public class RollerAgent : Agent
         // First point of the path is the agent position.
         m_Path.Add(agentPosition);
 
-        if (floor.CreateWall)
+        if (m_Config.createWall)
         {
             var doorPositions = floor.GetDoorPosition();
             if (agentPosition.z > targetPosition.z)

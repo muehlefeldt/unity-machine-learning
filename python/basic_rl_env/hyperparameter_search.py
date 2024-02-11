@@ -326,6 +326,13 @@ def check_env_config():
     # Given as {key, type of value, can_be_list}.
     keys_to_lookup: list[dict] = [
         {"key": "sensorCount", "value_type": int, "can_be_list": True},
+        {"key": "useDecoy", "value_type": bool, "can_be_list": False},
+        {"key": "createWall", "value_type": bool, "can_be_list": False},
+        {"key": "doorWidth", "value_type": float, "can_be_list": False},
+        {"key": "randomWallPosition", "value_type": bool, "can_be_list": False},
+        {"key": "randomDoorPosition", "value_type": bool, "can_be_list": False},
+        {"key": "targetAlwaysInOtherRoomFromAgent", "value_type": bool, "can_be_list": False},
+        {"key": "targetFixedPosition", "value_type": bool, "can_be_list": False},
     ]
 
     # Are keys and types of the specified value present?
