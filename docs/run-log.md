@@ -1448,11 +1448,20 @@ learning rate changes to reward signifcant?
 
 ## 1543
 * Editor run to verify code changes. Config as 1536.
+* Introduces other way to track door passages in the tensorboard.
 
+## 1544 disregard
+
+## 1545
+* Build run. 5e6 runs.
+* 1 sensor only: Take a look at LSTM setting.
+* memory_size: 356
+  * max possible with the batch size.
+* Compare against run? 1537.
+* Interestingly the ep length is increasing ... answers?
 
 # Next
-* CLI build with sensonr count dynamic.
 * Same room starts count rausschreiben.
   * Well, I believe we have a problem?
-* -1 for bad door passage and +1 for good door passage.
-  * Done, but needs recompile.
+* See notes to 1537.
+  * Do we require more LSTM studies with only one sensor or very few sensors. 

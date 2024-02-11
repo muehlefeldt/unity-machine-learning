@@ -4,7 +4,7 @@ userconfig:
   # Use build env? Set false for run using the unity editor.
   # Attention: This requieres a manually pre build by the user using the editor if set to true.
   # If true: sensor count and stat file export is used. See option below.
-  build: false
+  build: true
 
   # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
@@ -37,7 +37,7 @@ userconfig:
 env_config:
   # Define number of horizontal sensors. Can be single int or a list of int given as [1, 2].
   # Schould be between 1 and 32, but higher is possible.
-  sensorCount: 4
+  sensorCount: 1
 
   # Deploy a decoy object to increase complexity of the environment. Default set to false.
   useDecoy: false
@@ -105,7 +105,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 2e6
+    max_steps: 5e6
     time_horizon: 1540
     summary_freq: 10000
 
@@ -127,8 +127,9 @@ behaviors:
       normalize: false
       hidden_units: 512
       num_layers: 1
+      # Remember: sequence_len <= batch_size.
       memory:
-        memory_size: 128
+        memory_size: 356
         sequence_length: 64
       #vis_encode_type: simple
     reward_signals:
