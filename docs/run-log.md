@@ -1446,6 +1446,10 @@ learning rate changes to reward signifcant?
 * A bit longer run with 10e6 steps.
 * Expected: Very close result to 1477. 
 
+## 1543
+* Editor run to verify code changes. Config as 1536.
+
+
 # Next
 * CLI build with sensonr count dynamic.
 * Same room starts count rausschreiben.

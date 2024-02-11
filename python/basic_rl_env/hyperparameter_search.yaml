@@ -4,7 +4,7 @@ userconfig:
   # Use build env? Set false for run using the unity editor.
   # Attention: This requieres a manually pre build by the user using the editor if set to true.
   # If true: sensor count and stat file export is used. See option below.
-  build: true
+  build: false
 
   # Production mode? Bool requiered. Set to false if ml-agents is not to be run.
   production: true
@@ -35,8 +35,30 @@ userconfig:
 # Contains all settings directly passed to the unity environemt via a JSON config file loaded
 # during inital loading of the Unity environment.
 env_config:
-  # Define number of horizontal sensors. Can be single int or a list of int. Schould be between 1 and 32, but higher is possible.
-  sensorCount: 32
+  # Define number of horizontal sensors. Can be single int or a list of int given as [1, 2].
+  # Schould be between 1 and 32, but higher is possible.
+  sensorCount: 4
+
+  # Deploy a decoy object to increase complexity of the environment. Default set to false.
+  useDecoy: false
+
+  # Create a inner wall separating two rooms. Default set to true.
+  createWall: true
+
+  # Width of the created door as float. Default set to 4.0.
+  doorWidth: 4.0
+
+  # Use random position of the inner wall. Both rooms are of varying size. Default set to true.
+  randomWallPosition: true
+    
+  # Random position of the door within the inner wall. Default set to true.
+  randomDoorPosition: true
+    
+  # Select if target and agent are always in different rooms. Default set to false.
+  targetAlwaysInOtherRoomFromAgent: false
+    
+  # Fix the position of the target. Position will be hard coded.
+  targetFixedPosition: false
 
 # Paths used by the python script to generate, save and load files.
 paths:
@@ -83,7 +105,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 10e6
+    max_steps: 2e6
     time_horizon: 1540
     summary_freq: 10000
 
