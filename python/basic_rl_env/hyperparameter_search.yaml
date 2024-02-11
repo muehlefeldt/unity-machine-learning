@@ -129,8 +129,8 @@ behaviors:
       num_layers: 1
       # Remember: sequence_len <= batch_size.
       memory:
-        memory_size: 356
-        sequence_length: 64
+        memory_size: [64, 128, 256]
+        sequence_length: [32, 64, 128, 160]
       #vis_encode_type: simple
     reward_signals:
       extrinsic:

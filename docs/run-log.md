@@ -1460,6 +1460,10 @@ learning rate changes to reward signifcant?
 * Compare against run? 1537.
 * Interestingly the ep length is increasing ... answers?
 
+## 1546 +
+* LSTM study with only one sensor.
+* Comparable to 1545 and 1537 but changes to LSTM settings.
+
 # Next
 * Same room starts count rausschreiben.
   * Well, I believe we have a problem?
