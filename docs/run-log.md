@@ -1487,11 +1487,11 @@ learning rate changes to reward signifcant?
 ## 1562
 * Agent room NOT random. What does this do to the distribution.
 
-
-* Maybe good idea to take config of 1537 and comnpare against that?
-
+# ATTENTION
+* Agent room is NOT random.
 
 # Next
+* Maybe good idea to take config of 1537 and comnpare against that?
 * Same room starts count rausschreiben.
   * Well, I believe we have a problem? Houston?
 * See notes to 1537.
