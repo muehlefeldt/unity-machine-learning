@@ -10,5 +10,7 @@ public class Stats
     public ulong episodeCount = 0;
     public int sensorCount = 0;
     public int runId;
+    public ulong targetRoomIndex0 = 0;
+    public ulong targetRoomIndex1 = 0;
 }
 

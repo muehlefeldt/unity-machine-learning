@@ -1487,6 +1487,13 @@ learning rate changes to reward signifcant?
 ## 1562
 * Agent room NOT random. What does this do to the distribution.
 
+## 1563
+* Index select for target written to stats.
+
+## 1564
+* Room for target is only selected once! Even if distances are not large enough to agent or door.
+* Does this change a thing?
+
 # ATTENTION
 * Agent room is NOT random.
 

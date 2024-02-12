@@ -78,7 +78,7 @@ public class Floor : MonoBehaviour
         innerWallCreator = new InnerWallCreator(transform);
 
         // Setup the room management.
-        RoomsInEnv = new AllRooms(m_Config.createWall, m_Config.targetAlwaysInOtherRoomFromAgent);
+        RoomsInEnv = new AllRooms(m_Config.createWall, m_Config.targetAlwaysInOtherRoomFromAgent, FindObjectOfType<CustomStatsManager>());
 
         // Ensure the MeshFilter and its shared mesh exist
         if (floorMeshFilter != null && floorMeshFilter.sharedMesh != null)
@@ -324,6 +324,8 @@ public class Floor : MonoBehaviour
             var distToAgent = 0f;
             
             var newTargetPos = Vector3.zero;
+            
+            RoomsInEnv.SelectRandomRoom();
             
             // While distance to door or to the agent is too short, get new position.
             while (distToDoor < 4f || distToAgent < 4f)

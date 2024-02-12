@@ -104,6 +104,22 @@ public class CustomStatsManager : MonoBehaviour
         }
     }
 
+    public void AllRoomsRandomAdd(int index)
+    {
+        lock (m_LockObject)
+        {
+            switch (index)
+            {
+                case 0:
+                    m_Stats.targetRoomIndex0 += 1;
+                    break;
+                case 1:
+                    m_Stats.targetRoomIndex1 += 1;
+                    break;
+            }
+        }
+    }
+
     /// <summary>
     /// GUI output to help debugging and visual supervision.
     /// </summary>

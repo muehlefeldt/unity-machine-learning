@@ -14,17 +14,19 @@ public class AllRooms
     // Indicates if agent and target are placed in the same room.
     private bool m_AgentAndTargetInSameRoom;
 
-    
+    private CustomStatsManager m_StatsManager;
     /// <summary>
     /// Constructor: Setup list for the rooms and set where the target needs to be located.
     /// </summary>
     /// <param name="targetInOtherRoom"></param>
-    public AllRooms(bool createWall, bool targetInOtherRoom)
+    public AllRooms(bool createWall, bool targetInOtherRoom, CustomStatsManager mgmt)
     {
         m_AllRoomsInEnv = new List<Room>();
         m_TargetAlwaysInOtherRoomFromAgent = targetInOtherRoom;
         m_CreateWall = createWall;
         m_AgentAndTargetInSameRoom = false;
+
+        m_StatsManager = mgmt;
     }
     
     /// <summary>
@@ -107,6 +109,14 @@ public class AllRooms
         }
     }
 
+    private Room m_SelectedRoom;
+    public void SelectRandomRoom()
+    {
+        var index = Random.Range(0, m_AllRoomsInEnv.Count);
+        m_StatsManager.AllRoomsRandomAdd(index);
+        m_SelectedRoom = m_AllRoomsInEnv[index];
+    }
+
     /// <summary>
     /// Get a random position for the target. Global position is returned.
     /// </summary>
@@ -148,7 +158,11 @@ public class AllRooms
             
             // If not a different room is requested a random position is calculated. The position can be in every room. 
             // Select a random room from the possible rooms.
-            var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
+            /*var index = Random.Range(0, m_AllRoomsInEnv.Count);
+            m_StatsManager.AllRoomsRandomAdd(index);
+            var selectedRoom = m_AllRoomsInEnv[index];*/
+
+            var selectedRoom = m_SelectedRoom;
             
             // If agent and target are going to be in the same room, indicate so.
             if (selectedRoom.ContainsAgent()) m_AgentAndTargetInSameRoom = true;
@@ -160,7 +174,7 @@ public class AllRooms
         if (type is PositionType.Agent)
         {
             // Select a random room from the possible rooms.
-            // ToDo: What even is this?
+            // ToDo: What even is this? The room select for the agent is NOT random. Revert this?
             //var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
             var selectedRoom = m_AllRoomsInEnv[0];
             // Set the appropriate agent indicator for the room.
