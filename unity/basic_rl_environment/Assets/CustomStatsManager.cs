@@ -115,6 +115,25 @@ public class CustomStatsManager : MonoBehaviour
     }
 #endif*/
     
+    /*private bool m_ShowLabel = false;
+    /*private void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 1000, 2000), m_GuiText);
+    }#1#
+    
+    void OnGUI() {
+        if (GUILayout.Button("Stats"))
+        {
+            m_ShowLabel = !m_ShowLabel;
+        }
+
+        if (m_ShowLabel)
+        {
+            GUILayout.Label(m_Stats.ToString());
+            //Label(new Rect(10, 10, 1000, 2000), sameRoom.ToString());
+        }
+    }*/
+    
     /// <summary>
     /// On exit to the program write stats to a file.
     /// </summary>

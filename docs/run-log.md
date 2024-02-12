@@ -1485,7 +1485,7 @@ learning rate changes to reward signifcant?
 * Stats again show bias to agent and target in different rooms.
 
 ## 1562
-* 
+* Agent room NOT random. What does this do to the distribution.
 
 
 * Maybe good idea to take config of 1537 and comnpare against that?

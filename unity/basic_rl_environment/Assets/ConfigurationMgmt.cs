@@ -52,9 +52,22 @@ public class ConfigurationMgmt : MonoBehaviour
         allTrainingAreas.SetActive(true);
     }
     
-    private void OnGUI()
+    private bool m_ShowLabel = false;
+    /*private void OnGUI()
     {
         GUI.Label(new Rect(10, 10, 1000, 2000), m_GuiText);
-    }
+    }*/
     
+    void OnGUI() {
+        if (GUILayout.Button("Config"))
+        {
+            m_ShowLabel = !m_ShowLabel;
+        }
+
+        if (m_ShowLabel)
+        {
+            GUILayout.Label(m_GuiText.ToString());
+            //Label(new Rect(10, 10, 1000, 2000), sameRoom.ToString());
+        }
+    }
 }
