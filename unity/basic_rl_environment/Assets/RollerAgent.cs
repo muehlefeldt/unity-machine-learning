@@ -178,9 +178,6 @@ public class RollerAgent : Agent
         actionCount = 0;
         m_GuiText = "";
         
-        // Increment the global episode counter in the stats.
-        m_StatsManager.NewEpisode();
-        
         // Creates a wall or not if so desired within the floor parameters.
         floor.CreateInnerWall();
         
@@ -208,11 +205,11 @@ public class RollerAgent : Agent
         
         // Calculate the distance to the target.
         CalculateDistanceToTarget();
-
-        if (floor.RoomsInEnv.AreAgentAndTargetInSameRoom())
-        {
-            m_StatsManager.TargetAndAgentSameRoom();
-        }
+        
+        // Increment the global episode counter in the stats.
+        m_StatsManager.NewEpisode();
+        // Write the current state of the floor to the stats.
+        floor.RecordFloorState(m_StatsManager);
     }
     
     /// <summary>

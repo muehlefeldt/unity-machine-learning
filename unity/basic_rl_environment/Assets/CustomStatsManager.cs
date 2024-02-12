@@ -14,19 +14,71 @@ public class CustomStatsManager : MonoBehaviour
     // Contains the actual stats.
     private Stats m_Stats;
     
+    // Path to the export file.
     private string m_ExportPath;
     
-    private void Start()
+    /// <summary>
+    /// Setup the stats management.
+    /// </summary>
+    private void Awake()
     {
         m_Stats = new Stats();
         
         var configMgmt = FindObjectOfType<ConfigurationMgmt>();
-        m_Stats.runId = configMgmt.config.runId;
-        m_ExportPath = configMgmt.config.statsExportPath;
-        
         lock (m_LockObject)
         {
+            m_Stats.runId = configMgmt.config.runId;
+            m_ExportPath = configMgmt.config.statsExportPath;
             m_Stats.sensorCount = configMgmt.config.sensorCount;
+        }
+    }
+    
+    /// <summary>
+    /// Increments the number of times the agent was in room 0.
+    /// </summary>
+    public void AgentInRoomID(int id)
+    {
+        lock (m_LockObject)
+        {
+            switch (id)
+            {
+                case 0:
+                    m_Stats.agentInRoomID0 += 1;
+                    break;
+                case 1:
+                    m_Stats.agentInRoomID1 += 1;
+                    break;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Increments the number of times the target was in room 0.
+    /// </summary>
+    public void TargetInRoomID(int id)
+    {
+        lock (m_LockObject)
+        {
+            switch (id)
+            {
+                case 0:
+                    m_Stats.targetInRoomID0 += 1;
+                    break;
+                case 1:
+                    m_Stats.targetInRoomID1 += 1;
+                    break;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Increments the number of times the target was in room 0.
+    /// </summary>
+    public void TargetInRoomID1()
+    {
+        lock (m_LockObject)
+        {
+            m_Stats.targetInRoomID1 += 1;
         }
     }
 

@@ -346,6 +346,32 @@ public class Floor : MonoBehaviour
     }
     
     /// <summary>
+    /// Record the current state of the floor to the stats.
+    /// </summary>
+    /// <param name="statsManager">Overall stats manager instance.</param>
+    public void RecordFloorState(CustomStatsManager statsManager)
+    {
+        foreach (var singleRoom in RoomsInEnv.GetAllRooms())
+        {
+            var id = singleRoom.GetId();
+            if (singleRoom.ContainsAgent())
+            {
+                statsManager.AgentInRoomID(id);
+            }
+
+            if (singleRoom.ContainsTarget())
+            {
+                statsManager.TargetInRoomID(id);
+            }
+        }
+        
+        if (RoomsInEnv.AreAgentAndTargetInSameRoom())
+        {
+            statsManager.TargetAndAgentSameRoom();
+        }
+    }
+    
+    /// <summary>
     /// Get random position for the agent. Position can be in all rooms.
     /// </summary>
     /// <returns>Global position within the training area.</returns>
