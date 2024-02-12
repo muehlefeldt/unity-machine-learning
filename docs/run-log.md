@@ -1466,10 +1466,19 @@ learning rate changes to reward signifcant?
 * 12 runs expected. ETA N/A.
 * Hit always the EP length limit.
 
+## 
+* Take look a ep length limit. Set to? Multiple options?
+* Maybe good idea to take config of 1537 and comnpare against that?
 
 
 # Next
 * Same room starts count rausschreiben.
-  * Well, I believe we have a problem?
+  * Well, I believe we have a problem? Houston?
 * See notes to 1537.
   * Do we require more LSTM studies with only one sensor or very few sensors. 
+  * Does not seem so.
+  * Hyperparameter study needed ->
+* Hyperparameter study with one sensor.
+  * Increase the maxStep count in unity to ? 10k? Would mean 2000 actions through the NN.
+  * What are the hyperparameters to take a look at?
+* Check code for extended stats in the editor. 
