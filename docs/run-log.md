@@ -1480,8 +1480,14 @@ learning rate changes to reward signifcant?
   * Do we need to increase summary periode? Issue with no ep. completed since last summary.
 * Task: What are the stats saying?
 
+## 1561
+* Same as 1560 but bit longer.
+* Stats again show bias to agent and target in different rooms.
 
-## 
+## 1562
+* 
+
+
 * Maybe good idea to take config of 1537 and comnpare against that?
 
 

@@ -160,8 +160,9 @@ public class AllRooms
         if (type is PositionType.Agent)
         {
             // Select a random room from the possible rooms.
-            var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
-            
+            // ToDo: What even is this?
+            //var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
+            var selectedRoom = m_AllRoomsInEnv[0];
             // Set the appropriate agent indicator for the room.
             selectedRoom.SetAgentPresent();
             
