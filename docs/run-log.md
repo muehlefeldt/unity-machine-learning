@@ -1460,14 +1460,28 @@ learning rate changes to reward signifcant?
 * Compare against run? 1537.
 * Interestingly the ep length is increasing ... answers?
 
-## 1546 +
+## 1546 - 1557
 * LSTM study with only one sensor.
 * Comparable to 1545 and 1537 but changes to LSTM settings.
-* 12 runs expected. ETA N/A.
+* 12 runs expected. ETA N/A. Way too long in the end.
 * Hit always the EP length limit.
+* "KeyError during summary generation."
+* Results are pretty much useless.
+
+## 1558 disregard
+
+## 1559 disregard
+
+## 1560
+* LSTM settings back to run 1537 defaults.
+  * memory_size: 128
+  * sequence_length: 64
+* Short run only. But first run with 10k maxSteps in Unity.
+  * Do we need to increase summary periode? Issue with no ep. completed since last summary.
+* Task: What are the stats saying?
+
 
 ## 
-* Take look a ep length limit. Set to? Multiple options?
 * Maybe good idea to take config of 1537 and comnpare against that?
 
 
@@ -1479,6 +1493,6 @@ learning rate changes to reward signifcant?
   * Does not seem so.
   * Hyperparameter study needed ->
 * Hyperparameter study with one sensor.
-  * Increase the maxStep count in unity to ? 10k? Would mean 2000 actions through the NN.
+  * Increase the maxStep count in unity to ? 10k? Would mean 2000 actions through the NN. Multiple options? Is this a hyperparameter?
   * What are the hyperparameters to take a look at?
 * Check code for extended stats in the editor. 

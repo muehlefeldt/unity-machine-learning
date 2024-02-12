@@ -413,7 +413,7 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
             entry.pop("run_config")
 
             # Path not storeabe as json.
-            entry.pop("paths")
+            #entry.pop("paths")
 
             summary_dict[entry["run_id"]] = entry
         except KeyError:
