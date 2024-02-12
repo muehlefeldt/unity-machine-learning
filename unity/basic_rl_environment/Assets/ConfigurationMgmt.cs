@@ -41,12 +41,12 @@ public class ConfigurationMgmt : MonoBehaviour
         
         // Load the actual json.
         string jsonString = File.ReadAllText(jsonFilePath);
-
+        m_GuiText = jsonString;
         // Deserialize the JSON data into a C# object.
         config = JsonUtility.FromJson<Configuration>(jsonString);
         
         // Set the GUI text. No need to call this more often.
-        m_GuiText = string.Format("Run {0}\nSensor count {1}\nStats file {2}", config.runId, config.sensorCount, config.statsExportPath);
+        //m_GuiText = string.Format("Run {0}\nSensor count {1}\nStats file {2}", config.runId, config.sensorCount, config.statsExportPath);
         
         // Activate the training areas. This ensure the correct call order of Awake() within the areas.
         allTrainingAreas.SetActive(true);
@@ -54,7 +54,7 @@ public class ConfigurationMgmt : MonoBehaviour
     
     private void OnGUI()
     {
-        GUI.Label(new Rect(10, 400, 1000, 2000), m_GuiText);
+        GUI.Label(new Rect(10, 10, 1000, 2000), m_GuiText);
     }
     
 }

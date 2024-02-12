@@ -185,7 +185,12 @@ public class Floor : MonoBehaviour
         }
     }
     
-    private void OnGUI()
+    /// <summary>
+    /// GUI display used to help debug.
+    /// </summary>
+    /// <remarks>Only usable with one single training areas. Otherwise overlapping outputs are displayed.
+    /// Really only usable for debugging in the editor.</remarks>
+    /*private void OnGUI()
     {
         var text = "";
         foreach (var singleRoom in RoomsInEnv.GetAllRooms())
@@ -199,7 +204,7 @@ public class Floor : MonoBehaviour
 
         text += String.Format("Agent and Target same room: {0}\n", RoomsInEnv.AreAgentAndTargetInSameRoom());
         GUI.Label(new Rect(10, 200, 1000, 200), text);
-    }
+    }*/
 
 #endif
     
