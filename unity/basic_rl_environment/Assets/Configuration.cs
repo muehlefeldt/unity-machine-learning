@@ -50,4 +50,9 @@ public class Configuration
     /// Fix the position of the target. Position will be hard coded.
     /// </summary>
     public bool targetFixedPosition;
+    
+    /// <summary>
+    /// The maximum number of steps the agent takes before being done.
+    /// </summary>
+    public int maxStep;
 }

@@ -1463,6 +1463,10 @@ learning rate changes to reward signifcant?
 ## 1546 +
 * LSTM study with only one sensor.
 * Comparable to 1545 and 1537 but changes to LSTM settings.
+* 12 runs expected. ETA N/A.
+* Hit always the EP length limit.
+
+
 
 # Next
 * Same room starts count rausschreiben.

@@ -60,6 +60,9 @@ env_config:
   # Fix the position of the target. Position will be hard coded.
   targetFixedPosition: false
 
+  # Set the number of time steps in unity per episode. This equals 
+  maxStep: 10000
+
 # Paths used by the python script to generate, save and load files.
 paths:
   working_dir: "./python/basic_rl_env"

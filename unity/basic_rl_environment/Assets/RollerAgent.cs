@@ -76,6 +76,7 @@ public class RollerAgent : Agent
         // Get the configuration from the the configMgmt and set the requested sensor count from CLI arguments.
         m_Config = FindObjectOfType<ConfigurationMgmt>().config;
         sensorCount = m_Config.sensorCount;
+        MaxStep = m_Config.maxStep;
         
         // Set behavior parameters based on selected options for movement and sensor number.
         var brainParameters = GetComponent<BehaviorParameters>().BrainParameters;

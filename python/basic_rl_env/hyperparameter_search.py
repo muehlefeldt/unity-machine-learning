@@ -333,6 +333,7 @@ def check_env_config():
         {"key": "randomDoorPosition", "value_type": bool, "can_be_list": False},
         {"key": "targetAlwaysInOtherRoomFromAgent", "value_type": bool, "can_be_list": False},
         {"key": "targetFixedPosition", "value_type": bool, "can_be_list": False},
+        {"key": "maxStep", "value_type": int, "can_be_list": False},
     ]
 
     # Are keys and types of the specified value present?
@@ -462,7 +463,7 @@ def check_directories(complete_config):
         os.makedirs(Path(complete_config["paths"][key]).absolute(), exist_ok=True)
 
 
-def remove_run_files_log(summary_list: list[dict]):
+def remove_run_files_log(complete_config: dict, summary_list: list[dict]):
     """Delete files that have been created. Main purpose is to minimise number of irrelevant run id.
     Especially useful during debug runs. Set appropiate option in config file."""
     if summary_list == [{}]:
@@ -482,7 +483,7 @@ def remove_run_files_log(summary_list: list[dict]):
     try:
         # Remove handlers from logging configuration. Enable the log file to be deleted.
         logging.getLogger().handlers.clear()
-        os.remove(log_path.absolute())
+        os.remove(config["paths"]["log_file"])
     except OSError:
         print("Not able to delete log file.")
 
@@ -541,9 +542,10 @@ if __name__ == "__main__":
     ID_FIRST_RUN: int = get_run_id(config)
 
     # Logging config.
-    # log_path = Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
+    config["paths"]["log_file"] = config["paths"]["log_dir"] / f"{ID_FIRST_RUN}_search.log"
+    # Path(f"./logs/{ID_FIRST_RUN}_search.log").absolute()
     logging.basicConfig(
-        filename=config["paths"]["log_dir"] / f"{ID_FIRST_RUN}_search.log",
+        filename=config["paths"]["log_file"],
         level=logging.INFO,
     )
 
@@ -582,4 +584,4 @@ if __name__ == "__main__":
         create_summary_file(summary)
 
     if not userconfig["keep_files"]:
-        remove_run_files_log(summary)
+        remove_run_files_log(config, summary)
