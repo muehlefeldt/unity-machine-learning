@@ -1494,6 +1494,13 @@ learning rate changes to reward signifcant?
 * Room for target is only selected once! Even if distances are not large enough to agent or door.
 * Does this change a thing?
 
+## 1565 - 1566
+* Longer runs. 10e6.
+* 1 sensor.
+* Test 1 and 2 layers. No clue why.
+* Check distribution of room usage in the stats. Summary is working?
+* And again the agent room is still fixed. Should we change this? Yeah sounds good?
+
 # ATTENTION
 * Agent room is NOT random.
 
