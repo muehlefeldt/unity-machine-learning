@@ -25,7 +25,7 @@ userconfig:
   # Specify number of parallel env to use. Default = 1.
   num_env: 1
 
-  # Number of parallel processes. Default = 1.
+  # Attention: Do not change, issue with the unity config. Number of parallel processes. Default = 1.
   num_process: 1
 
   # Provide message for the log file for better traceability.
@@ -62,6 +62,9 @@ env_config:
 
   # Set the number of time steps in unity per episode. This equals 
   maxStep: 10000
+
+  # Penalty (negative reward) given for every taken step.
+  stepPenalty: -0.001
 
 # Paths used by the python script to generate, save and load files.
 paths:
@@ -129,7 +132,7 @@ behaviors:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
       hidden_units: 512
-      num_layers: [1, 2]
+      num_layers: 1
       # Remember: sequence_len <= batch_size.
       memory:
         memory_size: 128

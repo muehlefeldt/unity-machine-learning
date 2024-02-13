@@ -55,4 +55,9 @@ public class Configuration
     /// The maximum number of steps the agent takes before being done.
     /// </summary>
     public int maxStep;
+    
+    /// <summary>
+    /// Negative reward given with every action taken.
+    /// </summary>
+    public float stepPenalty;
 }

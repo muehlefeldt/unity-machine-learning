@@ -1418,12 +1418,10 @@ learning rate changes to reward signifcant?
 * Using a build. Run 2e6 steps.
 * 1477 config used.
 
-## 1479 - 1484 - Only dev
+## 1479 - 1533 - Disregard
 * Disregard. Test shit for CLI arguments.
 * At least stats seem to do stuff.
-
-## 1485 - 1533 - Only dev
-* Development entries. Can be disregarded.
+* Introduced unity config file and stats file written through unity.
 
 ## 1534 - 1536
 * Short runs for sensor study.
@@ -1501,13 +1499,29 @@ learning rate changes to reward signifcant?
 * Check distribution of room usage in the stats. Summary is working?
 * And again the agent room is still fixed. Should we change this? Yeah sounds good?
 
+## 1567
+* Again 10e6 steps but 32 sensors.
+* Same 1565 and 1566.
+* Using build.
+* Again result: Reward limit is not reached. 
+
+## 1568
+* Check 1567 but with maxstep reduced to 1000? Or keep the maxStep number high but increase also manually the punishment?
+* Shouldn't the result be similar to 1477? Was also 10e6 steps and 1000 maxSteps.
+* Well the difference is not too bad.
+
+## 1569
+* 10000 step per episode. Set step punishment to -0.001.
+  * Can now be set via config.
+* 1 sensor.
+* No clue.
+
+
 # ATTENTION
 * Agent room is NOT random.
 
 # Next
 * Maybe good idea to take config of 1537 and comnpare against that?
-* Same room starts count rausschreiben.
-  * Well, I believe we have a problem? Houston?
 * See notes to 1537.
   * Do we require more LSTM studies with only one sensor or very few sensors. 
   * Does not seem so.
@@ -1516,3 +1530,4 @@ learning rate changes to reward signifcant?
   * Increase the maxStep count in unity to ? 10k? Would mean 2000 actions through the NN. Multiple options? Is this a hyperparameter?
   * What are the hyperparameters to take a look at?
 * Check code for extended stats in the editor. 
+* Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.

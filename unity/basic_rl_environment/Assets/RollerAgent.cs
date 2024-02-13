@@ -513,7 +513,8 @@ public class RollerAgent : Agent
         }
 
         currentReward = scalar * (1f - m_DistToTargetNormal);*/
-        currentReward = -1f / MaxStep;
+        //currentReward = -1f / MaxStep;
+        currentReward = m_Config.stepPenalty;
         return currentReward;
     }
 
@@ -662,10 +663,12 @@ public class RollerAgent : Agent
             
             case RecorderCodes.GoodDoorPassage:
                 statsRecorder.Add("Door/Passage", 1f, StatAggregationMethod.Average);
+                statsRecorder.Add("Door/Good passage", 1f, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.BadDoorPassage:
                 statsRecorder.Add("Door/Passage", -1f, StatAggregationMethod.Average);
+                statsRecorder.Add("Door/Bad passage", -1f, StatAggregationMethod.Sum);
                 break;
         }
     }

@@ -334,6 +334,7 @@ def check_env_config():
         {"key": "targetAlwaysInOtherRoomFromAgent", "value_type": bool, "can_be_list": False},
         {"key": "targetFixedPosition", "value_type": bool, "can_be_list": False},
         {"key": "maxStep", "value_type": int, "can_be_list": False},
+        {"key": "stepPenalty", "value_type": float, "can_be_list": True},
     ]
 
     # Are keys and types of the specified value present?
