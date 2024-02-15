@@ -1533,7 +1533,7 @@ learning rate changes to reward signifcant?
   * Run 1571 is best. time_horizon: 64, beta: 1e-3, num_layers: 1
   * But "last_cumulative_reward": -5.817824195623398 ... dats shit
 
-## 1572+
+## 1595 - 
 * Based on previous hyperparameter search.
 * maxStep increased to 2e6.
 * time_horizon: [32, 64, 128]
@@ -1544,9 +1544,11 @@ learning rate changes to reward signifcant?
   * Best run ...
 * Why is the reward limit below 0?
 
-## For the night 
+## 1607+
 * Sensor study [1, 2, 4, 8, 16, 32] with the best config from 1572.
-  * Set maxStep to 5e6. 
+  * Set maxStep to 5e6.
+* This is still without the inner wall but ...
+* Make a plot with all runs and send to Mats? And ask for Anmeldung? 
 
 # ATTENTION
 * Agent room is NOT random.
