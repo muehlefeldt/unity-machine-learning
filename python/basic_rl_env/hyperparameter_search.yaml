@@ -43,7 +43,7 @@ env_config:
   useDecoy: false
 
   # Create a inner wall separating two rooms. Default set to true.
-  createWall: true
+  createWall: false
 
   # Width of the created door as float. Default set to 4.0.
   doorWidth: 4.0
@@ -61,9 +61,9 @@ env_config:
   targetFixedPosition: false
 
   # Set the number of time steps in unity per episode. This equals 
-  maxStep: 10000
+  maxStep: 1000
 
-  # Penalty (negative reward) given for every taken step.
+  # Penalty (negative reward) given for every taken step. Assume as default -1 / maxStep.
   stepPenalty: -0.001
 
 # Paths used by the python script to generate, save and load files.
@@ -111,8 +111,8 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 10e6
-    time_horizon: 1540
+    max_steps: 2e6
+    time_horizon: [32, 64, 128]
     summary_freq: 10000
 
     hyperparameters:
@@ -123,7 +123,7 @@ behaviors:
       learning_rate_schedule: linear
 
       # PPO-specific Configurations.
-      beta: 1e-3
+      beta: [1e-4, 5e-4, 1e-3, 5e-3]
       epsilon: 0.2
       lambd: 0.95
       num_epoch: 3

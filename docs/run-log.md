@@ -1515,7 +1515,29 @@ learning rate changes to reward signifcant?
   * Can now be set via config.
 * 1 sensor.
 * No clue.
+* Also 10e6 maxstep.
 
+## 1570
+* Where are we currently?
+* No inner wall test. With only 1 sensor!
+* Do we use this as a basis to run a hyperparameter search?
+
+## 1571 - 1594
+* Hyperparameter study with unclear purpose. maxStep 1e6.
+* time_horizon: [64, 512, 1024, 1540]
+* beta: [1e-3, 5e-3, 1e-2]
+* num_layers: [1, 2]
+* Summary: 
+  * Run 1571 is best. time_horizon: 64, beta: 1e-3, num_layers: 1
+  * But "last_cumulative_reward": -5.817824195623398 ... dats shit
+
+## 1572+
+* Based on previous hyperparameter search.
+* maxStep increased to 2e6.
+* time_horizon: [32, 64, 128]
+* beta: [1e-4, 5e-4, 1e-3, 5e-3]
+* num_layer fixed to 1. Did not provide an advantage.
+* I am not happy with this. How do we continue with this?
 
 # ATTENTION
 * Agent room is NOT random.
