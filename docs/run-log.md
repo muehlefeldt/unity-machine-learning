@@ -1521,6 +1521,8 @@ learning rate changes to reward signifcant?
 * Where are we currently?
 * No inner wall test. With only 1 sensor!
 * Do we use this as a basis to run a hyperparameter search?
+* Atleast are we seeing a reward limit trend beyond 0.
+* But this had 10e6 steps.
 
 ## 1571 - 1594
 * Hyperparameter study with unclear purpose. maxStep 1e6.
@@ -1538,6 +1540,13 @@ learning rate changes to reward signifcant?
 * beta: [1e-4, 5e-4, 1e-3, 5e-3]
 * num_layer fixed to 1. Did not provide an advantage.
 * I am not happy with this. How do we continue with this?
+* Summary:
+  * Best run ...
+* Why is the reward limit below 0?
+
+## For the night 
+* Sensor study [1, 2, 4, 8, 16, 32] with the best config from 1572.
+  * Set maxStep to 5e6. 
 
 # ATTENTION
 * Agent room is NOT random.
