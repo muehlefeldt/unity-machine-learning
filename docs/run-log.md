@@ -1544,14 +1544,19 @@ learning rate changes to reward signifcant?
   * Best run ...
 * Why is the reward limit below 0?
 
-## 1607+
+## 1607 - 1612
 * Sensor study [1, 2, 4, 8, 16, 32] with the best config from 1572.
   * Set maxStep to 5e6.
 * This is still without the inner wall but ...
 * Make a plot with all runs and send to Mats? And ask for Anmeldung? 
 
+## 1613
+* Same as above but more sensor counts.
+* sensorCount: [6, 10, 12, 14, 18, 20, 64, 128]
+
 # ATTENTION
 * Agent room is NOT random.
+* Still using graphics even with build.
 
 # Next
 * Maybe good idea to take config of 1537 and comnpare against that?
