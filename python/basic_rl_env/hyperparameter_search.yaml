@@ -37,7 +37,7 @@ userconfig:
 env_config:
   # Define number of horizontal sensors. Can be single int or a list of int given as [1, 2].
   # Schould be between 1 and 32, but higher is possible.
-  sensorCount: [6, 10, 12, 14, 18, 20, 64, 128]
+  sensorCount: 3
 
   # Deploy a decoy object to increase complexity of the environment. Default set to false.
   useDecoy: false

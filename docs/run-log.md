@@ -1554,6 +1554,10 @@ learning rate changes to reward signifcant?
 * Same as above but more sensor counts.
 * sensorCount: [6, 10, 12, 14, 18, 20, 64, 128]
 
+## 1621
+* Run with one more sensor config.
+* sensorCount: 3
+
 # ATTENTION
 * Agent room is NOT random.
 * Still using graphics even with build.
