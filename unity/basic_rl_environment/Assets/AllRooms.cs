@@ -175,8 +175,8 @@ public class AllRooms
         {
             // Select a random room from the possible rooms.
             // ToDo: What even is this? The room select for the agent is NOT random. Revert this?
-            //var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
-            var selectedRoom = m_AllRoomsInEnv[0];
+            var selectedRoom = m_AllRoomsInEnv[Random.Range(0, m_AllRoomsInEnv.Count)];
+            //var selectedRoom = m_AllRoomsInEnv[0];
             // Set the appropriate agent indicator for the room.
             selectedRoom.SetAgentPresent();
             

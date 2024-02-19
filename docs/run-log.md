@@ -1559,9 +1559,18 @@ learning rate changes to reward signifcant?
 * sensorCount: 3
 * Äh second run started? Possible reason: Hit play button in vs code for second time.
 
-# ATTENTION
-* Agent room is NOT random.
-* Still using graphics even with build.
+## 1622 disregard
+* See above.
+
+## 1623+
+* Runs to determine working config for sensor study with inner wal.
+* sensorCount: 1
+* Unity: maxStep: 10000 with stepPenalty: -0.001
+* time_horizon: [32, 64]
+* summary_freq: 20000
+* learning_rate: [5e-3, 1e-3, 5e-4]
+* beta: [1e-3, 5e-3, 1e-2]
+
 
 # Next
 * Maybe good idea to take config of 1537 and comnpare against that?
