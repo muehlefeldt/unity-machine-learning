@@ -155,12 +155,19 @@ public class CustomStatsManager : MonoBehaviour
     /// </summary>
     private void OnApplicationQuit()
     {
+        // Do not overwrite an exising file. Maybe the case, if a config is rerun without a change to the config file.
         if (!File.Exists(m_ExportPath))
         {
             lock (m_LockObject)
             {
+                // Create json string from the stats object.
                 var json = JsonUtility.ToJson(m_Stats, prettyPrint: true);
-                File.WriteAllText(m_ExportPath, json, Encoding.UTF8);
+                
+                // Ensure pure UTF8 encoding is used.
+                var customUtf8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+                
+                // Export the string to file.
+                File.WriteAllText(m_ExportPath, json, customUtf8Encoding);
             }
         }
     }
