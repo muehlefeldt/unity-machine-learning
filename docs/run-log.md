@@ -1557,6 +1557,7 @@ learning rate changes to reward signifcant?
 ## 1621
 * Run with one more sensor config.
 * sensorCount: 3
+* Äh second run started? Possible reason: Hit play button in vs code for second time.
 
 # ATTENTION
 * Agent room is NOT random.
@@ -1573,3 +1574,4 @@ learning rate changes to reward signifcant?
   * What are the hyperparameters to take a look at?
 * Check code for extended stats in the editor. 
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
+
