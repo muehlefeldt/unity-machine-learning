@@ -64,7 +64,7 @@ env_config:
   maxStep: [8000, 10000, 12000]
 
   # Penalty (negative reward) given for every taken step. Assume as default -1 / maxStep.
-  stepPenalty: [-0.001, -0.0005]
+  stepPenalty: [-0.01, -0.005]
 
 # Paths used by the python script to generate, save and load files.
 paths:
