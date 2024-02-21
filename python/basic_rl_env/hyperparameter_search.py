@@ -324,6 +324,8 @@ def check_env_config():
 
     # Provide here key and type of the provided value in the yaml.
     # Given as {key, type of value, can_be_list}.
+    # These could all be set to be a list. If you change this, check program behaviour.
+    # Esp. check the generated config files.
     keys_to_lookup: list[dict] = [
         {"key": "sensorCount", "value_type": int, "can_be_list": True},
         {"key": "useDecoy", "value_type": bool, "can_be_list": False},
@@ -333,7 +335,7 @@ def check_env_config():
         {"key": "randomDoorPosition", "value_type": bool, "can_be_list": False},
         {"key": "targetAlwaysInOtherRoomFromAgent", "value_type": bool, "can_be_list": False},
         {"key": "targetFixedPosition", "value_type": bool, "can_be_list": False},
-        {"key": "maxStep", "value_type": int, "can_be_list": False},
+        {"key": "maxStep", "value_type": int, "can_be_list": True},
         {"key": "stepPenalty", "value_type": float, "can_be_list": True},
     ]
 

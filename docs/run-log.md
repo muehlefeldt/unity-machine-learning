@@ -1562,22 +1562,22 @@ learning rate changes to reward signifcant?
 ## 1622 disregard
 * See above.
 
-## 1623+
+## 1623 - 1640
 * Runs to determine working config for sensor study with inner wal.
 * sensorCount: 1
 * Unity: maxStep: 10000 with stepPenalty: -0.001
 * time_horizon: [32, 64]
 * summary_freq: 20000
+  * Due to very high max possible unity step counts.
 * learning_rate: [5e-3, 1e-3, 5e-4]
 * beta: [1e-3, 5e-3, 1e-2]
+* At what point can the config be assumed as ok?
 
+## 1641+
+* Do we need to set the step penalty diffrently? 10000 / 5 = 2000. -1 = 2000 * (-0.0005)
+* Short runs to look at maxStep in Unity and penalties applied.
 
 # Next
-* Maybe good idea to take config of 1537 and comnpare against that?
-* See notes to 1537.
-  * Do we require more LSTM studies with only one sensor or very few sensors. 
-  * Does not seem so.
-  * Hyperparameter study needed ->
 * Hyperparameter study with one sensor.
   * Increase the maxStep count in unity to ? 10k? Would mean 2000 actions through the NN. Multiple options? Is this a hyperparameter?
   * What are the hyperparameters to take a look at?
