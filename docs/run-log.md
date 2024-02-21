@@ -1578,10 +1578,15 @@ learning rate changes to reward signifcant?
 * Short runs to look at maxStep in Unity and penalties applied.
 * maxStep: [8000, 10000, 12000]
 * stepPenalty: [-0.001, -0.0005]
+* 1641 and 1642 are ok.
 
-## 1647+
+## 1647 - 1652
 * maxStep: [8000, 10000, 12000]
 * stepPenalty: [-0.01, -0.005]
+
+## 1653+
+* maxStep: 1000, 2000, 3000, 4000, 5000, 6000, 7000
+stepPenalty: -0.01, -0.005, -0.001, -0.0005
 
 # Next
 * Hyperparameter study with one sensor.
