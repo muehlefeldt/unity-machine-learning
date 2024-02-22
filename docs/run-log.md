@@ -1605,7 +1605,7 @@ learning rate changes to reward signifcant?
 * Time horizon test.
 * time_horizon: [64, 200, 256, 512, 1000, 1500]
 
-## 1697+
+## 1702+
 * Crazy parameter search.
 
 ## 
