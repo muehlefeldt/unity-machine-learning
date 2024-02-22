@@ -1593,8 +1593,24 @@ learning rate changes to reward signifcant?
 * Take a look at the config of 1656 with 5e6 steps.
 * Just observe the behaviour.
 
-## 1682+
+## 1682 - 1688
 * Same config as 1681 and 1656 but sensor study.
+
+## 1689+ Aborted
+* Sensor study but now longer with 5e6.
+* Rest same as above.
+* Result is bad: No run (atleast including 8 sensors) remains below 0
+
+## 1696
+* Time horizon test.
+* time_horizon: [64, 200, 256, 512, 1000, 1500]
+
+## 1697+
+* Crazy parameter search.
+
+## 
+* Do we want to randomize the search of hyperparamter? By sorting the combinations?
+
 
 # Next
 * Hyperparameter study with one sensor.

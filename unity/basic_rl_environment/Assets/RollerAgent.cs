@@ -177,6 +177,7 @@ public class RollerAgent : Agent
         m_DoorPassages = 0;
         actionCount = 0;
         m_GuiText = "";
+        totalReward = 0f;
         
         // Creates a wall or not if so desired within the floor parameters.
         floor.CreateInnerWall();
@@ -453,6 +454,7 @@ public class RollerAgent : Agent
             RecordData(RecorderCodes.Target);
             m_EndReason = EpEndReasons.TargetReached;
             AddReward(1f);
+            totalReward += 1f;
             EndEpisode();
         }
         
@@ -497,6 +499,8 @@ public class RollerAgent : Agent
     /// </summary>
     public float currentReward = 0f;
 
+    public float totalReward;
+
     //public float heightPenalty = 0f;
     private float GetReward()
     {
@@ -515,6 +519,7 @@ public class RollerAgent : Agent
         currentReward = scalar * (1f - m_DistToTargetNormal);*/
         //currentReward = -1f / MaxStep;
         currentReward = m_Config.stepPenalty;
+        totalReward += currentReward;
         return currentReward;
     }
 
@@ -558,12 +563,14 @@ public class RollerAgent : Agent
                 if (m_DoorPassages % 2 == 0)
                 {
                     AddReward(0.5f);
+                    totalReward += 0.5f;
                     m_GuiText = "Not same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
                 else
                 {
                     AddReward(-0.6f);
+                    totalReward += -0.6f;
                     m_GuiText = "Not same room: Door passed -0.6f";
                     RecordData(RecorderCodes.BadDoorPassage);
                 }
@@ -574,12 +581,14 @@ public class RollerAgent : Agent
                 if (m_DoorPassages % 2 == 0)
                 {
                     AddReward(-0.6f);
+                    totalReward += -0.6f;
                     m_GuiText = "Same room: Door passed -0.6f";
                     RecordData(RecorderCodes.BadDoorPassage);
                 }
                 else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
                 {
                     AddReward(0.5f);
+                    totalReward += 0.5f;
                     m_GuiText = "Same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
