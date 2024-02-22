@@ -1584,9 +1584,17 @@ learning rate changes to reward signifcant?
 * maxStep: [8000, 10000, 12000]
 * stepPenalty: [-0.01, -0.005]
 
-## 1653+
-* maxStep: 1000, 2000, 3000, 4000, 5000, 6000, 7000
-stepPenalty: -0.01, -0.005, -0.001, -0.0005
+## 1653 - 1680
+* maxStep: [1000, 2000, 3000, 4000, 5000, 6000, 7000]
+* stepPenalty: [-0.01, -0.005, -0.001, -0.0005]
+* What did we learn?
+
+## 1681
+* Take a look at the config of 1656 with 5e6 steps.
+* Just observe the behaviour.
+
+## 1682+
+* Same config as 1681 and 1656 but sensor study.
 
 # Next
 * Hyperparameter study with one sensor.
