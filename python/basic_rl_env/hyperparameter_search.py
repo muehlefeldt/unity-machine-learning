@@ -2,6 +2,7 @@ import copy
 import itertools
 import json
 import logging
+import random
 import os
 import shutil
 import signal
@@ -561,6 +562,9 @@ if __name__ == "__main__":
     dynamic_parameters_config = get_dynamic_parameters(config, [])
     # dynamic_parameters_env_config = get_dynamic_parameters(env_config, [])
     combinations = get_parameter_combinations(dynamic_parameters_config)
+
+    # Randomly sort the combinations to cover a bigger range of parameters.
+    random.shuffle(combinations)
 
     # Get the number of runs the current config is goint to produce.
     NUM_COUNT = len(combinations)

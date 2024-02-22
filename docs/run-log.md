@@ -1605,10 +1605,10 @@ learning rate changes to reward signifcant?
 * Time horizon test.
 * time_horizon: [64, 200, 256, 512, 1000, 1500]
 
-## 1702+
+## 1702 Aborted
 * Crazy parameter search.
 
-## 
+## 1703++
 * Do we want to randomize the search of hyperparamter? By sorting the combinations?
 
 
