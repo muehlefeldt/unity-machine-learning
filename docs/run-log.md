@@ -1601,16 +1601,33 @@ learning rate changes to reward signifcant?
 * Rest same as above.
 * Result is bad: No run (atleast including 8 sensors) remains below 0
 
-## 1696
+## 1696 - 1701
 * Time horizon test.
+* Very short runs.
 * time_horizon: [64, 200, 256, 512, 1000, 1500]
 
 ## 1702 Aborted
 * Crazy parameter search.
+* Was aborted to start the thing below.
 
-## 1703++
+## 1703++ Terminated after 2 days
 * Do we want to randomize the search of hyperparamter? By sorting the combinations?
+  * Fucks the IDs of the runs.
+* maxStep: [1000, 2000, 5000]
+* stepPenalty: [-0.0005, -0.0025]
+* time_horizon: [64, 512, 1000, 1500, 2000]
+* batch_size: [248, 356, 512]
+* buffer_size: [51200, 102400, 204800]
+* learning_rate: [1e-5, 5e-4, 1e-4, 1e-3]
+* learning_rate_schedule: [linear, constant]
+* beta: [1e-3, 1e-2]
 
+## 6010
+* Rerun of 1477. Is the result comparable?
+
+## 6011
+* Rerun of the config of 2341. 
+* Increased run of 10e6 steps.
 
 # Next
 * Hyperparameter study with one sensor.
