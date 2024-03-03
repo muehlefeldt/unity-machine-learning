@@ -1632,11 +1632,19 @@ learning rate changes to reward signifcant?
   * Epsiode length is becoming less but still hitting the ceiling in terms of maxstep possible in unity. List is 200 actions per ep by the nn.
   * Reward remains below 1.
 
-## 6012+
+## 6012 - 6017
 * Sensor study.
 * Uses the config of 6011 but less steps. Only 1.5e6 and sensor count changed.
 * Compare against 2341 and look at reward and ep. length.
 * sensorCount: [1, 2, 4, 8, 16, 32]
+* Even with 32 sensors not above 0 reward?
+* Does this build even work?
+
+## 6018
+* Find a long ish run with 32 sensors. 1477.
+* Use same config as above but 32 sensors and 10e6 maxsteps.
+* How do we compare to 1477?
+
 
 # Next
 * Hyperparameter study with one sensor.
