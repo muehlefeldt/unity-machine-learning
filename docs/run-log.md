@@ -1643,7 +1643,10 @@ learning rate changes to reward signifcant?
 ## 6018
 * Find a long ish run with 32 sensors. 1477.
 * Use same config as above but 32 sensors and 10e6 maxsteps.
-* How do we compare to 1477?
+* How do we compare to 1477? Keep the diffrences in config in mind!
+  * We look quite good.
+
+## 6019++
 
 
 # Next
