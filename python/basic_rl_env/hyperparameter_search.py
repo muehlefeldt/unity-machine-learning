@@ -2,8 +2,8 @@ import copy
 import itertools
 import json
 import logging
-import random
 import os
+import random
 import shutil
 import signal
 import subprocess
@@ -383,6 +383,7 @@ def check_userconfig():
         ("keep_files", bool),
         ("not_based_on_previous_nn", bool),
         ("previous_run_id", int),
+        ("execution_order_not_random", bool),
     ]
 
     # Are keys and types of the specified value present?
@@ -417,7 +418,7 @@ def update_and_clean_summary(summary_list: list[dict]) -> dict:
             entry.pop("run_config")
 
             # Path not storeabe as json.
-            #entry.pop("paths")
+            # entry.pop("paths")
 
             summary_dict[entry["run_id"]] = entry
         except KeyError:
@@ -564,7 +565,10 @@ if __name__ == "__main__":
     combinations = get_parameter_combinations(dynamic_parameters_config)
 
     # Randomly sort the combinations to cover a bigger range of parameters.
-    random.shuffle(combinations)
+    # If seleceted the order of ids of the runs gets fucked.
+    # Just keep that in mind.
+    if not userconfig["execution_order_not_random"]:
+        random.shuffle(combinations)
 
     # Get the number of runs the current config is goint to produce.
     NUM_COUNT = len(combinations)
