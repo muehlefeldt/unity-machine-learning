@@ -1647,6 +1647,9 @@ learning rate changes to reward signifcant?
   * We look quite good.
 
 ## 6019++
+* sensorCount: [1, 2, 4, 8, 16] with max_steps: 10e6
+* 6018 was the same but with 32 sensors.
+* Is this enogh for a sensor study using the door?
 
 
 # Next
