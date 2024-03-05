@@ -1662,6 +1662,7 @@ learning rate changes to reward signifcant?
 * sensorCount: 1
 * maxStep: [1000, 2000, 3000, 4000, 5000, 10000]
 * stepPenalty: [-0.0005, -0.001, -0.0001, -0.00005]
+* Only 2e6 steps. Maybe longer needed for less combinations.
 
 # Next
 * Hyperparameter study with one sensor.
