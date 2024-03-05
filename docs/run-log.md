@@ -1646,11 +1646,22 @@ learning rate changes to reward signifcant?
 * How do we compare to 1477? Keep the diffrences in config in mind!
   * We look quite good.
 
-## 6019++
+## 6019 - 6023
 * sensorCount: [1, 2, 4, 8, 16] with max_steps: 10e6
 * 6018 was the same but with 32 sensors.
 * Is this enogh for a sensor study using the door?
+  * Only with 32 sensors (run 6018) above 0 reward.
+  * Not sufficient to be honest.
+* Maybe needed to increase the maxSteps in unity? Especially with 1 sensor. But take a look at it in the end.
+  * First indication point in that direction.
+  * See 6024+
 
+## 6024+
+* Take look at maxstep level in unity and one sensor.
+* Random execution.
+* sensorCount: 1
+* maxStep: [1000, 2000, 3000, 4000, 5000, 10000]
+* stepPenalty: [-0.0005, -0.001, -0.0001, -0.00005]
 
 # Next
 * Hyperparameter study with one sensor.
