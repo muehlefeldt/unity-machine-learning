@@ -1640,13 +1640,13 @@ learning rate changes to reward signifcant?
 * Even with 32 sensors not above 0 reward?
 * Does this build even work?
 
-## 6018
+## 6018 - Result useable
 * Find a long ish run with 32 sensors. 1477.
 * Use same config as above but 32 sensors and 10e6 maxsteps.
 * How do we compare to 1477? Keep the diffrences in config in mind!
   * We look quite good.
 
-## 6019 - 6023
+## 6019 - 6023 - Result useable
 * sensorCount: [1, 2, 4, 8, 16] with max_steps: 10e6
 * 6018 was the same but with 32 sensors.
 * Is this enogh for a sensor study using the door?
@@ -1656,7 +1656,7 @@ learning rate changes to reward signifcant?
   * First indication point in that direction.
   * See 6024+
 
-## 6024+
+## 6024 - 6047
 * Take look at maxstep level in unity and one sensor.
 * Random execution.
 * sensorCount: 1
@@ -1664,10 +1664,17 @@ learning rate changes to reward signifcant?
 * stepPenalty: [-0.0005, -0.001, -0.0001, -0.00005]
 * Only 2e6 steps. Maybe longer needed for less combinations.
 
+## 6048 - 6071
+* Rerun of 6024 - 6047 but longer.
+
+## 6072+
+* Run 6018 to 6023 again but longer. Maybe 20e6.
+
 # Next
-* Hyperparameter study with one sensor.
-  * Increase the maxStep count in unity to ? 10k? Would mean 2000 actions through the NN. Multiple options? Is this a hyperparameter?
-  * What are the hyperparameters to take a look at?
-* Check code for extended stats in the editor. 
+* Run 6018 to 6023 again but longer. Maybe 20e6.
+* Make plots of 6018 to 6023.
+* Use simple NN without LSTM for single room and env with door.
+
+# Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
 

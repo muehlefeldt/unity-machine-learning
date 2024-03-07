@@ -40,7 +40,7 @@ userconfig:
 env_config:
   # Define number of horizontal sensors. Can be single int or a list of int given as [1, 2].
   # Schould be between 1 and 32, but higher is possible.
-  sensorCount: 1
+  sensorCount: [1, 2, 4, 8, 10, 16, 32, 64, 128]
 
   # Deploy a decoy object to increase complexity of the environment. Default set to false.
   useDecoy: false
@@ -64,10 +64,10 @@ env_config:
   targetFixedPosition: false
 
   # Set the number of time steps in unity per episode. This equals 
-  maxStep: [1000, 2000, 3000, 4000, 5000, 10000]
+  maxStep: 1000
 
   # Penalty (negative reward) given for every taken step. Assume as default -1 / maxStep.
-  stepPenalty: [-0.0005, -0.001, -0.0001, -0.00005]
+  stepPenalty: -0.0005
 
 # Paths used by the python script to generate, save and load files.
 paths:
@@ -114,7 +114,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 2e6
+    max_steps: 20e6
     time_horizon: 2000
     summary_freq: 10000
 
