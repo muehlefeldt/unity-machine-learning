@@ -1667,8 +1667,9 @@ learning rate changes to reward signifcant?
 ## 6048 - 6071
 * Rerun of 6024 - 6047 but longer.
 
-## 6072+
+## 6072 - 6080
 * Run 6018 to 6023 again but longer. Maybe 20e6.
+* sensorCount: [1, 2, 4, 8, 10, 16, 32, 64, 128]
 
 # Next
 * Run 6018 to 6023 again but longer. Maybe 20e6.
