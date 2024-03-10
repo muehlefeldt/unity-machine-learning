@@ -1675,7 +1675,7 @@ learning rate changes to reward signifcant?
 * sensorCount: 32
 * num_layers: 3
 * No LSTM.
-  * To coompare against run with LSTM.
+  * To coompare against run with LSTM. Use run 6078 with same config. 
 
 # Next
 * Run 6018 to 6023 again but longer. Maybe 20e6.
