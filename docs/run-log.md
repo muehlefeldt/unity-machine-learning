@@ -1667,9 +1667,15 @@ learning rate changes to reward signifcant?
 ## 6048 - 6071
 * Rerun of 6024 - 6047 but longer.
 
-## 6072 - 6080
+## 6072 - 6080 - Useable results?
 * Run 6018 to 6023 again but longer. Maybe 20e6.
 * sensorCount: [1, 2, 4, 8, 10, 16, 32, 64, 128]
+
+## 6081
+* sensorCount: 32
+* num_layers: 3
+* No LSTM.
+  * To coompare against run with LSTM.
 
 # Next
 * Run 6018 to 6023 again but longer. Maybe 20e6.

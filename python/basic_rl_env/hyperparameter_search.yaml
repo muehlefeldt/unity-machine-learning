@@ -32,7 +32,7 @@ userconfig:
   message: "See log file."
 
   # Random excution order of generated hyperparameter configs.
-  execution_order_not_random: false
+  execution_order_not_random: true
 
 # Set unity enviroment specific options.
 # Contains all settings directly passed to the unity environemt via a JSON config file loaded
@@ -40,7 +40,7 @@ userconfig:
 env_config:
   # Define number of horizontal sensors. Can be single int or a list of int given as [1, 2].
   # Schould be between 1 and 32, but higher is possible.
-  sensorCount: [1, 2, 4, 8, 10, 16, 32, 64, 128]
+  sensorCount: 32
 
   # Deploy a decoy object to increase complexity of the environment. Default set to false.
   useDecoy: false
@@ -135,11 +135,11 @@ behaviors:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
       hidden_units: 512
-      num_layers: 1
+      num_layers: 3
       # Remember: sequence_len <= batch_size.
-      memory:
-        memory_size: 128
-        sequence_length: 64
+      #memory:
+      #  memory_size: 128
+      #  sequence_length: 64
       #vis_encode_type: simple
     reward_signals:
       extrinsic:
