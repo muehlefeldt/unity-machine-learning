@@ -1689,6 +1689,9 @@ learning rate changes to reward signifcant?
 * memory_size: 20
 * sequence_length: 1
 
+## 6084
+* 20e6 length.
+* Same as 6083.
 
 # Next
 * Run 6018 to 6023 again but longer. Maybe 20e6.

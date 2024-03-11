@@ -114,7 +114,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 5e6
+    max_steps: 20e6
     time_horizon: 2000
     summary_freq: 10000
 
