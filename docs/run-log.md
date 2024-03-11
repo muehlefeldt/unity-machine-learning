@@ -1676,6 +1676,19 @@ learning rate changes to reward signifcant?
 * num_layers: 3
 * No LSTM.
   * To coompare against run with LSTM. Use run 6078 with same config. 
+* Öhm .... result: Very similar to 6078.
+  * Why are they so similar?
+
+## 6082 - terminated
+* Same as 6081 but with 100e6 steps.
+* Run also 6078 this long and compare.
+* Terminated too enable test below.
+
+## 6083
+* LSTM settings test.
+* memory_size: 20
+* sequence_length: 1
+
 
 # Next
 * Run 6018 to 6023 again but longer. Maybe 20e6.
