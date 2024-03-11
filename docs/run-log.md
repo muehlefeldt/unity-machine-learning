@@ -1692,6 +1692,11 @@ learning rate changes to reward signifcant?
 ## 6084
 * 20e6 length.
 * Same as 6083.
+* Well not really so promissing. Remaining below 0 reward with only slow gains towards the target. 
+  * Ep. length is also no longer decreasing.
+
+## 6085 - 6104
+* What next? 5e6 steps runs. Look again at parameters? Including the memory settings.
 
 # Next
 * Run 6018 to 6023 again but longer. Maybe 20e6.
