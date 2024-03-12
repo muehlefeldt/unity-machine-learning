@@ -175,6 +175,10 @@ A few considerations when deciding to use memory:
   recommended to decrease `num_layers` when using recurrent.
 - It is required that `memory_size` be divisible by 2.
 
+Adittional information:
+
+* [PyTorch documentation](https://pytorch.org/docs/1.7.1/generated/torch.nn.LSTM.html#torch.nn.LSTM)
+
 ## Self-Play
 
 Training with self-play adds additional confounding factors to the usual issues
