@@ -1670,8 +1670,10 @@ learning rate changes to reward signifcant?
 ## 6072 - 6080 - Useable results?
 * Run 6018 to 6023 again but longer. Maybe 20e6.
 * sensorCount: [1, 2, 4, 8, 10, 16, 32, 64, 128]
+* Resulting plots were quite nice actually. Clear difference between wensor counts shown.
+* Runs below raised questions.
 
-## 6081
+## 6081 - No LSTM
 * sensorCount: 32
 * num_layers: 3
 * No LSTM.
@@ -1679,28 +1681,43 @@ learning rate changes to reward signifcant?
 * Öhm .... result: Very similar to 6078.
   * Why are they so similar?
 
-## 6082 - terminated
+## 6082 - Terminated
 * Same as 6081 but with 100e6 steps.
 * Run also 6078 this long and compare.
 * Terminated too enable test below.
 
-## 6083
+## 6083 - LSTM test
 * LSTM settings test.
+  * Reduced the settings below from the default values.
 * memory_size: 20
 * sequence_length: 1
 
 ## 6084
 * 20e6 length.
 * Same as 6083.
-* Well not really so promissing. Remaining below 0 reward with only slow gains towards the target. 
+* Well not really so promissing.
+  * Remaining below 0 reward with only slow gains towards the target. 
   * Ep. length is also no longer decreasing.
 
 ## 6085 - 6104
-* What next? 5e6 steps runs. Look again at parameters? Including the memory settings.
+* What next? 5e6 steps runs. Look again at parameters: Memory settings.
+* memory_size: [16, 32, 64, 128]
+* sequence_length: [1, 2, 4, 8, 16]
+* All the runs appear to be very close together.
+* Compare against base case: 6010?
+
+## 6105 - Error
+
+## 6106
+* 10e6 run with config of 6087
+
+## 6107
+* 100e6 run with config of 6078 but changed LSTM settings.
+* memory_size: 16
+* sequence_length: 4
+* sensorCount: 32
 
 # Next
-* Run 6018 to 6023 again but longer. Maybe 20e6.
-* Make plots of 6018 to 6023.
 * Use simple NN without LSTM for single room and env with door.
 
 # Advisory
