@@ -178,6 +178,7 @@ A few considerations when deciding to use memory:
 Adittional information:
 
 * [PyTorch documentation](https://pytorch.org/docs/1.7.1/generated/torch.nn.LSTM.html#torch.nn.LSTM)
+* [GitHub Feature-Memory:](https://github.com/Michaelwolf95/Hierarchical-ML-agents/blob/master/docs/Feature-Memory.md) Some explanations of LSTM settings.
 
 ## Self-Play
 
