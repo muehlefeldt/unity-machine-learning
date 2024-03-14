@@ -114,13 +114,13 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 100e6
+    max_steps: 5e6
     time_horizon: 2000
     summary_freq: 10000
 
     hyperparameters:
       # Common Trainer Configurations.
-      batch_size: 356
+      batch_size: [16, 32, 64, 128, 356, 512]
       buffer_size: 51200
       learning_rate: 1e-3
       learning_rate_schedule: linear
@@ -135,11 +135,11 @@ behaviors:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
       hidden_units: 512
-      num_layers: 1
+      num_layers: 2
       # Remember: sequence_len <= batch_size.
       memory:
-        memory_size: 16
-        sequence_length: 4
+        memory_size: [16, 32, 64, 128]
+        sequence_length: [2, 4, 8, 16, 32]
       #vis_encode_type: simple
     reward_signals:
       extrinsic:

@@ -1717,6 +1717,32 @@ learning rate changes to reward signifcant?
 * sequence_length: 4
 * sensorCount: 32
 
+## 6108 - No LSTM
+* Same as 6107 but no memory.
+* num_layers: 2
+* sensorCount: 32
+* Compare against 6107.
+* Shockingly good result ... Why exactly do we want to use LSTM?
+
+## 6109 Terminated
+* With error terminated.
+
+## 6110
+* In parallel to 6108.
+* Uses LSTM.
+* hidden_units: 512
+* num_layers: 2
+* memory:
+  * memory_size: 16
+  * sequence_length: 4
+* memory same as 6107. Only change is the num of layers.
+
+## 6111+
+* Take a look a batch_size and LSTM settings.
+* batch_size: [16, 32, 64, 128, 356, 512]
+* memory_size: [16, 32, 64, 128]
+* sequence_length: [2, 4, 8, 16, 32]
+
 # Next
 * Use simple NN without LSTM for single room and env with door.
 
