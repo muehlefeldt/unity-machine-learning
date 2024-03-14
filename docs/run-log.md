@@ -1743,6 +1743,13 @@ learning rate changes to reward signifcant?
 * memory_size: [16, 32, 64, 128]
 * sequence_length: [2, 4, 8, 16, 32]
 
+## ?+
+* hidden_units: [356, 512]
+* num_layers: 1
+* batch_size: [16, 32, 64, 128, 356, 512]
+* memory_size: [16, 32, 64, 128]
+* sequence_length: [2, 4, 8, 16, 32]
+
 # Next
 * Use simple NN without LSTM for single room and env with door.
 

@@ -134,8 +134,8 @@ behaviors:
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
-      hidden_units: 512
-      num_layers: 2
+      hidden_units: [356, 512]
+      num_layers: 1
       # Remember: sequence_len <= batch_size.
       memory:
         memory_size: [16, 32, 64, 128]
