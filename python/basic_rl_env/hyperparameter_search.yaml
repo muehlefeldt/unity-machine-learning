@@ -32,7 +32,7 @@ userconfig:
   message: "See log file."
 
   # Random excution order of generated hyperparameter configs.
-  execution_order_not_random: false
+  execution_order_not_random: true
 
 # Set unity enviroment specific options.
 # Contains all settings directly passed to the unity environemt via a JSON config file loaded
@@ -114,13 +114,13 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 5e6
+    max_steps: 300e6
     time_horizon: 2000
     summary_freq: 10000
 
     hyperparameters:
       # Common Trainer Configurations.
-      batch_size: [16, 32, 64, 128, 356, 512]
+      batch_size: 16
       buffer_size: 51200
       learning_rate: 1e-3
       learning_rate_schedule: linear
@@ -134,12 +134,12 @@ behaviors:
     network_settings:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
-      hidden_units: [356, 512]
+      hidden_units: 512
       num_layers: 1
       # Remember: sequence_len <= batch_size.
       memory:
-        memory_size: [16, 32, 64, 128]
-        sequence_length: [2, 4, 8, 16, 32]
+        memory_size: 16
+        sequence_length: 16
       #vis_encode_type: simple
     reward_signals:
       extrinsic:
@@ -151,8 +151,3 @@ behaviors:
       #  learning_rate: 3e-4
       #  network_settings: 
       #   hidden_units: 128
-      
-    
-
-
-    
