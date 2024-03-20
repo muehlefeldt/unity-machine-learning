@@ -1752,17 +1752,21 @@ learning rate changes to reward signifcant?
 * Attention: Run id order fucked.
 * 6202 best run.
 
-# 6408
+## 6408
 * Short run looking a network settings.
 * Result not promissing.
 
-# 6409
+## 6409
 * Run with 300ep steps.
 * Using LSTM.
 * Same config as 6202.
 * memory_size: 16
 * sequence_length: 16
 * Do we see any usefull reward progress? I want to see above 1.0 reward.
+* Terminated. Made no progress.
+
+## 6410
+* Same as above but shorter with 100e6. How does this compare to 6107?
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
