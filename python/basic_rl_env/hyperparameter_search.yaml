@@ -120,7 +120,7 @@ behaviors:
 
     hyperparameters:
       # Common Trainer Configurations.
-      batch_size: 16
+      batch_size: 356
       buffer_size: 51200
       learning_rate: 1e-3
       learning_rate_schedule: linear
@@ -139,7 +139,7 @@ behaviors:
       # Remember: sequence_len <= batch_size.
       memory:
         memory_size: 16
-        sequence_length: 16
+        sequence_length: 4
       #vis_encode_type: simple
     reward_signals:
       extrinsic:

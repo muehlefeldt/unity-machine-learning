@@ -1742,6 +1742,7 @@ learning rate changes to reward signifcant?
 * batch_size: [16, 32, 64, 128, 356, 512]
 * memory_size: [16, 32, 64, 128]
 * sequence_length: [2, 4, 8, 16, 32]
+* I believe was terminated.
 
 ## 6179 - 6406
 * hidden_units: [356, 512]
@@ -1767,6 +1768,21 @@ learning rate changes to reward signifcant?
 
 ## 6410
 * Same as above but shorter with 100e6. How does this compare to 6107?
+* memory_size: 16
+* sequence_length: 16
+* Using the same LSTM config as 6202.
+* Comparison to 6107:
+  * This run is worse. It is shit.
+  * Worse in all the metrics.
+  * Despite the run time.
+  * The LSTM config is not right.
+
+## 6411
+* Using the config of 6087 (was basis for 6107) with 100e6 steps.
+* batch_size: 356
+* memory_size: 16
+* sequence_length: 4
+* Compare against 6107 and 6410.
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
