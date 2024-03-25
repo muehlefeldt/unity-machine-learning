@@ -1777,7 +1777,7 @@ learning rate changes to reward signifcant?
   * Despite the run time.
   * The LSTM config is not right.
 
-## 6411
+## 6411 - Best LSTM
 * Using the config of 6087 (was basis for 6107) with 100e6 steps.
 * batch_size: 356
 * memory_size: 16
@@ -1793,8 +1793,18 @@ learning rate changes to reward signifcant?
   * But getting closer.
 * With LSTM first time above +1 reward?
 
+## 6412 - Terminated
+
+## 6413++
+* max_steps: 20e6
+* batch_size: [32, 64, 128, 256, 356, 516]
+* Take a look at the batch size.
+* Compare against 6411
+
 ##
 * Play with the batch size?
+* Look at LSTM settings?
+* Maybe using 20e6 steps. 
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
