@@ -1783,6 +1783,18 @@ learning rate changes to reward signifcant?
 * memory_size: 16
 * sequence_length: 4
 * Compare against 6107 and 6410.
+* Against 6107:
+  * Better than 6107.
+  * I like this run. 
+  * Both using the same batch size.
+  * Actually ... both runs use exactly the same config. Where is the fucking difference?
+* How do we compare against NO LSTM, 6108?
+  * Well, still lacking behind no LSTM.
+  * But getting closer.
+* With LSTM first time above +1 reward?
+
+##
+* Play with the batch size?
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
