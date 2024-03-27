@@ -120,7 +120,7 @@ behaviors:
 
     hyperparameters:
       # Common Trainer Configurations.
-      batch_size: [32, 64, 128, 256, 356, 516]
+      batch_size: [4, 8, 10, 12, 16]
       buffer_size: 51200
       learning_rate: 1e-3
       learning_rate_schedule: linear

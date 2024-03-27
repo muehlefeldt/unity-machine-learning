@@ -1801,6 +1801,11 @@ learning rate changes to reward signifcant?
 * Take a look at the batch size.
 * Compare against 6411
 
+## 6419++
+* max_steps: 20e6
+* batch_size: [4, 8, 10, 12, 16]
+* Same as above but smaller batch sizes.
+
 ##
 * Play with the batch size?
 * Look at LSTM settings?
