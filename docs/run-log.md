@@ -1795,16 +1795,19 @@ learning rate changes to reward signifcant?
 
 ## 6412 - Terminated
 
-## 6413++
+## 6413 - 6418
 * max_steps: 20e6
 * batch_size: [32, 64, 128, 256, 356, 516]
 * Take a look at the batch size.
 * Compare against 6411
+* 6413 is only promissing run. Only this run shows Increasing good door passages.
 
-## 6419++
+## 6419 - 6523
 * max_steps: 20e6
 * batch_size: [4, 8, 10, 12, 16]
 * Same as above but smaller batch sizes.
+* Compare against 6413 - 6418 and 6411.
+* Take best run and run again with 100e6 steps?
 
 ##
 * Play with the batch size?
