@@ -1800,16 +1800,23 @@ learning rate changes to reward signifcant?
 * batch_size: [32, 64, 128, 256, 356, 516]
 * Take a look at the batch size.
 * Compare against 6411
-* 6413 is only promissing run. Only this run shows Increasing good door passages.
+* 6413 is only promissing run.
+  * Only this run shows Increasing good door passages.
+  * Was running batch_size: 32.
 
-## 6419 - 6523
+## 6419 - 6423
 * max_steps: 20e6
 * batch_size: [4, 8, 10, 12, 16]
 * Same as above but smaller batch sizes.
 * Compare against 6413 - 6418 and 6411.
-* Take best run and run again with 100e6 steps?
+* Run batch sizes between 16 and 32? Take best run and run again with 100e6 steps?
+* Terminated 6419 due to lack of progress.
+* All runs very slow. Batch size does this effect how?
 
-##
+## 6424 - 6426
+* batch_size: [20, 24, 28]
+
+## 
 * Play with the batch size?
 * Look at LSTM settings?
 * Maybe using 20e6 steps. 
