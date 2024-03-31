@@ -1816,8 +1816,10 @@ learning rate changes to reward signifcant?
 ## 6424 - 6426
 * batch_size: [20, 24, 28]
 
-## 
-* Play with the batch size?
+## 6427++
+* Play with the batch size? [38, 42, 48, 56]
+
+##
 * Look at LSTM settings?
 * Maybe using 20e6 steps. 
 
