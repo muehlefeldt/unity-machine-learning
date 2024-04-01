@@ -1816,7 +1816,7 @@ learning rate changes to reward signifcant?
 ## 6424 - 6426
 * batch_size: [20, 24, 28]
 
-## 6427++
+## 6427 - 6430
 * Play with the batch size? [38, 42, 48, 56]
 
 ##
