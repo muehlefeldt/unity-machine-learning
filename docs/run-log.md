@@ -1821,10 +1821,15 @@ learning rate changes to reward signifcant?
 
 ## 6431
 * Based on 6428 but longer with 100e6 steps.
+* Compare to 6428 as both use the same settings.
+* Compare to 6411. Both use LSTM and are running for same step count. 6411 was so far the best LSTM run in the two rooms setting.
 
 ##
 * Look at LSTM settings?
 * Maybe using 20e6 steps. 
+
+# Note
+* We can move the plot script to also only load the results from the pickle file.
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
