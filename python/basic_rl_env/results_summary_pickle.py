@@ -106,11 +106,13 @@ def get_result_data(run_dict: dict, id: int) -> dict:
 
     # The last recorded rewards to be used as basis to gether some basic stats about the run.
     rewards_of_interest = data["env"]["cumulative_rewards"][-100:]
+    passages_of_interest = data["door"]["passage"][-100:]
 
     data["final_mean_reward"] = np.mean(rewards_of_interest)
-    data["final_std_mean_reward"] = np.round(np.std(rewards_of_interest), 5)
+    data["final_std_reward"] = np.round(np.std(rewards_of_interest), 5)
     data["final_mean_episode_length"] = np.mean(data["env"]["ep_length"][-100:])
-    data["final_mean_door_passage"] = np.mean(data["door"]["passage"][-100:])
+    data["final_mean_door_passage"] = np.mean(passages_of_interest)
+    data["final_std_door_passage"] = np.round(np.std(passages_of_interest), 5)
     # data["normalised_reward"] = np.mean(rewards_of_interest) / unity["maxStep"]
 
     return data
