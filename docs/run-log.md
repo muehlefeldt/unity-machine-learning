@@ -1818,15 +1818,18 @@ learning rate changes to reward signifcant?
 
 ## 6427 - 6430
 * Play with the batch size? [38, 42, 48, 56]
+* Taking into account 6413 - 6430:
+  * Probably the best run is 6428.
+  * If using this formula: final_mean_reward + final_mean_door_passage + -0.5 * final_mean_episode_length + 2 * final_std_mean_reward
 
 ## 6431
 * Based on 6428 but longer with 100e6 steps.
 * Compare to 6428 as both use the same settings.
-* Compare to 6411. Both use LSTM and are running for same step count. 6411 was so far the best LSTM run in the two rooms setting.
+* Compare to 6411. Both use LSTM and are running for same step count. 6411 was so far the best LSTM run in the two rooms setting. Difference in batch size.
 
 ##
 * Look at LSTM settings?
-* Maybe using 20e6 steps. 
+  * Maybe using 20e6 steps. 
 
 # Note
 * We can move the plot script to also only load the results from the pickle file.
