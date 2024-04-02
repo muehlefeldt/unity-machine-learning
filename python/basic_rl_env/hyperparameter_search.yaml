@@ -114,13 +114,13 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 20e6
+    max_steps: 100e6
     time_horizon: 2000
     summary_freq: 10000
 
     hyperparameters:
       # Common Trainer Configurations.
-      batch_size: [38, 42, 48, 56]
+      batch_size: 42
       buffer_size: 51200
       learning_rate: 1e-3
       learning_rate_schedule: linear

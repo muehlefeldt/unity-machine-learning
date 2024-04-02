@@ -1819,6 +1819,9 @@ learning rate changes to reward signifcant?
 ## 6427 - 6430
 * Play with the batch size? [38, 42, 48, 56]
 
+## 6431
+* Based on 6428 but longer with 100e6 steps.
+
 ##
 * Look at LSTM settings?
 * Maybe using 20e6 steps. 
