@@ -1826,6 +1826,10 @@ learning rate changes to reward signifcant?
 * Based on 6428 but longer with 100e6 steps.
 * Compare to 6428 as both use the same settings.
 * Compare to 6411. Both use LSTM and are running for same step count. 6411 was so far the best LSTM run in the two rooms setting. Difference in batch size.
+* Result shows progress in learning but significantly below 6411.
+
+## 6432
+* Rerun 6431 with no changes.
 
 ##
 * Look at LSTM settings?
