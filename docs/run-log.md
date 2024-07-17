@@ -1842,7 +1842,16 @@ learning rate changes to reward signifcant?
 ## 6435
 * We want one single run. Same as 6107, atleast that is the hope.
 * Background: Problem with collsions being multiple time triggered for every timestep t_rl because decison period is set to 5?
-* Or is dat shit?
+* Or is dat shit? Jop.
+* Terminated.
+
+## 6436
+* Same as 6435 but minimum time reward only.
+* Terminated. Error in config with reward.
+
+## 6437
+* Same as 6435 but only minimum time reward.
+* Does the ep length needs to be longer?
 
 # Note
 * We can move the plot script to also only load the results from the pickle file.
