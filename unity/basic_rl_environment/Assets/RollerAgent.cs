@@ -562,15 +562,15 @@ public class RollerAgent : Agent
             {
                 if (m_DoorPassages % 2 == 0)
                 {
-                    AddReward(0.5f);
-                    totalReward += 0.5f;
+                    AddReward(0.05f);
+                    totalReward += 0.05f;
                     m_GuiText = "Not same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
                 else
                 {
-                    AddReward(-0.6f);
-                    totalReward += -0.6f;
+                    AddReward(-0.1f);
+                    totalReward += -0.1f;
                     m_GuiText = "Not same room: Door passed -0.6f";
                     RecordData(RecorderCodes.BadDoorPassage);
                 }
@@ -580,15 +580,15 @@ public class RollerAgent : Agent
                 // Door passage now in the wrong direction. Away from the target. Both started in the same room.
                 if (m_DoorPassages % 2 == 0)
                 {
-                    AddReward(-0.6f);
-                    totalReward += -0.6f;
+                    AddReward(-0.1f);
+                    totalReward += -0.1f;
                     m_GuiText = "Same room: Door passed -0.6f";
                     RecordData(RecorderCodes.BadDoorPassage);
                 }
                 else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
                 {
-                    AddReward(0.5f);
-                    totalReward += 0.5f;
+                    AddReward(0.05f);
+                    totalReward += 0.05f;
                     m_GuiText = "Same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
@@ -604,7 +604,7 @@ public class RollerAgent : Agent
     private void OnCollisionEnter(Collision other)
     {
         m_LastCollision = transform.position; // Used for Gizmos.
-        AddReward(-0.5f);
+        AddReward(-0.1f);
         RecordData(RecorderCodes.Wall);
     }
     
@@ -615,7 +615,7 @@ public class RollerAgent : Agent
     private void OnCollisionStay(Collision other)
     {
         m_LastCollision = transform.position;
-        AddReward(-0.3f);
+        AddReward(-0.05f);
         RecordData(RecorderCodes.Wall);
     }
 

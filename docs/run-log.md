@@ -1839,6 +1839,11 @@ learning rate changes to reward signifcant?
 * Look at LSTM settings?
   * Maybe using 20e6 steps. 
 
+## 6435
+* We want one single run. Same as 6107, atleast that is the hope.
+* Background: Problem with collsions being multiple time triggered for every timestep t_rl because decison period is set to 5?
+* Or is dat shit?
+
 # Note
 * We can move the plot script to also only load the results from the pickle file.
 
