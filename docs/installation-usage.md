@@ -1,3 +1,12 @@
+# Installation and usage
+This repository is used with the following software. Unity 2021.3.11f1, ML-Agents Release 20 and Python 3.9. The versions of the software was determined to work as expected.
+
+## Installation
+
+
+## Usage
+
+
 # Prepare ML-Agents Release 20
 
 ## Python 3.9
