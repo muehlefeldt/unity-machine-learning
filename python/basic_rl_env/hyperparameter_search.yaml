@@ -64,7 +64,7 @@ env_config:
   targetFixedPosition: false
 
   # Set the number of time steps in unity per episode. This equals 
-  maxStep: 1000
+  maxStep: 100000
 
   # Penalty (negative reward) given for every taken step. Assume as default -1 / maxStep.
   stepPenalty: -1.0

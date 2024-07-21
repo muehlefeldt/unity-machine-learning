@@ -1852,6 +1852,10 @@ learning rate changes to reward signifcant?
 ## 6437
 * Same as 6435 but only minimum time reward.
 * Does the ep length needs to be longer?
+* Terminated. No real progress.
+
+## 6438
+* Longer episodes.
 
 # Note
 * We can move the plot script to also only load the results from the pickle file.
