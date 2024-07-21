@@ -1856,6 +1856,16 @@ learning rate changes to reward signifcant?
 
 ## 6438
 * Longer episodes.
+* Again same as 6437.
+* Looked at minimum time approach.
+
+## 6439 - Terminated
+
+## 6440
+* Final prep for hand-in.
+* Comparison run against 6107.
+* Minimum time approach removed.
+
 
 # Note
 * We can move the plot script to also only load the results from the pickle file.

@@ -453,10 +453,9 @@ public class RollerAgent : Agent
         {
             RecordData(RecorderCodes.Target);
             m_EndReason = EpEndReasons.TargetReached;
-            if (!m_MinimumTime)
-            {
-                AddReward(1f);
-            }
+            
+            AddReward(1f);
+            
 
             totalReward += 1f;
             EndEpisode();
@@ -550,7 +549,7 @@ public class RollerAgent : Agent
     }
 #endif    
 */
-    private bool m_MinimumTime = true;
+    
     /// <summary>
     /// Called on trigger exit after collider contact finishes with the door.
     /// </summary>
@@ -558,8 +557,7 @@ public class RollerAgent : Agent
     /// Important change to the reward function due to direction change of what is a good door passage.</remarks>
     private void OnTriggerExit(Collider other)
     {
-        if (!m_MinimumTime)
-        {
+        
             // Make sure a proper door passage occured.
             if (m_DoorPassageStartInRoom != GetCurrentRoomId())
             {
@@ -602,7 +600,7 @@ public class RollerAgent : Agent
 
                 m_DoorPassages++;
             }
-        }
+        
     }
     
     /// <summary>
@@ -610,12 +608,11 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionEnter(Collision other)
     {
-        if (!m_MinimumTime)
-        {
+        
             m_LastCollision = transform.position; // Used for Gizmos.
             AddReward(-0.1f);
             RecordData(RecorderCodes.Wall);
-        }
+        
     }
     
     
@@ -624,12 +621,12 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        if (!m_MinimumTime)
-        {
+        
+        
             m_LastCollision = transform.position;
             AddReward(-0.05f);
             RecordData(RecorderCodes.Wall);
-        }
+        
     }
 
     /// <summary>

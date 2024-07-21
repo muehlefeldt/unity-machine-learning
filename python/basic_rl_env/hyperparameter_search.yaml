@@ -64,10 +64,10 @@ env_config:
   targetFixedPosition: false
 
   # Set the number of time steps in unity per episode. This equals 
-  maxStep: 100000
+  maxStep: 1000
 
   # Penalty (negative reward) given for every taken step. Assume as default -1 / maxStep.
-  stepPenalty: -1.0
+  stepPenalty: -0.0005
 
 # Paths used by the python script to generate, save and load files.
 paths:
@@ -122,8 +122,8 @@ behaviors:
       # Common Trainer Configurations.
       batch_size: 356
       buffer_size: 51200
-      learning_rate: 1e-2
-      learning_rate_schedule: constant
+      learning_rate: 1e-3
+      learning_rate_schedule: linear
 
       # PPO-specific Configurations.
       beta: 1e-2
