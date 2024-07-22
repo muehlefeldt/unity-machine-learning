@@ -1865,6 +1865,7 @@ learning rate changes to reward signifcant?
 * Final prep for hand-in.
 * Comparison run against 6107.
 * Minimum time approach removed.
+* Result looks comparable to 6107.
 
 
 # Note
