@@ -1867,6 +1867,17 @@ learning rate changes to reward signifcant?
 * Minimum time approach removed.
 * Result looks comparable to 6107.
 
+## 6441 - Terminated
+* Sensor study. 
+
+## 6442 - Terminated
+
+## 6443 - 6444 - Terminated
+
+## 6445+
+* Sensor study.
+* Comparable to 6072+
+* BUT: No LSTM.
 
 # Note
 * We can move the plot script to also only load the results from the pickle file.
