@@ -1878,6 +1878,7 @@ learning rate changes to reward signifcant?
 * Sensor study.
 * Comparable to 6072+
 * BUT: No LSTM.
+* 2 hidden layers to increase learnable parameters.
 
 # Note
 * We can move the plot script to also only load the results from the pickle file.
