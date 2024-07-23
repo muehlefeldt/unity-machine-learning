@@ -1,3 +1,6 @@
+""" This script creates a pickle file from the ML-Agents result files for further use.
+"""
+
 import json
 import os
 import pickle
@@ -140,7 +143,7 @@ if __name__ == "__main__":
             paths[key] = paths["working_dir"] / paths[key]
 
     from_run = 6000
-    to_run = 7000
+    to_run = 6450
 
     run_path_dict: dict = get_run_path_dict(paths)
     test = run_path_dict[6009]
@@ -158,7 +161,9 @@ if __name__ == "__main__":
 
     summary_file_path: Path = Path("summary_dict.pickle").absolute()
     if summary_file_path.exists():
+        print("Removed old summary file.")
         os.remove(summary_file_path)
 
     with open(summary_file_path, mode="wb") as file:
+
         pickle.dump(summary_dict, file)
