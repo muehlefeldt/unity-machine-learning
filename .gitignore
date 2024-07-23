@@ -1,6 +1,7 @@
 *.onnx.meta
 *.onnx
 *.pickle
+*.png
 
 env_config.json
 env_config.json.meta
