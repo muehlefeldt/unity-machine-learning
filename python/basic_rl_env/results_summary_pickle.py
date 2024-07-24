@@ -143,7 +143,7 @@ if __name__ == "__main__":
             paths[key] = paths["working_dir"] / paths[key]
 
     from_run = 6000
-    to_run = 6450
+    to_run = 7000
 
     run_path_dict: dict = get_run_path_dict(paths)
     test = run_path_dict[6009]

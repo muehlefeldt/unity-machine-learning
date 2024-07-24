@@ -1874,14 +1874,19 @@ learning rate changes to reward signifcant?
 
 ## 6443 - 6444 - Terminated
 
-## 6445+
+## 6445 - 6453
 * Sensor study.
 * Comparable to 6072+
 * BUT: No LSTM.
 * 2 hidden layers to increase learnable parameters.
+* Again extremly good results without LSTM.
+
+## 6454
+* Environment 1 data creation with very short run.
+* No inner wall.
 
 # Note
-* We can move the plot script to also only load the results from the pickle file.
+* Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
