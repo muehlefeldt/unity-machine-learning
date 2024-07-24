@@ -610,7 +610,7 @@ public class RollerAgent : Agent
     {
         m_LastCollision = transform.position; // Used for Gizmos.
         AddReward(-0.1f);
-        RecordData(RecorderCodes.Wall);
+        RecordData(RecorderCodes.TotalCollision);
         RecordData(RecorderCodes.InitialCollision);
     }
     
@@ -622,7 +622,7 @@ public class RollerAgent : Agent
     {
         m_LastCollision = transform.position;
         AddReward(-0.05f);
-        RecordData(RecorderCodes.Wall);
+        RecordData(RecorderCodes.TotalCollision);
         RecordData(RecorderCodes.StayCollision);
     }
 
@@ -631,7 +631,7 @@ public class RollerAgent : Agent
     /// </summary>
     private enum RecorderCodes
     {
-        Wall,
+        TotalCollision,
         MaxSteps,
         Implausible,
         Target,
@@ -668,8 +668,9 @@ public class RollerAgent : Agent
                 statsRecorder.Add("Collision/Initial", 1f, StatAggregationMethod.Sum);
                 break;
                 
-            case RecorderCodes.Wall:
+            case RecorderCodes.TotalCollision:
                 statsRecorder.Add("Wall hit", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Collision/Total", 1f, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.MaxSteps:
