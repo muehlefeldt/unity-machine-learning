@@ -1888,6 +1888,9 @@ learning rate changes to reward signifcant?
 ## 6455
 * Same as 6454 but longer for nicer data.
 
+## 6456
+* Same as 6455. Change to wall hit data collection.
+
 # Note
 * Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
 

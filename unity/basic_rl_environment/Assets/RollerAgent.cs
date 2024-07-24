@@ -661,7 +661,7 @@ public class RollerAgent : Agent
         switch (msg)
         {
             case RecorderCodes.Wall:
-                statsRecorder.Add("Wall hit", 1f);
+                statsRecorder.Add("Wall hit", 1f, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.MaxSteps:
