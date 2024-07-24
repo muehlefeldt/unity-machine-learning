@@ -1891,6 +1891,10 @@ learning rate changes to reward signifcant?
 ## 6456
 * Same as 6455. Change to wall hit data collection.
 
+## 6457
+* New RecorderCodes to track collisions better.
+* Test run only.
+
 # Note
 * Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
 

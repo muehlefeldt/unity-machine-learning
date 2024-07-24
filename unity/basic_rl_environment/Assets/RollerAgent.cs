@@ -558,48 +558,48 @@ public class RollerAgent : Agent
     private void OnTriggerExit(Collider other)
     {
         
-            // Make sure a proper door passage occured.
-            if (m_DoorPassageStartInRoom != GetCurrentRoomId())
+        // Make sure a proper door passage occured.
+        if (m_DoorPassageStartInRoom != GetCurrentRoomId())
+        {
+            // Door passage can only be rewarded if target and agent are NOT in the same room.
+            if (!floor.RoomsInEnv.AreAgentAndTargetInSameRoom())
             {
-                // Door passage can only be rewarded if target and agent are NOT in the same room.
-                if (!floor.RoomsInEnv.AreAgentAndTargetInSameRoom())
+                if (m_DoorPassages % 2 == 0)
                 {
-                    if (m_DoorPassages % 2 == 0)
-                    {
-                        AddReward(0.05f);
-                        totalReward += 0.05f;
-                        m_GuiText = "Not same room: Door passed +0.5f";
-                        RecordData(RecorderCodes.GoodDoorPassage);
-                    }
-                    else
-                    {
-                        AddReward(-0.1f);
-                        totalReward += -0.1f;
-                        m_GuiText = "Not same room: Door passed -0.6f";
-                        RecordData(RecorderCodes.BadDoorPassage);
-                    }
+                    AddReward(0.05f);
+                    totalReward += 0.05f;
+                    m_GuiText = "Not same room: Door passed +0.5f";
+                    RecordData(RecorderCodes.GoodDoorPassage);
                 }
-                else // Agent and target start in the same room.
+                else
                 {
-                    // Door passage now in the wrong direction. Away from the target. Both started in the same room.
-                    if (m_DoorPassages % 2 == 0)
-                    {
-                        AddReward(-0.1f);
-                        totalReward += -0.1f;
-                        m_GuiText = "Same room: Door passed -0.6f";
-                        RecordData(RecorderCodes.BadDoorPassage);
-                    }
-                    else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
-                    {
-                        AddReward(0.05f);
-                        totalReward += 0.05f;
-                        m_GuiText = "Same room: Door passed +0.5f";
-                        RecordData(RecorderCodes.GoodDoorPassage);
-                    }
+                    AddReward(-0.1f);
+                    totalReward += -0.1f;
+                    m_GuiText = "Not same room: Door passed -0.6f";
+                    RecordData(RecorderCodes.BadDoorPassage);
                 }
-
-                m_DoorPassages++;
             }
+            else // Agent and target start in the same room.
+            {
+                // Door passage now in the wrong direction. Away from the target. Both started in the same room.
+                if (m_DoorPassages % 2 == 0)
+                {
+                    AddReward(-0.1f);
+                    totalReward += -0.1f;
+                    m_GuiText = "Same room: Door passed -0.6f";
+                    RecordData(RecorderCodes.BadDoorPassage);
+                }
+                else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
+                {
+                    AddReward(0.05f);
+                    totalReward += 0.05f;
+                    m_GuiText = "Same room: Door passed +0.5f";
+                    RecordData(RecorderCodes.GoodDoorPassage);
+                }
+            }
+
+            m_DoorPassages++;
+        }
         
     }
     
@@ -608,11 +608,10 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionEnter(Collision other)
     {
-        
-            m_LastCollision = transform.position; // Used for Gizmos.
-            AddReward(-0.1f);
-            RecordData(RecorderCodes.Wall);
-        
+        m_LastCollision = transform.position; // Used for Gizmos.
+        AddReward(-0.1f);
+        RecordData(RecorderCodes.Wall);
+        RecordData(RecorderCodes.InitialCollision);
     }
     
     
@@ -621,12 +620,10 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        
-        
-            m_LastCollision = transform.position;
-            AddReward(-0.05f);
-            RecordData(RecorderCodes.Wall);
-        
+        m_LastCollision = transform.position;
+        AddReward(-0.05f);
+        RecordData(RecorderCodes.Wall);
+        RecordData(RecorderCodes.StayCollision);
     }
 
     /// <summary>
@@ -647,7 +644,10 @@ public class RollerAgent : Agent
         /// <summary>
         /// Door passage away from the target. Passage in the wrong direction.
         /// </summary>
-        BadDoorPassage
+        BadDoorPassage,
+        /// Collision codes.
+        InitialCollision,
+        StayCollision
     }
     
     /// <summary>
@@ -660,6 +660,14 @@ public class RollerAgent : Agent
         var statsRecorder = Academy.Instance.StatsRecorder;
         switch (msg)
         {
+            case RecorderCodes.StayCollision:
+                statsRecorder.Add("Collision/Stay", 1f, StatAggregationMethod.Sum);
+                break;
+            
+            case RecorderCodes.InitialCollision:
+                statsRecorder.Add("Collision/Initial", 1f, StatAggregationMethod.Sum);
+                break;
+                
             case RecorderCodes.Wall:
                 statsRecorder.Add("Wall hit", 1f, StatAggregationMethod.Sum);
                 break;
@@ -669,7 +677,7 @@ public class RollerAgent : Agent
                 break;
 
             case RecorderCodes.Target:
-                statsRecorder.Add("Target Reached", 1f);
+                statsRecorder.Add("Target Reached", 1f, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.RotationError:
@@ -681,12 +689,12 @@ public class RollerAgent : Agent
                 break;
             
             case RecorderCodes.GoodDoorPassage:
-                statsRecorder.Add("Door/Passage", 1f, StatAggregationMethod.Average);
+                statsRecorder.Add("Door/Passage", 1f, StatAggregationMethod.Sum);
                 statsRecorder.Add("Door/Good passage", 1f, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.BadDoorPassage:
-                statsRecorder.Add("Door/Passage", -1f, StatAggregationMethod.Average);
+                statsRecorder.Add("Door/Passage", -1f, StatAggregationMethod.Sum);
                 statsRecorder.Add("Door/Bad passage", -1f, StatAggregationMethod.Sum);
                 break;
         }
