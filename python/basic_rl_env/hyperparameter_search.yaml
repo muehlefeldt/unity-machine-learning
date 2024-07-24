@@ -114,7 +114,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 2e6
+    max_steps: 10e6
     time_horizon: 2000
     summary_freq: 10000
 
@@ -135,7 +135,7 @@ behaviors:
       conditioning_type: none # Can be none, because no goal observation is used.
       normalize: false
       hidden_units: 512
-      num_layers: 2
+      num_layers: 1
       # Remember: sequence_len <= batch_size.
       memory:
         memory_size: 128

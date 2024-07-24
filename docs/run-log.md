@@ -1885,6 +1885,9 @@ learning rate changes to reward signifcant?
 * Environment 1 data creation with very short run.
 * No inner wall.
 
+## 6455
+* Same as 6454 but longer for nicer data.
+
 # Note
 * Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
 
