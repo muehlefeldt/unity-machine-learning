@@ -69,6 +69,7 @@ def get_result_data(run_dict: dict, id: int) -> dict:
     data = {
         "env": {"cumulative_rewards": [], "ep_length": []},
         "door": {"bad_passage": [], "good_passage": [], "passage": []},
+        "collision": {"initial": [], "stay": [], "total":[]},
         "steps": [],
         "summary": {
             "mean_reward": 0,
@@ -101,6 +102,12 @@ def get_result_data(run_dict: dict, id: int) -> dict:
                 data["door"]["good_passage"].append(value.tensor.float_val[0])
             elif value.tag == "Door/Passage":
                 data["door"]["passage"].append(value.tensor.float_val[0])
+            elif value.tag == "Collision/Initial":
+                data["collision"]["initial"].append(value.tensor.float_val[0])
+            elif value.tag == "Collision/Stay":
+                data["collision"]["stay"].append(value.tensor.float_val[0])
+            elif value.tag == "Collision/Total":
+                data["collision"]["total"].append(value.tensor.float_val[0])
 
             if len(data["steps"]) == 0:
                 data["steps"].append(event.step)
@@ -142,7 +149,7 @@ if __name__ == "__main__":
         if key != "working_dir":
             paths[key] = paths["working_dir"] / paths[key]
 
-    from_run = 6000
+    from_run = 6450
     to_run = 7000
 
     run_path_dict: dict = get_run_path_dict(paths)
@@ -165,5 +172,5 @@ if __name__ == "__main__":
         os.remove(summary_file_path)
 
     with open(summary_file_path, mode="wb") as file:
-
+        print("Created new summary file.")
         pickle.dump(summary_dict, file)
