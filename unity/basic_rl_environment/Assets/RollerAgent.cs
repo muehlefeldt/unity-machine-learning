@@ -435,10 +435,28 @@ public class RollerAgent : Agent
         m_RBody.AddForce(direction * forceMultiplier, ForceMode.Force);
     }
     
+    /*void FixedUpdate()
+    {
+        // Get the distance to the target.
+        CalculateDistanceToTarget();
+        
+        // Reached target. Success. Terminate episode.
+        if (m_DistToTarget < 1.42f)
+        {
+            RecordData(RecorderCodes.Target);
+            m_EndReason = EpEndReasons.TargetReached;
+            
+            AddReward(1f);
+            
+
+            totalReward += 1f;
+            EndEpisode();
+        }
+    }*/
+    
     /// <summary>
     /// Called on action input.
     /// </summary>
-
     public int actionCount = 0;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -611,10 +629,14 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionEnter(Collision other)
     {
-        m_LastCollision = transform.position; // Used for Gizmos.
-        AddReward(-0.1f);
-        RecordData(RecorderCodes.TotalCollision);
-        RecordData(RecorderCodes.InitialCollision);
+        // Collisions with target can be disregarded.
+        if (!other.gameObject.CompareTag(floor.target.tag))
+        {
+            m_LastCollision = transform.position; // Used for Gizmos.
+            AddReward(-0.1f);
+            RecordData(RecorderCodes.TotalCollision);
+            RecordData(RecorderCodes.InitialCollision);
+        }
     }
     
     
@@ -623,10 +645,14 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        m_LastCollision = transform.position;
-        AddReward(-0.05f);
-        RecordData(RecorderCodes.TotalCollision);
-        RecordData(RecorderCodes.StayCollision);
+        // Collisions with target can be disregarded.
+        if (!other.gameObject.CompareTag(floor.target.tag))
+        {
+            m_LastCollision = transform.position;
+            AddReward(-0.05f);
+            RecordData(RecorderCodes.TotalCollision);
+            RecordData(RecorderCodes.StayCollision);
+        }
     }
 
     /// <summary>

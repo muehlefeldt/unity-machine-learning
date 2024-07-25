@@ -1903,6 +1903,9 @@ learning rate changes to reward signifcant?
 * Recorde training data should now be with all the same dimensions?
 * Problem had 6458.
 
+## 6460
+* 
+
 # Note
 * Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
 
