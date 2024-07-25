@@ -1906,6 +1906,7 @@ learning rate changes to reward signifcant?
 ## 6460
 
 ## 6461
+* Change of R_goal appily. Did not make change. I believe ...
 
 ## 6462+
 * Sensor study. But same config as env 1 runs. Do not know.
