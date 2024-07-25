@@ -442,6 +442,9 @@ public class RollerAgent : Agent
     public int actionCount = 0;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        // Initial record base data. To ensure training data has all the same dimensions.
+        RecordBaseData();
+        
         // Perform the movement of the agent.
         MoveAgent(actionBuffers);
         
@@ -576,7 +579,7 @@ public class RollerAgent : Agent
                     AddReward(-0.1f);
                     totalReward += -0.1f;
                     m_GuiText = "Not same room: Door passed -0.6f";
-                    RecordData(RecorderCodes.BadDoorPassage);
+                    RecordData(RecorderCodes.BadDoorPassage, recordValue:-1f);
                 }
             }
             else // Agent and target start in the same room.
@@ -587,7 +590,7 @@ public class RollerAgent : Agent
                     AddReward(-0.1f);
                     totalReward += -0.1f;
                     m_GuiText = "Same room: Door passed -0.6f";
-                    RecordData(RecorderCodes.BadDoorPassage);
+                    RecordData(RecorderCodes.BadDoorPassage, recordValue:-1f);
                 }
                 else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
                 {
@@ -655,50 +658,63 @@ public class RollerAgent : Agent
     /// </summary>
     /// <remarks>Write data based on selected Recorder codes within the code.</remarks>
     /// <param name="msg">Recorder code</param>
-    private void RecordData(RecorderCodes msg)
+    private void RecordData(RecorderCodes msg, float recordValue = 1f)
     {
         var statsRecorder = Academy.Instance.StatsRecorder;
         switch (msg)
         {
             case RecorderCodes.StayCollision:
-                statsRecorder.Add("Collision/Stay", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Collision/Stay", recordValue, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.InitialCollision:
-                statsRecorder.Add("Collision/Initial", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Collision/Initial", recordValue, StatAggregationMethod.Sum);
                 break;
                 
             case RecorderCodes.TotalCollision:
-                statsRecorder.Add("Wall hit", 1f, StatAggregationMethod.Sum);
-                statsRecorder.Add("Collision/Total", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Wall hit", recordValue, StatAggregationMethod.Sum);
+                statsRecorder.Add("Collision/Total", recordValue, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.MaxSteps:
-                statsRecorder.Add("Max Steps reached", 1f);
+                statsRecorder.Add("Max Steps reached", recordValue);
                 break;
 
             case RecorderCodes.Target:
-                statsRecorder.Add("Target Reached", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Target Reached", recordValue, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.RotationError:
-                statsRecorder.Add("Rotation Error", 1f);
+                statsRecorder.Add("Rotation Error", recordValue);
                 break;
             
             case RecorderCodes.OutOfBounds:
-                statsRecorder.Add("Out of bounds", 1f);
+                statsRecorder.Add("Out of bounds", recordValue);
                 break;
             
             case RecorderCodes.GoodDoorPassage:
-                statsRecorder.Add("Door/Passage", 1f, StatAggregationMethod.Sum);
-                statsRecorder.Add("Door/Good passage", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Passage", recordValue, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Good passage", recordValue, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.BadDoorPassage:
-                statsRecorder.Add("Door/Passage", -1f, StatAggregationMethod.Sum);
-                statsRecorder.Add("Door/Bad passage", -1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Passage", recordValue, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Bad passage", recordValue, StatAggregationMethod.Sum);
                 break;
         }
+    }
+    
+    /// <summary>
+    /// Record dummy data to ensure dimensions of the training data is all the same.
+    /// </summary>
+    private void RecordBaseData()
+    {   
+        RecordData(RecorderCodes.BadDoorPassage, 0f);
+        RecordData(RecorderCodes.GoodDoorPassage, 0f);
+        RecordData(RecorderCodes.Target, 0f);
+        RecordData(RecorderCodes.TotalCollision, 0f);
+        RecordData(RecorderCodes.StayCollision, 0f);
+        RecordData(RecorderCodes.InitialCollision, 0f);
     }
 
     /// <summary>

@@ -1899,6 +1899,10 @@ learning rate changes to reward signifcant?
 * Env 1 run.
 * Used for plots.
 
+## 6459
+* Recorde training data should now be with all the same dimensions?
+* Problem had 6458.
+
 # Note
 * Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
 
