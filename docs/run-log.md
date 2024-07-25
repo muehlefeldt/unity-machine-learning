@@ -1904,7 +1904,11 @@ learning rate changes to reward signifcant?
 * Problem had 6458.
 
 ## 6460
-* 
+
+## 6461
+
+## 6462+
+* Sensor study. But same config as env 1 runs. Do not know.
 
 # Note
 * Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
