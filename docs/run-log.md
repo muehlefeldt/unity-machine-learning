@@ -1908,8 +1908,12 @@ learning rate changes to reward signifcant?
 ## 6461
 * Change of R_goal appily. Did not make change. I believe ...
 
-## 6462+
+## 6462+ Terminated
 * Sensor study. But same config as env 1 runs. Do not know.
+
+## 6465
+* Rerun of 6107 to gether plot data.
+* Slight change in LSTM config but who cares.
 
 # Note
 * Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
