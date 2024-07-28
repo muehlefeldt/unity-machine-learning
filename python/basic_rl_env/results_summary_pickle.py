@@ -149,8 +149,8 @@ if __name__ == "__main__":
         if key != "working_dir":
             paths[key] = paths["working_dir"] / paths[key]
 
-    from_run = 6107
-    to_run = 7000
+    from_run = 6000
+    to_run = 6465
 
     run_path_dict: dict = get_run_path_dict(paths)
     test = run_path_dict[6009]
