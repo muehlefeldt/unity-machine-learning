@@ -1914,9 +1914,10 @@ learning rate changes to reward signifcant?
 ## 6465
 * Rerun of 6107 to gether plot data.
 * Slight change in LSTM config but who cares.
+* Compare the result against 6107. And compare with 
 
-# Note
-* Sensor study with diffrent NN structure? 2 hidden layer + LSTM?
+## 6466+
+
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
