@@ -63,7 +63,7 @@ env_config:
   # Fix the position of the target. Position will be hard coded.
   targetFixedPosition: false
 
-  # Set the number of time steps in unity per episode. This equals 
+  # Set the number of time steps in unity per episode. Remeber to take the decision periode into account.
   maxStep: 1000
 
   # Penalty (negative reward) given for every taken step. Assume as default -1 / maxStep.
