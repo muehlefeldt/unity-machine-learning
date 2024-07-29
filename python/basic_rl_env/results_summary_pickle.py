@@ -12,6 +12,9 @@ from tensorboard.backend.event_processing.event_file_loader import EventFileLoad
 
 
 def get_run_path_dict(paths_dict: dict) -> dict:
+    """Generate a dictionary where the keys are run numbers and the values are
+    dictionaries with paths to different files related to that run.
+    """
     result = {}
     # dir_contents: list = []
     for key in paths_dict:
@@ -39,6 +42,7 @@ def get_run_path_dict(paths_dict: dict) -> dict:
 
 
 def get_file_contents(specific_run_dict: dict) -> dict:
+    """Retrieve the contents of various configuration and statistics files for a specific run."""
     file_contents = {}
     if "stats_dir" in specific_run_dict:
         with open(specific_run_dict["stats_dir"]) as json_file:
@@ -59,6 +63,7 @@ def get_file_contents(specific_run_dict: dict) -> dict:
 
 
 def get_result_data(run_dict: dict, id: int) -> dict:
+    """Extract data from the result files for a specific run and compile it into a dictionary."""
     if "results_dir" in run_dict[id]:
         path = run_dict[id]["results_dir"]
     elif "results_archive_dir" in run_dict[id]:
@@ -66,10 +71,11 @@ def get_result_data(run_dict: dict, id: int) -> dict:
     else:
         raise KeyError
 
+    # This dict structure is useful to reference when loading the pickle file at a later stage.
     data = {
         "env": {"cumulative_rewards": [], "ep_length": []},
         "door": {"bad_passage": [], "good_passage": [], "passage": []},
-        "collision": {"initial": [], "stay": [], "total":[]},
+        "collision": {"initial": [], "stay": [], "total": []},
         "steps": [],
         "summary": {
             "mean_reward": 0,
@@ -133,6 +139,7 @@ if __name__ == "__main__":
     if os.getcwd() != Path("./python/basic_rl_env").absolute():
         os.chdir(Path("./python/basic_rl_env").absolute())
 
+    # Define paths to dirs.
     paths = {
         "working_dir": "C:/Users/max.muehlefeldt/Documents/GitHub/unity-machine-learning/python/basic_rl_env",
         "results_dir": "results/",
@@ -143,22 +150,25 @@ if __name__ == "__main__":
         "unity_configs_dir": "unity_configs/",
     }
 
+    # Absolute path set for working dir.
     paths["working_dir"] = Path(paths["working_dir"]).absolute()
 
+    # Update paths to be absolute.
     for key in paths:
         if key != "working_dir":
             paths[key] = paths["working_dir"] / paths[key]
 
+    # Define run id range to be part of the created dict.
     from_run = 6000
     to_run = 6465
 
     run_path_dict: dict = get_run_path_dict(paths)
-    test = run_path_dict[6009]
+
+    # Get the selected ids.
     selected_ids = [x for x in run_path_dict.keys() if from_run <= x <= to_run]
 
+    # Get the data from the requested runs.
     summary_dict = {}
-
-    # Get the data from the runs.
     for id in selected_ids:
         print(f"Getting summary for {id}.")
         try:
@@ -166,11 +176,13 @@ if __name__ == "__main__":
         except KeyError:
             print(f"Error in ID {id}.")
 
+    # Define the path for the summary pickle file. Remove existing file.
     summary_file_path: Path = Path("summary_dict.pickle").absolute()
     if summary_file_path.exists():
         print("Removed old summary file.")
         os.remove(summary_file_path)
 
+    # Create the pickle file with summary dict.
     with open(summary_file_path, mode="wb") as file:
         print("Created new summary file.")
         pickle.dump(summary_dict, file)
