@@ -518,14 +518,12 @@ public class RollerAgent : Agent
         PositionImplausible
     }
     
+    
+    public float currentReward = 0f;
+    public float totalReward;
     /// <summary>
     /// Calculate and return reward based on current distance to target.
     /// </summary>
-    public float currentReward = 0f;
-
-    public float totalReward;
-
-    //public float heightPenalty = 0f;
     private float GetReward()
     {
         /*var dist = m_DistToTargetNormal;
@@ -550,26 +548,20 @@ public class RollerAgent : Agent
     /// <summary>
     /// Get the ID of the room the agent is currently in.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Room id based on the provided position.</returns>
     private int GetCurrentRoomId()
     {
         return floor.GetAgentRoomId(transform.position);
     }
-
+    
+    /// <summary>
+    /// Update the current room of the agent on entering the door trigger.
+    /// </summary>
     private int m_DoorPassageStartInRoom;
     private void OnTriggerEnter(Collider other)
     {
         m_DoorPassageStartInRoom = GetCurrentRoomId();
     }
-
-/*
-#if UNITY_EDITOR
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 1000, 20), m_GuiText);
-    }
-#endif    
-*/
     
     /// <summary>
     /// Called on trigger exit after collider contact finishes with the door.
