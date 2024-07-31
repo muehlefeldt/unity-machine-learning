@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
     # Define run id range to be part of the created dict.
     from_run = 6000
-    to_run = 6465
+    to_run = 6473
 
     run_path_dict: dict = get_run_path_dict(paths)
 
