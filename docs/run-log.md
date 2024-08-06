@@ -1916,9 +1916,13 @@ learning rate changes to reward signifcant?
 * Slight change in LSTM config but who cares.
 * Compare the result against 6107. And compare with 
 
-## 6466+
+## 6466 - 6474
 * Repeat of 6072–6080? Sensor study runs.
 * Aim is to gather better collision data.
+
+## 6475
+* Step penalty data.
+
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
