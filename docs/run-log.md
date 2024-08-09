@@ -1920,9 +1920,10 @@ learning rate changes to reward signifcant?
 * Repeat of 6072–6080? Sensor study runs.
 * Aim is to gather better collision data.
 
-## 6475+
+## 6475 - 6479
 * Step penalty data.
 * Idea is to get a plot to show diffrent step penalties.
+* Would require a new plot type? EP length would be of interest here.
 
 
 # Advisory

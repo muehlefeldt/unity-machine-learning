@@ -73,7 +73,7 @@ def get_result_data(run_dict: dict, id: int) -> dict:
 
     # This dict structure is useful to reference when loading the pickle file at a later stage.
     data = {
-        "env": {"cumulative_rewards": [], "ep_length": []},
+        "env": {"cumulative_rewards": [], "ep_length": [], "target_reached": []},
         "door": {"bad_passage": [], "good_passage": [], "passage": []},
         "collision": {"initial": [], "stay": [], "total": []},
         "steps": [],
@@ -114,6 +114,8 @@ def get_result_data(run_dict: dict, id: int) -> dict:
                 data["collision"]["stay"].append(value.tensor.float_val[0])
             elif value.tag == "Collision/Total":
                 data["collision"]["total"].append(value.tensor.float_val[0])
+            elif value.tag == "Target Reached":
+                data["env"]["target_reached"].append(value.tensor.float_val[0])
 
             if len(data["steps"]) == 0:
                 data["steps"].append(event.step)
