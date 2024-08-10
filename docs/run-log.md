@@ -1925,6 +1925,8 @@ learning rate changes to reward signifcant?
 * Idea is to get a plot to show diffrent step penalties.
 * Would require a new plot type? EP length would be of interest here.
 
+## 6480
+* Same as 6475+ but with missing 3 sensors.
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.

@@ -40,7 +40,7 @@ userconfig:
 env_config:
   # Define number of horizontal sensors. Can be single int or a list of int given as [1, 2].
   # Schould be between 1 and 32, but higher is possible.
-  sensorCount: 32
+  sensorCount: 3
 
   # Deploy a decoy object to increase complexity of the environment. Default set to false.
   useDecoy: false
@@ -67,7 +67,7 @@ env_config:
   maxStep: 1000
 
   # Penalty (negative reward) given for every taken step. Assume as default -1 / maxStep.
-  stepPenalty: [0.0, -0.005, -0.0005, -0.0001, -0.001]
+  stepPenalty: -0.0005
 
 # Paths used by the python script to generate, save and load files.
 paths:
@@ -114,7 +114,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 10e6
+    max_steps: 20e6
     time_horizon: 2000
     summary_freq: 10000
 
