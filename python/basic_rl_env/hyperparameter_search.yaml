@@ -46,7 +46,7 @@ env_config:
   useDecoy: false
 
   # Create a inner wall separating two rooms. Default set to true.
-  createWall: true
+  createWall: false
 
   # Width of the created door as float. Default set to 4.0.
   doorWidth: 4.0
@@ -114,7 +114,7 @@ behaviors:
     # Common Trainer Configurations.
     trainer_type: ppo
     keep_checkpoints: 5
-    max_steps: 100e6
+    max_steps: [10e6, 20e6]
     time_horizon: 2000
     summary_freq: 10000
 

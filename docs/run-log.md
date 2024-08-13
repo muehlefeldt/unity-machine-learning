@@ -1927,9 +1927,17 @@ learning rate changes to reward signifcant?
 
 ## 6480
 * Same as 6475+ but with missing 3 sensors.
+* Data needed for plot for experiment 3.
 
 ## 6481
-* Long run with 3 sensors. Do we need this for a result in experiment 3?
+* Long run with 3 sensors. Do we need this for a result in experiment 2?
+
+## 6482, 6483
+* Runs wihout inner wall.
+* 3 sensors only due to being max limit of the drone.
+* Two runs with diffrent run lengths. 
+* Perhaps nice to use for the thesis?
+* No clue!
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
