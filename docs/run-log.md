@@ -1931,6 +1931,7 @@ learning rate changes to reward signifcant?
 
 ## 6481
 * Long run with 3 sensors. Do we need this for a result in experiment 2?
+* Compare against 6465.
 
 ## 6482, 6483
 * Runs wihout inner wall.
@@ -1938,6 +1939,7 @@ learning rate changes to reward signifcant?
 * Two runs with diffrent run lengths. 
 * Perhaps nice to use for the thesis?
 * No clue!
+* Compare against 6459
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
