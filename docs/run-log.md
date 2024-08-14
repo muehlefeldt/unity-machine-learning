@@ -1941,6 +1941,13 @@ learning rate changes to reward signifcant?
 * No clue!
 * Compare against 6459
 
+## 6484 - Terminated
+* Very long run.
+
+## 6485
+* Very long run in env 2.
+* Maybe good for experiment 2?
+
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
 
