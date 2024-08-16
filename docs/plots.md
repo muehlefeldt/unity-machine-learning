@@ -2,6 +2,7 @@
 
 * Use python script `python\basic_rl_env\results_summary_pickle.py` to prepare the training data. 
 * A pickle file containing a dict is created to simplify access to the plots.
+* The script expects ml-agents genrated run files in the folders `python\basic_rl_env\results` or `python\basic_rl_env\results_archive`.
 * You need to specify in the script the training run ids to be coverd by the created pickle file. Examples:
   * from_run = 6000
   * to_run = 6465
