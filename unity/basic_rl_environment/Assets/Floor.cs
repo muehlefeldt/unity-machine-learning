@@ -22,8 +22,8 @@ public class Floor : MonoBehaviour
     /// <summary>
     /// If selected true a decoy is deployed. The agent needs to distinguish between desired target and decoy. 
     /// </summary>
-    [Tooltip("Select if a decoy object is requested.")]
-    public bool useDecoy = false;
+    /*[Tooltip("Select if a decoy object is requested.")]
+    public bool useDecoy = false;*/
     private Decoy m_Decoy;
     
     // Store global coords of the floor. Populated during startup.
@@ -42,7 +42,7 @@ public class Floor : MonoBehaviour
     private Vector3 m_DoorCentreGlobalCoord;
     
     // Public bools to be set through the Unity editor. Allow for a simpler environment during the training. 
-    [Tooltip("Create two rooms by introducing an inner wall in the training area. Includes a door.")]
+    /*[Tooltip("Create two rooms by introducing an inner wall in the training area. Includes a door.")]
     public bool CreateWall = true;
     
     /// <summary>Set width of the door through the unity editor. Use the prefab to set!</summary>
@@ -57,19 +57,28 @@ public class Floor : MonoBehaviour
     public bool RanndomDoorPosition = true;
     
     [Tooltip("Select if target and agent are always in different rooms.")]
-    public bool targetAlwaysInOtherRoomFromAgent = false;
-   
+    */
+    //public bool targetAlwaysInOtherRoomFromAgent = false;
+    
+    /// <summary>
+    /// Property to store the requested configuration.
+    /// </summary>
+    private Configuration m_Config;
+    
     // Start is called before the first frame update
     void Awake()
     {
+        // Get the main configuration of the environment.
+        m_Config = FindObjectOfType<ConfigurationMgmt>().config;
+
         // Get the MeshFilter component of the floor object.
         MeshFilter floorMeshFilter = GetComponent<MeshFilter>();
-        
+
         // Initialise the creator object for the inner wall. 
         innerWallCreator = new InnerWallCreator(transform);
-        
+
         // Setup the room management.
-        RoomsInEnv = new AllRooms(CreateWall, targetAlwaysInOtherRoomFromAgent);
+        RoomsInEnv = new AllRooms(m_Config.createWall, m_Config.targetAlwaysInOtherRoomFromAgent, FindObjectOfType<CustomStatsManager>());
 
         // Ensure the MeshFilter and its shared mesh exist
         if (floorMeshFilter != null && floorMeshFilter.sharedMesh != null)
@@ -79,7 +88,7 @@ public class Floor : MonoBehaviour
 
             var corners = new List<Vector3>();
             m_CornersGlobalCoords = corners;
-            
+
             corners.Add(transform.TransformPoint(floorMesh.vertices[0]));
             corners.Add(transform.TransformPoint(floorMesh.vertices[10]));
             corners.Add(transform.TransformPoint(floorMesh.vertices[110]));
@@ -92,16 +101,16 @@ public class Floor : MonoBehaviour
             m_MaxXGlobalCoord = sortedX[^1];
             m_MinZGlobalCoord = sortedZ[0];
             m_MaxZGlobalCoord = sortedZ[^1];
-            
+
             CalculateMaxDist();
 
-            if (useDecoy)
+            if (m_Config.useDecoy)
             {
                 m_Decoy = new Decoy(this.transform);
             }
         }
     }
-    
+
     /// <summary>
     /// Calculate the maximum possible distance for given floor. Is based on the distances between the corners.
     /// </summary>
@@ -153,7 +162,7 @@ public class Floor : MonoBehaviour
     void OnDrawGizmos()
     {   
         // In case of an inner wall. Highlight start and end of the wall including the door.
-        if (CreateWall)
+        if (m_Config.createWall)
         {
             foreach (var coord in new List<Vector3>() { m_WallStartGlobalCoord, m_WallEndGlobalCoord })
             {
@@ -176,7 +185,12 @@ public class Floor : MonoBehaviour
         }
     }
     
-    private void OnGUI()
+    /// <summary>
+    /// GUI display used to help debug.
+    /// </summary>
+    /// <remarks>Only usable with one single training areas. Otherwise overlapping outputs are displayed.
+    /// Really only usable for debugging in the editor.</remarks>
+    /*private void OnGUI()
     {
         var text = "";
         foreach (var singleRoom in RoomsInEnv.GetAllRooms())
@@ -190,7 +204,7 @@ public class Floor : MonoBehaviour
 
         text += String.Format("Agent and Target same room: {0}\n", RoomsInEnv.AreAgentAndTargetInSameRoom());
         GUI.Label(new Rect(10, 200, 1000, 200), text);
-    }
+    }*/
 
 #endif
     
@@ -226,7 +240,7 @@ public class Floor : MonoBehaviour
         Prepare();
         
         // The wall inner wall is only created if selected in the Unity editor. Set to true as default.
-        if (CreateWall)
+        if (m_Config.createWall)
         {
             // Calculate and store inner wall and door positions.
             SetWallCoords();
@@ -249,7 +263,7 @@ public class Floor : MonoBehaviour
     private void SetWallCoords()
     {
         var r = 0.5f; // Default position in the middle of the floor.
-        if (RandomWallPosition)
+        if (m_Config.randomWallPosition)
         {
             r = GetRandom(0.3f);
         }
@@ -267,7 +281,7 @@ public class Floor : MonoBehaviour
     private void SetDoorCoords()
     {
         var r = 0.5f;
-        if (RanndomDoorPosition)
+        if (m_Config.randomDoorPosition)
         {
             r = GetRandom(0.3f);
         }
@@ -280,8 +294,8 @@ public class Floor : MonoBehaviour
         m_DoorCentreGlobalCoord = pos;
         
         var direction = Vector3.Normalize(m_WallEndGlobalCoord - pos);
-        m_DoorStartGlobalCoord = pos - direction * doorWidth / 2f;
-        m_DoorEndGlobalCoord = pos + direction * doorWidth / 2f;
+        m_DoorStartGlobalCoord = pos - direction * m_Config.doorWidth / 2f;
+        m_DoorEndGlobalCoord = pos + direction * m_Config.doorWidth / 2f;
     }
     
     /// <summary>
@@ -298,10 +312,9 @@ public class Floor : MonoBehaviour
     /// Reset the position of the target to a random position. Based on the created rooms in the environment.
     /// </summary>
     /// <remarks>Be sure to call this function only after the position of the agent was changed.</remarks>
-    public bool targetFixedPosition = false;
     public void ResetTargetPosition()
     {
-        if (targetFixedPosition) // Target shall always be spawned at the same position.
+        if (m_Config.targetFixedPosition) // Target shall always be spawned at the same position.
         {
             target.transform.localPosition = new Vector3(0f, 0.5f, -12f);
         }
@@ -312,6 +325,8 @@ public class Floor : MonoBehaviour
             
             var newTargetPos = Vector3.zero;
             
+            RoomsInEnv.SelectRandomRoom();
+            
             // While distance to door or to the agent is too short, get new position.
             while (distToDoor < 4f || distToAgent < 4f)
             {
@@ -319,7 +334,7 @@ public class Floor : MonoBehaviour
                 newTargetPos = RoomsInEnv.GetRandomPosition(AllRooms.PositionType.Target, agent.transform.position);
                 
                 // Get distance to the door.
-                distToDoor = CreateWall ? Vector3.Distance(newTargetPos, m_DoorCentreGlobalCoord) :
+                distToDoor = m_Config.createWall ? Vector3.Distance(newTargetPos, m_DoorCentreGlobalCoord) :
                     // If we do not have a door present, the distance is in every case ok and can be assumed as infinity.
                     float.PositiveInfinity;
                 
@@ -329,6 +344,32 @@ public class Floor : MonoBehaviour
             
             // Set the position of the target.
             target.ResetPosition(newTargetPos);
+        }
+    }
+    
+    /// <summary>
+    /// Record the current state of the floor to the stats.
+    /// </summary>
+    /// <param name="statsManager">Overall stats manager instance.</param>
+    public void RecordFloorState(CustomStatsManager statsManager)
+    {
+        foreach (var singleRoom in RoomsInEnv.GetAllRooms())
+        {
+            var id = singleRoom.GetId();
+            if (singleRoom.ContainsAgent())
+            {
+                statsManager.AgentInRoomID(id);
+            }
+
+            if (singleRoom.ContainsTarget())
+            {
+                statsManager.TargetInRoomID(id);
+            }
+        }
+        
+        if (RoomsInEnv.AreAgentAndTargetInSameRoom())
+        {
+            statsManager.TargetAndAgentSameRoom();
         }
     }
     
@@ -352,7 +393,7 @@ public class Floor : MonoBehaviour
     /// </summary>
     public void ResetDecoyPosition()
     {
-        if (useDecoy)
+        if (m_Config.useDecoy)
         {
             var agentPos = agent.transform.position;
             var targetPos = target.transform.position;

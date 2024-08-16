@@ -1397,8 +1397,557 @@ learning rate changes to reward signifcant?
 * Expected runtime of 2.6 hours.
 * Not good run. Compare config again against 1433. No was same except max_step.
 
-## 1454+
+## 1454 - 1477
 * Hyperparameter search. 2 processes.
+* Good runs.
+* Summary: Take look at 1477.
+  * Jap quite nice results.
+  * Runs 10e6 steps long. 
+* 1477 config:
+  * time_horizon: 1540
+  * batch_size: 356
+  * learning_rate: 1e-3
+  * beta: 1e-3
+* Also good runs: 1476 and 1474.
+  * 1476 also good. Increased beta value compared to 1477.
+* Kept only the best runs in the results dir.
 
-# Next
-* CLI build with sensonr count dynamic
+## 1478
+* Short run to test code.
+  * Writes stats to json file.
+* Using a build. Run 2e6 steps.
+* 1477 config used.
+
+## 1479 - 1533 - Disregard
+* Disregard. Test shit for CLI arguments.
+* At least stats seem to do stuff.
+* Introduced unity config file and stats file written through unity.
+
+## 1534 - 1536
+* Short runs for sensor study.
+* sensorCount: [1, 2, 4]
+
+## 1537 - 1540
+* Again sensor study but with 5e6 steps a bit longer.
+* sensorCount: [1, 2, 4, 8]
+* Interesting, but question remains about. LSTM settings.
+  * Wouldn't fewer sensors require a more powerfull LSTM?
+* Esp. with very few sensors the ep. length limit is hit and no noticeable reduction is observed.
+
+## 1541
+* sensorCount: 16
+* Result similar 8 sensors.
+
+## 1542
+* Rerun of 1477. Task: Compare results and look for obvious issues the rewritten code may have introduced.
+* sensorCount: 32
+* A bit longer run with 10e6 steps.
+* Expected: Very close result to 1477. 
+
+## 1543
+* Editor run to verify code changes. Config as 1536.
+* Introduces other way to track door passages in the tensorboard.
+
+## 1544 disregard
+
+## 1545
+* Build run. 5e6 runs.
+* 1 sensor only: Take a look at LSTM setting.
+* memory_size: 356
+  * max possible with the batch size.
+* Compare against run? 1537.
+* Interestingly the ep length is increasing ... answers?
+
+## 1546 - 1557
+* LSTM study with only one sensor.
+* Comparable to 1545 and 1537 but changes to LSTM settings.
+* 12 runs expected. ETA N/A. Way too long in the end.
+* Hit always the EP length limit.
+* "KeyError during summary generation."
+* Results are pretty much useless.
+
+## 1558 disregard
+
+## 1559 disregard
+
+## 1560
+* LSTM settings back to run 1537 defaults.
+  * memory_size: 128
+  * sequence_length: 64
+* Short run only. But first run with 10k maxSteps in Unity.
+  * Do we need to increase summary periode? Issue with no ep. completed since last summary.
+* Task: What are the stats saying?
+
+## 1561
+* Same as 1560 but bit longer.
+* Stats again show bias to agent and target in different rooms.
+
+## 1562
+* Agent room NOT random. What does this do to the distribution.
+
+## 1563
+* Index select for target written to stats.
+
+## 1564
+* Room for target is only selected once! Even if distances are not large enough to agent or door.
+* Does this change a thing?
+
+## 1565 - 1566
+* Longer runs. 10e6.
+* 1 sensor.
+* Test 1 and 2 layers. No clue why.
+* Check distribution of room usage in the stats. Summary is working?
+* And again the agent room is still fixed. Should we change this? Yeah sounds good?
+
+## 1567
+* Again 10e6 steps but 32 sensors.
+* Same 1565 and 1566.
+* Using build.
+* Again result: Reward limit is not reached. 
+
+## 1568
+* Check 1567 but with maxstep reduced to 1000? Or keep the maxStep number high but increase also manually the punishment?
+* Shouldn't the result be similar to 1477? Was also 10e6 steps and 1000 maxSteps.
+* Well the difference is not too bad.
+
+## 1569
+* 10000 step per episode. Set step punishment to -0.001.
+  * Can now be set via config.
+* 1 sensor.
+* No clue.
+* Also 10e6 maxstep.
+
+## 1570
+* Where are we currently?
+* No inner wall test. With only 1 sensor!
+* Do we use this as a basis to run a hyperparameter search?
+* Atleast are we seeing a reward limit trend beyond 0.
+* But this had 10e6 steps.
+
+## 1571 - 1594
+* Hyperparameter study with unclear purpose. maxStep 1e6.
+* time_horizon: [64, 512, 1024, 1540]
+* beta: [1e-3, 5e-3, 1e-2]
+* num_layers: [1, 2]
+* Summary: 
+  * Run 1571 is best. time_horizon: 64, beta: 1e-3, num_layers: 1
+  * But "last_cumulative_reward": -5.817824195623398 ... dats shit
+
+## 1595 - 
+* Based on previous hyperparameter search.
+* maxStep increased to 2e6.
+* time_horizon: [32, 64, 128]
+* beta: [1e-4, 5e-4, 1e-3, 5e-3]
+* num_layer fixed to 1. Did not provide an advantage.
+* I am not happy with this. How do we continue with this?
+* Summary:
+  * Best run ...
+* Why is the reward limit below 0?
+
+## 1607 - 1612
+* Sensor study [1, 2, 4, 8, 16, 32] with the best config from 1572.
+  * Set maxStep to 5e6.
+* This is still without the inner wall but ...
+* Make a plot with all runs and send to Mats? And ask for Anmeldung? 
+
+## 1613
+* Same as above but more sensor counts.
+* sensorCount: [6, 10, 12, 14, 18, 20, 64, 128]
+
+## 1621
+* Run with one more sensor config.
+* sensorCount: 3
+* Äh second run started? Possible reason: Hit play button in vs code for second time.
+
+## 1622 disregard
+* See above.
+
+## 1623 - 1640
+* Runs to determine working config for sensor study with inner wal.
+* sensorCount: 1
+* Unity: maxStep: 10000 with stepPenalty: -0.001
+* time_horizon: [32, 64]
+* summary_freq: 20000
+  * Due to very high max possible unity step counts.
+* learning_rate: [5e-3, 1e-3, 5e-4]
+* beta: [1e-3, 5e-3, 1e-2]
+* At what point can the config be assumed as ok?
+
+## 1641 - 1646
+* Do we need to set the step penalty diffrently? 10000 / 5 = 2000. -1 = 2000 * (-0.0005)
+* Short runs to look at maxStep in Unity and penalties applied.
+* maxStep: [8000, 10000, 12000]
+* stepPenalty: [-0.001, -0.0005]
+* 1641 and 1642 are ok.
+
+## 1647 - 1652
+* maxStep: [8000, 10000, 12000]
+* stepPenalty: [-0.01, -0.005]
+
+## 1653 - 1680
+* maxStep: [1000, 2000, 3000, 4000, 5000, 6000, 7000]
+* stepPenalty: [-0.01, -0.005, -0.001, -0.0005]
+* What did we learn?
+
+## 1681
+* Take a look at the config of 1656 with 5e6 steps.
+* Just observe the behaviour.
+
+## 1682 - 1688
+* Same config as 1681 and 1656 but sensor study.
+
+## 1689+ Aborted
+* Sensor study but now longer with 5e6.
+* Rest same as above.
+* Result is bad: No run (atleast including 8 sensors) remains below 0
+
+## 1696 - 1701
+* Time horizon test.
+* Very short runs.
+* time_horizon: [64, 200, 256, 512, 1000, 1500]
+
+## 1702 Aborted
+* Crazy parameter search.
+* Was aborted to start the thing below.
+
+## 1703 - 6009 Terminated after 2 days
+* Do we want to randomize the search of hyperparamter? By sorting the combinations?
+  * Fucks the IDs of the runs.
+* maxStep: [1000, 2000, 5000]
+* stepPenalty: [-0.0005, -0.0025]
+* time_horizon: [64, 512, 1000, 1500, 2000]
+* batch_size: [248, 356, 512]
+* buffer_size: [51200, 102400, 204800]
+* learning_rate: [1e-5, 5e-4, 1e-4, 1e-3]
+* learning_rate_schedule: [linear, constant]
+* beta: [1e-3, 1e-2]
+
+## 6010
+* Rerun of 1477. Is the result comparable?
+
+## 6011
+* Rerun of the config of 2341. 
+* Increased run of 10e6 steps.
+* Observations in comparison to 2341:
+  * Epsiode length is becoming less but still hitting the ceiling in terms of maxstep possible in unity. List is 200 actions per ep by the nn.
+  * Reward remains below 1.
+
+## 6012 - 6017
+* Sensor study.
+* Uses the config of 6011 but less steps. Only 1.5e6 and sensor count changed.
+* Compare against 2341 and look at reward and ep. length.
+* sensorCount: [1, 2, 4, 8, 16, 32]
+* Even with 32 sensors not above 0 reward?
+* Does this build even work?
+
+## 6018 - Result useable
+* Find a long ish run with 32 sensors. 1477.
+* Use same config as above but 32 sensors and 10e6 maxsteps.
+* How do we compare to 1477? Keep the diffrences in config in mind!
+  * We look quite good.
+
+## 6019 - 6023 - Result useable
+* sensorCount: [1, 2, 4, 8, 16] with max_steps: 10e6
+* 6018 was the same but with 32 sensors.
+* Is this enogh for a sensor study using the door?
+  * Only with 32 sensors (run 6018) above 0 reward.
+  * Not sufficient to be honest.
+* Maybe needed to increase the maxSteps in unity? Especially with 1 sensor. But take a look at it in the end.
+  * First indication point in that direction.
+  * See 6024+
+
+## 6024 - 6047
+* Take look at maxstep level in unity and one sensor.
+* Random execution.
+* sensorCount: 1
+* maxStep: [1000, 2000, 3000, 4000, 5000, 10000]
+* stepPenalty: [-0.0005, -0.001, -0.0001, -0.00005]
+* Only 2e6 steps. Maybe longer needed for less combinations.
+
+## 6048 - 6071
+* Rerun of 6024 - 6047 but longer.
+
+## 6072 - 6080 - Useable results?
+* Run 6018 to 6023 again but longer. Maybe 20e6.
+* sensorCount: [1, 2, 4, 8, 10, 16, 32, 64, 128]
+* Resulting plots were quite nice actually. Clear difference between wensor counts shown.
+* Runs below raised questions.
+
+## 6081 - No LSTM
+* sensorCount: 32
+* num_layers: 3
+* No LSTM.
+  * To coompare against run with LSTM. Use run 6078 with same config. 
+* Öhm .... result: Very similar to 6078.
+  * Why are they so similar?
+
+## 6082 - Terminated
+* Same as 6081 but with 100e6 steps.
+* Run also 6078 this long and compare.
+* Terminated too enable test below.
+
+## 6083 - LSTM test
+* LSTM settings test.
+  * Reduced the settings below from the default values.
+* memory_size: 20
+* sequence_length: 1
+
+## 6084
+* 20e6 length.
+* Same as 6083.
+* Well not really so promissing.
+  * Remaining below 0 reward with only slow gains towards the target. 
+  * Ep. length is also no longer decreasing.
+
+## 6085 - 6104
+* What next? 5e6 steps runs. Look again at parameters: Memory settings.
+* memory_size: [16, 32, 64, 128]
+* sequence_length: [1, 2, 4, 8, 16]
+* All the runs appear to be very close together.
+* Compare against base case: 6010?
+
+## 6105 - Error
+
+## 6106
+* 10e6 run with config of 6087
+
+## 6107
+* 100e6 run with config of 6078 but changed LSTM settings.
+* memory_size: 16
+* sequence_length: 4
+* sensorCount: 32
+
+## 6108 - No LSTM
+* Same as 6107 but no memory.
+* num_layers: 2
+* sensorCount: 32
+* Compare against 6107.
+* Shockingly good result ... Why exactly do we want to use LSTM?
+
+## 6109 Terminated
+* With error terminated.
+
+## 6110
+* In parallel to 6108.
+* Uses LSTM.
+* hidden_units: 512
+* num_layers: 2
+* memory:
+  * memory_size: 16
+  * sequence_length: 4
+* memory same as 6107. Only change is the num of layers.
+
+## 6111+
+* Take a look a batch_size and LSTM settings.
+* batch_size: [16, 32, 64, 128, 356, 512]
+* memory_size: [16, 32, 64, 128]
+* sequence_length: [2, 4, 8, 16, 32]
+* I believe was terminated.
+
+## 6179 - 6406
+* hidden_units: [356, 512]
+* num_layers: 1
+* batch_size: [16, 32, 64, 128, 356, 512]
+* memory_size: [16, 32, 64, 128]
+* sequence_length: [2, 4, 8, 16, 32]
+* Attention: Run id order fucked.
+* 6202 best run.
+
+## 6408
+* Short run looking a network settings.
+* Result not promissing.
+
+## 6409
+* Run with 300ep steps.
+* Using LSTM.
+* Same config as 6202.
+* memory_size: 16
+* sequence_length: 16
+* Do we see any usefull reward progress? I want to see above 1.0 reward.
+* Terminated. Made no progress.
+
+## 6410
+* Same as above but shorter with 100e6. How does this compare to 6107?
+* memory_size: 16
+* sequence_length: 16
+* Using the same LSTM config as 6202.
+* Comparison to 6107:
+  * This run is worse. It is shit.
+  * Worse in all the metrics.
+  * Despite the run time.
+  * The LSTM config is not right.
+
+## 6411 - Best LSTM
+* Using the config of 6087 (was basis for 6107) with 100e6 steps.
+* batch_size: 356
+* memory_size: 16
+* sequence_length: 4
+* Compare against 6107 and 6410.
+* Against 6107:
+  * Better than 6107.
+  * I like this run. 
+  * Both using the same batch size.
+  * Actually ... both runs use exactly the same config. Where is the fucking difference?
+* How do we compare against NO LSTM, 6108?
+  * Well, still lacking behind no LSTM.
+  * But getting closer.
+* With LSTM first time above +1 reward?
+
+## 6412 - Terminated
+
+## 6413 - 6418
+* max_steps: 20e6
+* batch_size: [32, 64, 128, 256, 356, 516]
+* Take a look at the batch size.
+* Compare against 6411
+* 6413 is only promissing run.
+  * Only this run shows Increasing good door passages.
+  * Was running batch_size: 32.
+
+## 6419 - 6423
+* max_steps: 20e6
+* batch_size: [4, 8, 10, 12, 16]
+* Same as above but smaller batch sizes.
+* Compare against 6413 - 6418 and 6411.
+* Run batch sizes between 16 and 32? Take best run and run again with 100e6 steps?
+* Terminated 6419 due to lack of progress.
+* All runs very slow. Batch size does this effect how?
+
+## 6424 - 6426
+* batch_size: [20, 24, 28]
+
+## 6427 - 6430
+* Play with the batch size? [38, 42, 48, 56]
+* Taking into account 6413 - 6430:
+  * Probably the best run is 6428.
+  * If using this formula: final_mean_reward + final_mean_door_passage + -0.5 * final_mean_episode_length + 2 * final_std_mean_reward
+
+## 6431
+* Based on 6428 but longer with 100e6 steps.
+* Compare to 6428 as both use the same settings.
+* Compare to 6411. Both use LSTM and are running for same step count. 6411 was so far the best LSTM run in the two rooms setting. Difference in batch size.
+* Result shows progress in learning but significantly below 6411.
+
+## 6432 -  Disregard
+* Rerun 6431 with no changes.
+* Öh ... what happend here?
+
+## 6433
+* Again like 6431. Does this work again?
+
+##
+* Look at LSTM settings?
+  * Maybe using 20e6 steps. 
+
+## 6435
+* We want one single run. Same as 6107, atleast that is the hope.
+* Background: Problem with collsions being multiple time triggered for every timestep t_rl because decison period is set to 5?
+* Or is dat shit? Jop.
+* Terminated.
+
+## 6436
+* Same as 6435 but minimum time reward only.
+* Terminated. Error in config with reward.
+
+## 6437
+* Same as 6435 but only minimum time reward.
+* Does the ep length needs to be longer?
+* Terminated. No real progress.
+
+## 6438
+* Longer episodes.
+* Again same as 6437.
+* Looked at minimum time approach.
+
+## 6439 - Terminated
+
+## 6440
+* Final prep for hand-in.
+* Comparison run against 6107.
+* Minimum time approach removed.
+* Result looks comparable to 6107.
+
+## 6441 - Terminated
+* Sensor study. 
+
+## 6442 - Terminated
+
+## 6443 - 6444 - Terminated
+
+## 6445 - 6453
+* Sensor study.
+* Comparable to 6072+
+* BUT: No LSTM.
+* 2 hidden layers to increase learnable parameters.
+* Again extremly good results without LSTM.
+
+## 6454
+* Environment 1 data creation with very short run.
+* No inner wall.
+
+## 6455
+* Same as 6454 but longer for nicer data.
+
+## 6456
+* Same as 6455. Change to wall hit data collection.
+
+## 6457 - Terminated
+* New RecorderCodes to track collisions better.
+* Test run only.
+
+## 6458
+* Env 1 run.
+* Used for plots.
+
+## 6459
+* Recorde training data should now be with all the same dimensions?
+* Problem had 6458.
+
+## 6460
+
+## 6461
+* Change of R_goal appily. Did not make change. I believe ...
+
+## 6462+ Terminated
+* Sensor study. But same config as env 1 runs. Do not know.
+
+## 6465
+* Rerun of 6107 to gether plot data.
+* Slight change in LSTM config but who cares.
+* Compare the result against 6107. And compare with 
+
+## 6466 - 6474
+* Repeat of 6072–6080? Sensor study runs.
+* Aim is to gather better collision data.
+
+## 6475 - 6479
+* Step penalty data.
+* Idea is to get a plot to show diffrent step penalties.
+* Would require a new plot type? EP length would be of interest here.
+
+## 6480
+* Same as 6475+ but with missing 3 sensors.
+* Data needed for plot for experiment 3.
+
+## 6481
+* Long run with 3 sensors. Do we need this for a result in experiment 2?
+* Compare against 6465.
+
+## 6482, 6483
+* Runs wihout inner wall.
+* 3 sensors only due to being max limit of the drone.
+* Two runs with diffrent run lengths. 
+* Perhaps nice to use for the thesis?
+* No clue!
+* Compare against 6459
+
+## 6484 - Terminated
+* Very long run.
+
+## 6485
+* Very long run in env 2.
+* Maybe good for experiment 2?
+
+# Advisory
+* Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
+

@@ -59,14 +59,24 @@ public class RollerAgent : Agent
     
     // Gui text for debugging in the editor.
     private string m_GuiText;
+
+    private Configuration m_Config;
     
     /// <summary>
     /// Called on loading. Setup of the sensors.
     /// </summary>
+    /// <remarks>This function is always called before any Start functions and also just after a prefab
+    /// is instantiated.
+    /// (If a GameObject is inactive during start up Awake is not called until it is made active.)</remarks>
     protected override void Awake()
     {
         // Crucial to call Awake() from the base class to ensure proper initialisation.
         base.Awake();
+        
+        // Get the configuration from the the configMgmt and set the requested sensor count from CLI arguments.
+        m_Config = FindObjectOfType<ConfigurationMgmt>().config;
+        sensorCount = m_Config.sensorCount;
+        MaxStep = m_Config.maxStep;
         
         // Set behavior parameters based on selected options for movement and sensor number.
         var brainParameters = GetComponent<BehaviorParameters>().BrainParameters;
@@ -78,11 +88,13 @@ public class RollerAgent : Agent
         // Set action branch size based on allowed movement.
         brainParameters.ActionSpec.BranchSizes[0] = allowYMovement ? 9 : 7;
     }
-    
+
+    private CustomStatsManager m_StatsManager;
     // Is called before the first frame update
     public void Start() {
         m_RBody = GetComponent<Rigidbody>();
         m_SensorDirections = GetSensorDirections();
+        m_StatsManager = FindObjectOfType<CustomStatsManager>();
     }
     
     /// <summary>
@@ -165,6 +177,7 @@ public class RollerAgent : Agent
         m_DoorPassages = 0;
         actionCount = 0;
         m_GuiText = "";
+        totalReward = 0f;
         
         // Creates a wall or not if so desired within the floor parameters.
         floor.CreateInnerWall();
@@ -193,6 +206,11 @@ public class RollerAgent : Agent
         
         // Calculate the distance to the target.
         CalculateDistanceToTarget();
+        
+        // Increment the global episode counter in the stats.
+        m_StatsManager.NewEpisode();
+        // Write the current state of the floor to the stats.
+        floor.RecordFloorState(m_StatsManager);
     }
     
     /// <summary>
@@ -417,13 +435,34 @@ public class RollerAgent : Agent
         m_RBody.AddForce(direction * forceMultiplier, ForceMode.Force);
     }
     
+    /*void FixedUpdate()
+    {
+        // Get the distance to the target.
+        CalculateDistanceToTarget();
+        
+        // Reached target. Success. Terminate episode.
+        if (m_DistToTarget < 1.42f)
+        {
+            RecordData(RecorderCodes.Target);
+            m_EndReason = EpEndReasons.TargetReached;
+            
+            AddReward(1f);
+            
+
+            totalReward += 1f;
+            EndEpisode();
+        }
+    }*/
+    
     /// <summary>
     /// Called on action input.
     /// </summary>
-
     public int actionCount = 0;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        // Initial record base data. To ensure training data has all the same dimensions.
+        RecordBaseData();
+        
         // Perform the movement of the agent.
         MoveAgent(actionBuffers);
         
@@ -435,7 +474,11 @@ public class RollerAgent : Agent
         {
             RecordData(RecorderCodes.Target);
             m_EndReason = EpEndReasons.TargetReached;
+            
             AddReward(1f);
+            
+
+            totalReward += 1f;
             EndEpisode();
         }
         
@@ -475,12 +518,12 @@ public class RollerAgent : Agent
         PositionImplausible
     }
     
+    
+    public float currentReward = 0f;
+    public float totalReward;
     /// <summary>
     /// Calculate and return reward based on current distance to target.
     /// </summary>
-    public float currentReward = 0f;
-
-    //public float heightPenalty = 0f;
     private float GetReward()
     {
         /*var dist = m_DistToTargetNormal;
@@ -496,32 +539,30 @@ public class RollerAgent : Agent
         }
 
         currentReward = scalar * (1f - m_DistToTargetNormal);*/
-        currentReward = -1f / MaxStep;
+        //currentReward = -1f / MaxStep;
+        currentReward = m_Config.stepPenalty;
+        totalReward += currentReward;
         return currentReward;
     }
 
     /// <summary>
     /// Get the ID of the room the agent is currently in.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Room id based on the provided position.</returns>
     private int GetCurrentRoomId()
     {
         return floor.GetAgentRoomId(transform.position);
     }
-
+    
+    /// <summary>
+    /// Update the current room of the agent on entering the door trigger.
+    /// </summary>
     private int m_DoorPassageStartInRoom;
     private void OnTriggerEnter(Collider other)
     {
         m_DoorPassageStartInRoom = GetCurrentRoomId();
     }
-
-#if UNITY_EDITOR
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 1000, 20), m_GuiText);
-    }
-#endif    
-
+    
     /// <summary>
     /// Called on trigger exit after collider contact finishes with the door.
     /// </summary>
@@ -529,6 +570,7 @@ public class RollerAgent : Agent
     /// Important change to the reward function due to direction change of what is a good door passage.</remarks>
     private void OnTriggerExit(Collider other)
     {
+        
         // Make sure a proper door passage occured.
         if (m_DoorPassageStartInRoom != GetCurrentRoomId())
         {
@@ -537,15 +579,17 @@ public class RollerAgent : Agent
             {
                 if (m_DoorPassages % 2 == 0)
                 {
-                    AddReward(0.5f);
+                    AddReward(0.05f);
+                    totalReward += 0.05f;
                     m_GuiText = "Not same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
                 else
                 {
-                    AddReward(-0.6f);
+                    AddReward(-0.1f);
+                    totalReward += -0.1f;
                     m_GuiText = "Not same room: Door passed -0.6f";
-                    RecordData(RecorderCodes.BadDoorPassage);
+                    RecordData(RecorderCodes.BadDoorPassage, recordValue:-1f);
                 }
             }
             else // Agent and target start in the same room.
@@ -553,13 +597,15 @@ public class RollerAgent : Agent
                 // Door passage now in the wrong direction. Away from the target. Both started in the same room.
                 if (m_DoorPassages % 2 == 0)
                 {
-                    AddReward(-0.6f);
+                    AddReward(-0.1f);
+                    totalReward += -0.1f;
                     m_GuiText = "Same room: Door passed -0.6f";
-                    RecordData(RecorderCodes.BadDoorPassage);
+                    RecordData(RecorderCodes.BadDoorPassage, recordValue:-1f);
                 }
                 else // Now door passage back to the target room. Reward must be less to inhibit circular movement through the door.
                 {
-                    AddReward(0.5f);
+                    AddReward(0.05f);
+                    totalReward += 0.05f;
                     m_GuiText = "Same room: Door passed +0.5f";
                     RecordData(RecorderCodes.GoodDoorPassage);
                 }
@@ -567,6 +613,7 @@ public class RollerAgent : Agent
 
             m_DoorPassages++;
         }
+        
     }
     
     /// <summary>
@@ -574,9 +621,14 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionEnter(Collision other)
     {
-        m_LastCollision = transform.position; // Used for Gizmos.
-        AddReward(-0.5f);
-        RecordData(RecorderCodes.Wall);
+        // Collisions with target can be disregarded.
+        if (!other.gameObject.CompareTag(floor.target.tag))
+        {
+            m_LastCollision = transform.position; // Used for Gizmos.
+            AddReward(-0.1f);
+            RecordData(RecorderCodes.TotalCollision);
+            RecordData(RecorderCodes.InitialCollision);
+        }
     }
     
     
@@ -585,9 +637,14 @@ public class RollerAgent : Agent
     /// </summary>
     private void OnCollisionStay(Collision other)
     {
-        m_LastCollision = transform.position;
-        AddReward(-0.3f);
-        RecordData(RecorderCodes.Wall);
+        // Collisions with target can be disregarded.
+        if (!other.gameObject.CompareTag(floor.target.tag))
+        {
+            m_LastCollision = transform.position;
+            AddReward(-0.05f);
+            RecordData(RecorderCodes.TotalCollision);
+            RecordData(RecorderCodes.StayCollision);
+        }
     }
 
     /// <summary>
@@ -595,7 +652,7 @@ public class RollerAgent : Agent
     /// </summary>
     private enum RecorderCodes
     {
-        Wall,
+        TotalCollision,
         MaxSteps,
         Implausible,
         Target,
@@ -608,7 +665,10 @@ public class RollerAgent : Agent
         /// <summary>
         /// Door passage away from the target. Passage in the wrong direction.
         /// </summary>
-        BadDoorPassage
+        BadDoorPassage,
+        /// Collision codes.
+        InitialCollision,
+        StayCollision
     }
     
     /// <summary>
@@ -616,39 +676,63 @@ public class RollerAgent : Agent
     /// </summary>
     /// <remarks>Write data based on selected Recorder codes within the code.</remarks>
     /// <param name="msg">Recorder code</param>
-    private void RecordData(RecorderCodes msg)
+    private void RecordData(RecorderCodes msg, float recordValue = 1f)
     {
         var statsRecorder = Academy.Instance.StatsRecorder;
         switch (msg)
         {
-            case RecorderCodes.Wall:
-                statsRecorder.Add("Wall hit", 1f);
+            case RecorderCodes.StayCollision:
+                statsRecorder.Add("Collision/Stay", recordValue, StatAggregationMethod.Sum);
+                break;
+            
+            case RecorderCodes.InitialCollision:
+                statsRecorder.Add("Collision/Initial", recordValue, StatAggregationMethod.Sum);
+                break;
+                
+            case RecorderCodes.TotalCollision:
+                statsRecorder.Add("Wall hit", recordValue, StatAggregationMethod.Sum);
+                statsRecorder.Add("Collision/Total", recordValue, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.MaxSteps:
-                statsRecorder.Add("Max Steps reached", 1f);
+                statsRecorder.Add("Max Steps reached", recordValue);
                 break;
 
             case RecorderCodes.Target:
-                statsRecorder.Add("Target Reached", 1f);
+                statsRecorder.Add("Target Reached", recordValue, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.RotationError:
-                statsRecorder.Add("Rotation Error", 1f);
+                statsRecorder.Add("Rotation Error", recordValue);
                 break;
             
             case RecorderCodes.OutOfBounds:
-                statsRecorder.Add("Out of bounds", 1f);
+                statsRecorder.Add("Out of bounds", recordValue);
                 break;
             
             case RecorderCodes.GoodDoorPassage:
-                statsRecorder.Add("Door/Good passage", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Passage", recordValue, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Good passage", recordValue, StatAggregationMethod.Sum);
                 break;
             
             case RecorderCodes.BadDoorPassage:
-                statsRecorder.Add("Door/Bad passage", 1f, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Passage", recordValue, StatAggregationMethod.Sum);
+                statsRecorder.Add("Door/Bad passage", recordValue, StatAggregationMethod.Sum);
                 break;
         }
+    }
+    
+    /// <summary>
+    /// Record dummy data to ensure dimensions of the training data is all the same.
+    /// </summary>
+    private void RecordBaseData()
+    {   
+        RecordData(RecorderCodes.BadDoorPassage, 0f);
+        RecordData(RecorderCodes.GoodDoorPassage, 0f);
+        RecordData(RecorderCodes.Target, 0f);
+        RecordData(RecorderCodes.TotalCollision, 0f);
+        RecordData(RecorderCodes.StayCollision, 0f);
+        RecordData(RecorderCodes.InitialCollision, 0f);
     }
 
     /// <summary>
@@ -712,7 +796,7 @@ public class RollerAgent : Agent
         // First point of the path is the agent position.
         m_Path.Add(agentPosition);
 
-        if (floor.CreateWall)
+        if (m_Config.createWall)
         {
             var doorPositions = floor.GetDoorPosition();
             if (agentPosition.z > targetPosition.z)

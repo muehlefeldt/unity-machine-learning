@@ -1,6 +1,12 @@
 *.onnx.meta
 *.onnx
+*.pickle
+*.png
 
+env_config.json
+env_config.json.meta
+unity_configs/
+stats/
 results/
 results_archive/
 logs/
@@ -145,3 +151,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+unity/basic_rl_environment/Assets/env_config.json.meta

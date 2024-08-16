@@ -164,7 +164,7 @@ and setting `memory_size` and `sequence_length`:
 
 | **Setting**       | **Description**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `network_settings -> memory -> memory_size` | (default = `128`) Size of the memory an agent must keep. In order to use a LSTM, training requires a sequence of experiences instead of single experiences. Corresponds to the size of the array of floating point numbers used to store the hidden state of the recurrent neural network of the policy. This value must be a multiple of 2, and should scale with the amount of information you expect the agent will need to remember in order to successfully complete the task. <br><br>Typical range: `32` - `256` |
+| `network_settings -> memory -> memory_size` | (default = `128`) Size of the memory an agent must keep. In order to use a LSTM, training requires a sequence of experiences instead of single experiences. Corresponds to the size of the array of floating point numbers used to store the hidden state of the recurrent neural network of the policy. This value must be a multiple of 2, and should scale with the amount of information you expect the agent will need to remember in order to successfully complete the task. <br><br>Typical range: `32` - `256` <br><br> memory_size // 2 = hidden_size|
 | `network_settings -> memory -> sequence_length` | (default = `64`) Defines how long the sequences of experiences must be while training. Note that if this number is too small, the agent will not be able to remember things over longer periods of time. If this number is too large, the neural network will take longer to train. <br><br>Typical range: `4` - `128` <br><br> [Unity Forum](https://forum.unity.com/threads/lstm-unity-ml-agents.1231839/): If Sequence length is 64 then this means over 64 steps the LSTM layer will choose what it wants to remember and what it wants to forget / ignore. With LSTM we are letting the NN choose which bits of the previous states that it wants to remember. The NN's choices are going to be dependent on which observations helped it most with getting a higher reward.|
 
 A few considerations when deciding to use memory:
@@ -174,6 +174,11 @@ A few considerations when deciding to use memory:
 - Adding a recurrent layer increases the complexity of the neural network, it is
   recommended to decrease `num_layers` when using recurrent.
 - It is required that `memory_size` be divisible by 2.
+
+Adittional information:
+
+* [PyTorch documentation](https://pytorch.org/docs/1.7.1/generated/torch.nn.LSTM.html#torch.nn.LSTM)
+* [GitHub Feature-Memory:](https://github.com/Michaelwolf95/Hierarchical-ML-agents/blob/master/docs/Feature-Memory.md) Some explanations of LSTM settings.
 
 ## Self-Play
 
