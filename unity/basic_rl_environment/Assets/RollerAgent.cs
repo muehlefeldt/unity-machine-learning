@@ -17,7 +17,9 @@ using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
-
+/// <summary>
+/// Class to manage the agent.
+/// </summary>
 public class RollerAgent : Agent
 {
     private Rigidbody m_RBody;
@@ -171,6 +173,9 @@ public class RollerAgent : Agent
     }
 
     private EpEndReasons m_EndReason = EpEndReasons.None;
+    /// <summary>
+    /// Called on start of the episode.
+    /// </summary>
     public override void OnEpisodeBegin()
     {
         // Reset variables on ep begin.
@@ -262,6 +267,9 @@ public class RollerAgent : Agent
         return currentHit.distance / floor.GetMaxPossibleDist();
     }
     
+    /// <summary>
+    /// Code of the agent to get the sensor data.
+    /// </summary>
     public override void CollectObservations(VectorSensor sensor)
     {
         // Idea: Ensure updated sensor data when setting observations. 
