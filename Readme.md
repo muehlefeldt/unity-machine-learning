@@ -1,5 +1,5 @@
 # Autonomous indoor operation of sUAS using Reinforcement Learning and LSTM
-This repository is part of a [bachelor thesis](thesis.pdf) handed in at Technische Universität Berlin. 
+This repository is part of a [bachelor thesis](Abschlussarbeit_382737.pdf) handed in at Technische Universität Berlin. 
 For installation and usage please refer to the [documentation](docs/Readme.md).
 
 ## Folder structure
