@@ -1958,9 +1958,18 @@ learning rate changes to reward signifcant?
 ## 6484 - Terminated
 * Very long run.
 
-## 6485
+## 6485 - Terminated
 * Very long run in env 2.
 * Maybe good for experiment 2?
+* Error occured due file copy.
+
+## 6486
+* Same as 6485.
+* 3e8 steps with 3 sensors in env 2.
+
+## 6487
+* 6e8 steps.
+* Otherwise same as before.
 
 # Advisory
 * Are parallel processes even possible with the unity config files? Dat seems questionable ... feature may need another look.
